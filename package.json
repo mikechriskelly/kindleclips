@@ -1,4 +1,7 @@
 {
+  "name": "kindleclips",
+  "version": "0.1.0",
+  "description": "A simple app to view and search highlighted passages from your Kindle.",
   "private": true,
   "engines": {
     "node": ">=5.0 <6",
@@ -9,6 +12,7 @@
     "babel-runtime": "^6.3.19",
     "bluebird": "3.1.1",
     "classnames": "2.2.3",
+    "connect-mongo": "^1.1.0",
     "eventemitter3": "1.1.1",
     "express": "4.13.3",
     "fastclick": "1.0.6",
@@ -17,8 +21,11 @@
     "history": "2.0.0-rc2",
     "isomorphic-style-loader": "0.0.6",
     "jade": "1.11.0",
+    "mongoose": "^4.3.4",
     "node-fetch": "1.3.3",
     "normalize.css": "3.0.3",
+    "passport": "^0.2.2",
+    "passport-google-oauth": "^0.2.0",
     "react": "0.14.6",
     "react-dom": "0.14.6",
     "react-routing": "0.0.7",
