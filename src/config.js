@@ -8,5 +8,6 @@ export const credentials = {
   google: {
     clientID: process.env.GOOGLE_CLIENTID || '',
     clientSecret: process.env.GOOGLE_SECRET || '',
-    callbackURL: process.env.GOOGLE_CALLBACK || '/auth/google/callback'
+    callbackURL: process.env.GOOGLE_CALLBACK || '/auth/google/callback',
+  },
 };

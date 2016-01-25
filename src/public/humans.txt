@@ -3,11 +3,11 @@
 
 # TEAM
 
-    <name> -- <role> -- <twitter>
+    Mike Kelly 
 
 # THANKS
 
-    <name>
+    Konstantin Tarkus - React Starter Kit
 
 # TECHNOLOGY COLOPHON
 
