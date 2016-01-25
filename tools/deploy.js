@@ -33,9 +33,9 @@ async function deploy() {
   await repo.setRemote(remote.name, remote.url);
 
   // Fetch the remote repository if it exists
-  if ((await repo.hasRef(remote.url, 'master'))) {
+  if ((await repo.hasRef(remote.url, 'deploy'))) {
     await repo.fetch(remote.name);
-    await repo.reset(`${remote.name}/master`, { hard: true });
+    await repo.reset(`${remote.name}/deploy`, { hard: true });
     await repo.clean({ force: true });
   }
 
@@ -47,7 +47,7 @@ async function deploy() {
   // Push the contents of the build folder to the remote server via Git
   await repo.add('--all .');
   await repo.commit('Update');
-  await repo.push(remote.name, 'master');
+  await repo.push(remote.name, 'deploy');
 
   // Check if the site was successfully deployed
   const response = await fetch(remote.website);
