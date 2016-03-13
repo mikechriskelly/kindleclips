@@ -5,7 +5,7 @@ import fetch from './lib/fetch';
 // TODO: Update deployment URL
 // For more information visit http://gitolite.com/deploy.html
 const getRemote = (slot) => ({
-  name: slot ? slot : 'production',
+  name: slot || 'production',
   url: `https://github.com/mikechriskelly/kindleclips.git`,
   website: `http://kindleclips.heroku.com`,
 });

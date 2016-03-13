@@ -7,14 +7,12 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-@import '../variables.scss';
+import React from 'react';
+import Login from './Login';
 
-.root {
-
-}
-
-.container {
-  margin: 0 auto;
-  padding: 0 0 40px;
-  max-width: $max-content-width;
-}
+export const path = '/login';
+export const action = async (state) => {
+  const title = 'Log In';
+  state.context.onSetTitle(title);
+  return <Login title={title} />;
+};

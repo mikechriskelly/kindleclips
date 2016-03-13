@@ -8,6 +8,8 @@ import webpackConfig from './webpack.config';
 import clean from './clean';
 import copy from './copy';
 
+const DEBUG = !process.argv.includes('--release');
+
 /**
  * Launches a development web server with "live reload" functionality -
  * synchronizing URLs, interactions and code changes across multiple devices.
@@ -19,20 +21,28 @@ async function start() {
     // Patch the client-side bundle configurations
     // to enable Hot Module Replacement (HMR) and React Transform
     webpackConfig.filter(x => x.target !== 'node').forEach(config => {
+      /* eslint-disable no-param-reassign */
       if (Array.isArray(config.entry)) {
         config.entry.unshift('webpack-hot-middleware/client');
       } else {
         config.entry = ['webpack-hot-middleware/client', config.entry];
       }
 
+      config.output.filename = config.output.filename.replace('[chunkhash]', '[hash]');
+      config.output.chunkFilename = config.output.chunkFilename.replace('[chunkhash]', '[hash]');
       config.plugins.push(new webpack.HotModuleReplacementPlugin());
       config.plugins.push(new webpack.NoErrorsPlugin());
-      config.module.loaders
+      config
+        .module
+        .loaders
         .filter(x => x.loader === 'babel-loader')
-        .forEach(x => x.query = {
+        .forEach(x => (x.query = {
+          ...x.query,
+
           // Wraps all React components into arbitrary transforms
           // https://github.com/gaearon/babel-plugin-react-transform
           plugins: [
+            ...(x.query ? x.query.plugins : []),
             ['react-transform', {
               transforms: [
                 {
@@ -44,9 +54,11 @@ async function start() {
                   imports: ['react', 'redbox-react'],
                 },
               ],
-            }],
+            },
+            ],
           ],
-        });
+        }));
+      /* eslint-enable no-param-reassign */
     });
 
     const bundler = webpack(webpackConfig);
@@ -62,7 +74,8 @@ async function start() {
       // For other settings see
       // https://webpack.github.io/docs/webpack-dev-middleware
     });
-    const hotMiddlewares = bundler.compilers
+    const hotMiddlewares = bundler
+      .compilers
       .filter(compiler => compiler.options.target !== 'node')
       .map(compiler => webpackHotMiddleware(compiler));
 
@@ -71,6 +84,8 @@ async function start() {
         if (!err) {
           const bs = Browsersync.create();
           bs.init({
+            ...(DEBUG ? {} : { notify: false, ui: false }),
+
             proxy: {
               target: host,
               middleware: [wpMiddleware, ...hotMiddlewares],
