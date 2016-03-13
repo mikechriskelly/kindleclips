@@ -3,12 +3,32 @@ import path from 'path';
 import express from 'express';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
+import mongoose from 'mongoose';
 import Router from './routes';
 import Html from './components/Html';
 import assets from './assets';
-import { port } from './config';
+import { port, db } from './config';
+
+/* eslint-disable no-console */
 
 const server = global.server = express();
+
+//
+// Connect to MongoDB
+// -----------------------------------------------------------------------------
+const connect = () => {
+  mongoose.connect(db, (err) => {
+    if (err) {
+      console.log('Error connecting to: ' + db + '. ' + err);
+    } else {
+      console.log('Successful connecting to: ' + db);
+    }
+  });
+};
+
+connect();
+mongoose.connection.on('error', console.log);
+mongoose.connection.on('disconnected', connect);
 
 //
 // Register Node.js middleware
@@ -51,6 +71,5 @@ server.get('*', async (req, res, next) => {
 // Launch the server
 // -----------------------------------------------------------------------------
 server.listen(port, () => {
-  /* eslint-disable no-console */
   console.log(`The server is running at http://localhost:${port}/`);
 });
