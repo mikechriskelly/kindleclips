@@ -13,20 +13,20 @@ import passport from './core/passport';
 import schema from './data/schema';
 import Router from './routes';
 import assets from './assets';
-import { port, auth, analytics } from './config';
+import { port, auth, analytics, db } from './config';
 
 /* eslint-disable no-console */
 
 const server = global.server = express();
 
-// Connect to MongoDB - MK
+// Connect to MongoDB
 // -----------------------------------------------------------------------------
 const connect = () => {
   mongoose.connect(db, (err) => {
     if (err) {
-      console.log('Error connecting to: ' + db + '. ' + err);
+      console.log(`Error connecting to: ${db} ${err}`);
     } else {
-      console.log('Successful connecting to: ' + db);
+      console.log(`Successful connecting to ${db}`);
     }
   });
 };
