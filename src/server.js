@@ -8,16 +8,18 @@ import expressGraphQL from 'express-graphql';
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import ReactDOM from 'react-dom/server';
+import { match } from 'universal-router';
 import PrettyError from 'pretty-error';
 import passport from './core/passport';
+import models from './data/models';
 import schema from './data/schema';
-import Router from './routes';
+import routes from './routes';
 import assets from './assets';
 import { port, auth, analytics, db } from './config';
 
 /* eslint-disable no-console */
 
-const server = global.server = express();
+const app = express();
 
 // Connect to MongoDB
 // -----------------------------------------------------------------------------
@@ -44,27 +46,27 @@ global.navigator.userAgent = global.navigator.userAgent || 'all';
 //
 // Register Node.js middleware
 // -----------------------------------------------------------------------------
-server.use(express.static(path.join(__dirname, 'public')));
-server.use(cookieParser());
-server.use(bodyParser.urlencoded({ extended: true }));
-server.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 //
 // Authentication
 // -----------------------------------------------------------------------------
-server.use(expressJwt({
+app.use(expressJwt({
   secret: auth.jwt.secret,
   credentialsRequired: false,
   /* jscs:disable requireCamelCaseOrUpperCaseIdentifiers */
   getToken: req => req.cookies.id_token,
   /* jscs:enable requireCamelCaseOrUpperCaseIdentifiers */
 }));
-server.use(passport.initialize());
+app.use(passport.initialize());
 
-server.get('/login/facebook',
+app.get('/login/facebook',
   passport.authenticate('facebook', { scope: ['email', 'user_location'], session: false })
 );
-server.get('/login/facebook/return',
+app.get('/login/facebook/return',
   passport.authenticate('facebook', { failureRedirect: '/login', session: false }),
   (req, res) => {
     const expiresIn = 60 * 60 * 24 * 180; // 180 days
@@ -77,7 +79,7 @@ server.get('/login/facebook/return',
 //
 // Register API middleware
 // -----------------------------------------------------------------------------
-server.use('/graphql', expressGraphQL(req => ({
+app.use('/graphql', expressGraphQL(req => ({
   schema,
   graphiql: true,
   rootValue: { request: req },
@@ -87,8 +89,9 @@ server.use('/graphql', expressGraphQL(req => ({
 //
 // Register server-side rendering middleware
 // -----------------------------------------------------------------------------
-server.get('*', async (req, res, next) => {
+app.get('*', async (req, res, next) => {
   try {
+    let css = [];
     let statusCode = 200;
     const template = require('./views/index.jade');
     const data = { title: '', description: '', css: '', body: '', entry: assets.main.js };
@@ -97,17 +100,21 @@ server.get('*', async (req, res, next) => {
       data.trackingId = analytics.google.trackingId;
     }
 
-    const css = [];
-    const context = {
-      insertCss: styles => css.push(styles._getCss()),
-      onSetTitle: value => (data.title = value),
-      onSetMeta: (key, value) => (data[key] = value),
-      onPageNotFound: () => (statusCode = 404),
-    };
-
-    await Router.dispatch({ path: req.path, query: req.query, context }, (state, component) => {
-      data.body = ReactDOM.renderToString(component);
-      data.css = css.join('');
+    await match(routes, {
+      path: req.path,
+      query: req.query,
+      context: {
+        insertCss: styles => css.push(styles._getCss()),
+        setTitle: value => (data.title = value),
+        setMeta: (key, value) => (data[key] = value),
+      },
+      render(component, status = 200) {
+        css = [];
+        statusCode = status;
+        data.body = ReactDOM.renderToString(component);
+        data.css = css.join('');
+        return true;
+      },
     });
 
     res.status(statusCode);
@@ -124,7 +131,7 @@ const pe = new PrettyError();
 pe.skipNodeFiles();
 pe.skipPackage('express');
 
-server.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
+app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   console.log(pe.render(err)); // eslint-disable-line no-console
   const template = require('./views/error.jade');
   const statusCode = err.status || 500;
@@ -138,6 +145,9 @@ server.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
 //
 // Launch the server
 // -----------------------------------------------------------------------------
-server.listen(port, () => {
-  console.log(`The server is running at http://localhost:${port}/`);
+/* eslint-disable no-console */
+models.sync().catch(err => console.error(err.stack)).then(() => {
+  app.listen(port, () => {
+    console.log(`The server is running at http://localhost:${port}/`);
+  });
 });

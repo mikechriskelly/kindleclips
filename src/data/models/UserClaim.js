@@ -7,8 +7,19 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import keyMirror from 'fbjs/lib/keyMirror';
+import DataType from 'sequelize';
+import Model from '../sequelize';
 
-export default keyMirror({
+const UserClaim = Model.define('UserClaim', {
+
+  type: {
+    type: DataType.STRING,
+  },
+
+  value: {
+    type: DataType.INTEGER,
+  },
 
 });
+
+export default UserClaim;
