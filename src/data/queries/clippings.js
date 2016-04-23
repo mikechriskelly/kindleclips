@@ -1,5 +1,5 @@
 import ClippingsType from '../types/ClippingsType';
-import ClippingsModel from '../models/ClippingsModel';
+import Clippings from '../models/Clippings';
 import { GraphQLList, GraphQLString, GraphQLID } from 'graphql';
 
 const clippings = {
@@ -11,7 +11,7 @@ const clippings = {
     author: { type: GraphQLString },
   },
   resolve: (root, params, options) => {
-    return ClippingsModel.find(params).exec();
+    return Clippings.find(params).exec();
   },
 };
 
