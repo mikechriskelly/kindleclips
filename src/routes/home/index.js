@@ -14,13 +14,13 @@ export default {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        query: '{news{title,link,contentSnippet}}',
+        query: '{clippings{id,title,author,text}}',
       }),
       credentials: 'include',
     });
     const { data } = await resp.json();
-    if (!data || !data.news) throw new Error('Failed to load the news feed.');
-    return <Home news={data.news} />;
+    if (!data || !data.clippings) throw new Error('Failed to load clippings.');
+    return <Home clippings={data.clippings} />;
   },
 
 };
