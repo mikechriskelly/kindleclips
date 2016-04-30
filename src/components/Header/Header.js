@@ -6,14 +6,15 @@ import Navigation from '../Navigation';
 function Header() {
   return (
     <div className={s.root}>
-      <div className={s.inputbar}>
-        <input
-          className={s.searchfield}
-          onChange={filterText => this.setState({ filterText })}
-          placeholder="Search..."
-        />
+      <div className={s.container}>
+        <div className={s.search}>
+          <input
+            onChange={filterText => this.setState({ filterText })}
+            placeholder="Search..."
+          />
+        </div>
+        <Navigation className={s.nav} />
       </div>
-      <Navigation className={s.nav} />
     </div>
   );
 }

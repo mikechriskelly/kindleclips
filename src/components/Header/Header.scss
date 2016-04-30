@@ -1,55 +1,37 @@
 @import '../variables.scss';
 
-$brand-color: #61dafb;
-
 .root {
-  background: #999;
-  border-bottom: 3px solid #bbb;
-  height: 40px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 6px 0;
+  background: $accent;
+  border-bottom: 3px solid $accent-dark;
+  padding: 10px 0;
 }
 
-.nav {
-  float: right;
+.container {
+  height: auto;
+  margin: 0 auto;
+  max-width: $max-content-width;
+  overflow: hidden;
+  vertical-align: middle;
 }
 
-.links {
-  color: #555;
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 38px;
-  letter-spacing: .1rem;
-  padding: 0 5px;
-  text-transform: uppercase;
-  text-decoration: none;
-}
-
-.links:hover,
-.links:active {
-  text-decoration: underline;
-}
-
-.inputbar {
+.search {
   float: left;
+  vertical-align: middle;
 }
 
-input.searchfield {
-  padding-left: 3px;
-  position: absolute;
-}
-
-input.searchfield, 
-input.searchfield:focus {
-  max-width: 768px; 
-  font-size: 16px;
+.search > input {
+  color: $gray-darker;
+  font-size: 20px;
   border: none;
   border-radius: 0;
   background-color: inherit;
   outline: none;
 }
 
-input.searchfield:focus {
-  color: #C24D2C;
+.search > input::placeholder {
+  color: #fff;
+}
+
+.nav {
+  float: right;
 }

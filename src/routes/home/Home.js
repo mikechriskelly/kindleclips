@@ -9,15 +9,16 @@ function Home({ clippings }, context) {
   return (
     <div className={s.root}>
       <div className={s.container}>
-        <h1 className={s.title}>Kindle Clips</h1>
-        <ul className={s.news}>
+        <h2 className={s.title}>My Kindle Highlights</h2>
+        <ul className={s.clipList}>
           {clippings.map((item, index) => (
-            <li key={index} className={s.newsItem}>
-              <a href="#" className={s.newsTitle}>{item.title}</a> {item.author}
-              <span
-                className={s.newsDesc}
+            <li key={index} className={s.clipItem}>
+              <p
+                className={s.clipText}
                 dangerouslySetInnerHTML={{ __html: item.text }}
               />
+              <span className={s.clipTitle}>{item.title}</span>
+              <span className={s.clipAuthor}>{item.author}</span>
             </li>
           ))}
         </ul>
