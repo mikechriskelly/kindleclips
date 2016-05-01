@@ -6,7 +6,7 @@ import fetch from './lib/fetch';
 // For more information visit http://gitolite.com/deploy.html
 const getRemote = (slot) => ({
   name: slot || 'production',
-  url: `https://github.com/mikechriskelly/kindleclips.git`,
+  url: `https://git.heroku.com/kindleclips.git`,
   website: `http://kindleclips.heroku.com`,
 });
 
@@ -24,9 +24,9 @@ async function deploy() {
   await repo.setRemote(remote.name, remote.url);
 
   // Fetch the remote repository if it exists
-  if ((await repo.hasRef(remote.url, 'deploy'))) {
+  if ((await repo.hasRef(remote.url, 'master'))) {
     await repo.fetch(remote.name);
-    await repo.reset(`${remote.name}/deploy`, { hard: true });
+    await repo.reset(`${remote.name}/master`, { hard: true });
     await repo.clean({ force: true });
   }
 
@@ -38,7 +38,7 @@ async function deploy() {
   // Push the contents of the build folder to the remote server via Git
   await repo.add('--all .');
   await repo.commit('Update');
-  await repo.push(remote.name, 'deploy');
+  await repo.push(remote.name, 'master');
 
   // Check if the site was successfully deployed
   const response = await fetch(remote.website);
