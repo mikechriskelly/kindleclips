@@ -29,8 +29,8 @@ function Home({ clippings }, context) {
 
 Home.propTypes = {
   clippings: PropTypes.arrayOf(PropTypes.shape({
-    title: PropTypes.string.isRequired,
-    author: PropTypes.string.isRequired,
+    title: PropTypes.string,
+    author: PropTypes.string,
     text: PropTypes.string,
   })).isRequired,
 };

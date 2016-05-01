@@ -6,7 +6,10 @@ const clippingsSchema = new mongoose.Schema({
   text: String,
   title: String,
   author: String,
+  search: String,
 });
+
+clippingsSchema.index({ text: 'text', title: 'text', author: 'text' });
 
 // Compiles the schema into a model, opening (or creating, nonexistent)
 // the 'Clipping' collection in the MongoDB database
