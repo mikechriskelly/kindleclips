@@ -15,7 +15,7 @@ import models from './data/models';
 import schema from './data/schema';
 import routes from './routes';
 import assets from './assets';
-import { port, auth, analytics, db } from './config';
+import { port, auth, analytics, mondgodbUrl } from './config';
 
 /* eslint-disable no-console */
 
@@ -24,11 +24,11 @@ const app = express();
 // Connect to MongoDB
 // -----------------------------------------------------------------------------
 const connect = () => {
-  mongoose.connect(db, (err) => {
+  mongoose.connect(mondgodbUrl, (err) => {
     if (err) {
-      console.log(`Error connecting to: ${db} ${err}`);
+      console.log(`Error connecting to: ${mondgodbUrl} ${err}`);
     } else {
-      console.log(`Successful connecting to ${db}`);
+      console.log(`Successful connecting to ${mondgodbUrl}`);
     }
   });
 };
