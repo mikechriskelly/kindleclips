@@ -9,7 +9,7 @@ function Home({ clippings }, context) {
   return (
     <div className={s.root}>
       <div className={s.container}>
-        <h2 className={s.title}>My Kindle Highlights</h2>
+        <h2 className={s.title}>Results for "ancient history"</h2>
         <ul className={s.clipList}>
           {clippings.map((item, index) => (
             <li key={index} className={s.clipItem}>
