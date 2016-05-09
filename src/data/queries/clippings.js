@@ -19,7 +19,7 @@ const clippings = {
 
     return Clippings
       .find(filter, { score: { $meta: 'textScore' } })
-      .limit(10)
+      .limit(25)
       .exec();
   },
 };

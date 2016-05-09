@@ -10,6 +10,7 @@ import mongoose from 'mongoose';
 import ReactDOM from 'react-dom/server';
 import { match } from 'universal-router';
 import PrettyError from 'pretty-error';
+import multer from 'multer';
 import passport from './core/passport';
 import models from './data/models';
 import schema from './data/schema';
@@ -133,6 +134,23 @@ app.get('*', async (req, res, next) => {
 
     res.status(statusCode);
     res.send(template(data));
+  } catch (err) {
+    next(err);
+  }
+});
+
+//
+// Uploading
+// -----------------------------------------------------------------------------
+const options = {
+  storage: multer.memoryStorage(),
+  limits: { files: 1, fileSize: 5000000 },
+};
+
+app.post('/upload', multer(options).single('myClippingsText'), async (req, res, next) => {
+  try {
+    // console.log(req.file.buffer);
+    res.send(req.body);
   } catch (err) {
     next(err);
   }
