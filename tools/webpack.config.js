@@ -2,6 +2,7 @@ import path from 'path';
 import webpack from 'webpack';
 import extend from 'extend';
 import AssetsPlugin from 'assets-webpack-plugin';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
 
 const DEBUG = !process.argv.includes('--release');
 const VERBOSE = process.argv.includes('--verbose');
@@ -235,6 +236,10 @@ const serverConfig = extend(true, {}, config, {
     // https://webpack.github.io/docs/list-of-plugins.html#bannerplugin
     new webpack.BannerPlugin('require("source-map-support").install();',
       { raw: true, entryOnly: false }),
+
+    // Copy R scripts to build folder so they can be run by server
+    new CopyWebpackPlugin([{ from: path.resolve(__dirname, '../src/analysis'),
+                            to: path.resolve(__dirname, '../build/analysis') }]),
   ],
 
   node: {
