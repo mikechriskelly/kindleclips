@@ -2,9 +2,7 @@ require(tm)
 require(SnowballC)
 require(RTextTools)
 require(topicmodels)
-
-# set your own dir
-setwd("/Users/christophercastle/Documents/Kindle Proj")
+library(proxy)
 
 # connect to mongodb
 mongo = mongo.create(host = "localhost")
@@ -32,3 +30,18 @@ terms(lda, 15) # Top 15 most likely terms for each Topic cluster
 # make a dataframe with the topic cluster probability for each document
 gammaDF <- as.data.frame(lda@gamma)
 head(round(gammaDF, 2))
+
+# use Hellinger distance for similarity measure of vectors
+dist.mat = as.matrix(dist(gammaDF), method = "Bhjattacharyya")
+
+# sorted similarity matrix for all clips
+tops_lst = apply(dist.mat, 2, function(x) names(sort(x)[2:dim(dist.mat)[1]]))
+
+# write a function that will find the top n related clips
+top_results <- function(tops_lst, clip_number, top_n) {
+      # for(i in 1:dim(distance_matrix)[1]) { tops_lst[[i]] = sort(dist.mat[,i])[2:(top_n+1)]}
+      # as.integer(names(tops_lst[[clip_number]]))
+      as.integer(tops_lst[1:top_n,clip_number])
+}
+
+top_results(tops_lst=tops_lst, clip_number=450, top_n=6)
