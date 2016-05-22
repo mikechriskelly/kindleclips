@@ -2,11 +2,11 @@ import mongoose from 'mongoose';
 
 // Define a schema for Clippings
 const clippingsSchema = new mongoose.Schema({
-  id: String,
-  text: String,
-  title: String,
-  author: String,
-  search: String,
+  id: { type: Number, required: true, unique: true },
+  title: { type: String, required: false },
+  author: { type: String, required: false },
+  text: { type: String, required: true },
+  search: { type: String, required: false },
 });
 
 clippingsSchema.index({ text: 'text', title: 'text', author: 'text' });

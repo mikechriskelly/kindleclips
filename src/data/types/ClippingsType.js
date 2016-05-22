@@ -8,10 +8,10 @@ import {
 const ClippingsType = new ObjectType({
   name: 'ClippingsItem',
   fields: {
-    id: { type: ID },
+    id: { type: new NonNull(ID) },
     title: { type: StringType },
     author: { type: StringType },
-    text: { type: StringType },
+    text: { type: new NonNull(StringType) },
   },
 });
 

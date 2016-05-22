@@ -19,6 +19,7 @@ import assets from './assets';
 import { port, auth, analytics, mondgodbUrl } from './config';
 import { exec } from 'child_process';
 import fs from 'fs';
+import insertClippings from './data/queries/insertClippings';
 
 /* eslint-disable no-console */
 
@@ -151,8 +152,9 @@ const options = {
 
 app.post('/upload', multer(options).single('myClippingsText'), async (req, res, next) => {
   try {
-    // console.log(req.file.buffer);
-    res.send('OK');
+    const clippingsString = req.file.buffer.toString('utf8');
+    insertClippings(clippingsString);
+    res.end('Success');
   } catch (err) {
     next(err);
   }
@@ -163,13 +165,13 @@ fs.chmod('build/analysis/LDA.r', 493, (err) => {
   if (err) throw err;
 });
 
-exec('build/analysis/LDA.r', (error, stdout, stderr) => {
-  console.log('stdout: ', stdout);
-  console.log('stderr: ', stderr);
-  if (error !== null) {
-    console.log('exec error: ', error);
-  }
-});
+// exec('build/analysis/LDA.r', (error, stdout, stderr) => {
+//   console.log('stdout: ', stdout);
+//   console.log('stderr: ', stderr);
+//   if (error !== null) {
+//     console.log('exec error: ', error);
+//   }
+// });
 
 //
 // Error handling
