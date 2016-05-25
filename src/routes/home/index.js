@@ -14,7 +14,7 @@ export default {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        query: '{clippings(search:"ancient history"){id,title,author,text}}',
+        query: '{clippings{id,title,author,text}}',
       }),
       credentials: 'include',
     });
