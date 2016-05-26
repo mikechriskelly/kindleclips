@@ -61,22 +61,14 @@ for (i in 1:length(tmp)) {
                    objNew=b, flags=mongo.update.basic)
 }
 
-#=================
-#===topic naming==
+###topic naming###
 # list of collapsed author names
-author.collapse = NULL
-for (i in 1:length(tmp)) {
-      author.collapse[i] = tmp[[i]][5]
-}
-author.collapse = tolower(unique(author.collapse))
+author.collapse = tolower(unique( lapply(X=tmp, FUN= `[[`, "authorCollapse")))
 
-term 	= terms(lda, 1000)
-nchar 	= 6
-indx 	= apply(term, 2, nchar) > n_char
-term[!indx] = NA
-term[term %in% author.collapse] <- NA
-# topic name based on top 3 words over n characters in length
-topic.names = NULL
-for (i in 1:dim(term)[2]) {
-      topic.names[[i]] = term[!is.na(term[,i]), i][1:3]
-}
+name.topic <- function(term_length, n_char, top_n_terms) {
+      term = terms(lda, term_length) # pull top lda terms
+      indx = apply(term, 2, nchar) > n_char 
+      term[!indx] = NA # remove short terms
+      term[term %in% author.collapse] <- NA # remove author names
+      topic.names <- apply(term, 2, FUN=function(x) x[!is.na(x)][1:top_n_terms])
+      topic.names }
