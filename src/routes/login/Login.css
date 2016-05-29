@@ -1,14 +1,28 @@
 @import '../../components/variables.css';
 
+html {
+  background-color: var(--accent);
+}
+
+h1 {
+  font-size: 1.4em;
+  margin: 0 0 20px 0;
+  text-align: center;
+}
+
 .root {
-  padding-left: 20px;
-  padding-right: 20px;
+  height: 100%;
+  position: absolute;
+  top: 25%;
+  width: 100%;
 }
 
 .container {
-  margin: 0 auto;
-  padding: 0 0 40px;
-  max-width: 380px;
+  background-color: var(--white-base);
+  border-radius: 5px;
+  margin: auto auto;
+  padding: 20px 25px 25px 25px;
+  max-width: 350px;
 }
 
 .lead {
