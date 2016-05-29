@@ -4,7 +4,7 @@ import ErrorPage from './ErrorPage';
 
 export default {
 
-  path: '/error',
+  path: '*',
 
   action({ render, context, error }) {
     return render(

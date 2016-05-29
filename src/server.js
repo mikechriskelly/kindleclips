@@ -74,7 +74,7 @@ app.get('/login/facebook/return',
     const expiresIn = 60 * 60 * 24 * 180; // 180 days
     const token = jwt.sign(req.user, auth.jwt.secret, { expiresIn });
     res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
-    res.redirect('/');
+    res.redirect('/home');
   }
 );
 
@@ -88,7 +88,7 @@ app.get('/login/google/return',
     const token = jwt.sign(req.user, auth.jwt.secret, { expiresIn });
     res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
     console.log('Server req.user: ', req.user);
-    res.redirect('/');
+    res.redirect('/home');
   }
 );
 
@@ -98,6 +98,16 @@ app.get('/logout', (req, res) => {
   res.redirect('/');
 });
 
+app.get('/verify',
+  passport.authorize('google', { scope: ['email'], failureRedirect: '/login', session: false }),
+  (req, res) => {
+    res.json(res);
+  }
+);
+
+
+
+// TODO: Move this into client-side route
 app.get('/delete', async (req, res) => {
   const removedUser = await User.destroy({ where: { id: req.user.id } });
   if (removedUser) {
@@ -106,6 +116,39 @@ app.get('/delete', async (req, res) => {
     res.redirect('/');
   }
 });
+
+//
+// Uploading
+// -----------------------------------------------------------------------------
+const options = {
+  storage: multer.memoryStorage(),
+  limits: { files: 1, fileSize: 5000000 },
+};
+
+app.post('/upload', multer(options).single('myClippingsText'), async (req, res, next) => {
+  try {
+    const clippingsString = req.file.buffer.toString('utf8');
+    insertClippings(clippingsString);
+    res.end('Success');
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Make the R script executable for node (octal 0755 = decimal 493)
+fs.chmod('build/analysis/LDA.r', 493, (err) => {
+  if (err) throw err;
+});
+
+// exec('build/analysis/LDA.r', (error, stdout, stderr) => {
+//   console.log('stdout: ', stdout);
+//   console.log('stderr: ', stderr);
+//   if (error !== null) {
+//     console.log('exec error: ', error);
+//   }
+// });
+
+
 
 //
 // Register API middleware
@@ -154,37 +197,6 @@ app.get('*', async (req, res, next) => {
     next(err);
   }
 });
-
-//
-// Uploading
-// -----------------------------------------------------------------------------
-const options = {
-  storage: multer.memoryStorage(),
-  limits: { files: 1, fileSize: 5000000 },
-};
-
-app.post('/upload', multer(options).single('myClippingsText'), async (req, res, next) => {
-  try {
-    const clippingsString = req.file.buffer.toString('utf8');
-    insertClippings(clippingsString);
-    res.end('Success');
-  } catch (err) {
-    next(err);
-  }
-});
-
-// Make the R script executable for node (octal 0755 = decimal 493)
-fs.chmod('build/analysis/LDA.r', 493, (err) => {
-  if (err) throw err;
-});
-
-// exec('build/analysis/LDA.r', (error, stdout, stderr) => {
-//   console.log('stdout: ', stdout);
-//   console.log('stderr: ', stderr);
-//   if (error !== null) {
-//     console.log('exec error: ', error);
-//   }
-// });
 
 //
 // Error handling

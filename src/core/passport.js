@@ -141,7 +141,10 @@ passport.use(new GoogleStrategy({
         // There is already a Google account that belongs to you.
         // Sign in with that account or delete it, then link it with your current account.
         console.log('You already have a Google login associated with your email address');
-        done();
+        done(null, {
+          id: req.user.id,
+          email: req.user.email,
+        });
       } else {
         console.log('Associating this Google account with your existing account');
         const user = await User.create({

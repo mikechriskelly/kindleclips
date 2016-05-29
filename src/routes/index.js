@@ -6,6 +6,7 @@ import home from './home';
 import login from './login';
 import register from './register';
 import error from './error';
+import content from './content';
 
 export default {
 
@@ -16,6 +17,7 @@ export default {
     login,
     register,
     error,
+    content,
   ],
 
   async action({ next, render, context }) {
