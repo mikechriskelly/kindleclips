@@ -10,7 +10,6 @@ function Login(props, context) {
     <div className={s.root}>
       <div className={s.container}>
         <h1>{title}</h1>
-        <p className={s.lead}>Log in with your username or company email address.</p>
         <div className={s.formGroup}>
           <a className={s.facebook} href="/login/facebook">
             <svg
@@ -27,6 +26,7 @@ function Login(props, context) {
             <span>Log in with Facebook</span>
           </a>
         </div>
+        <strong className={s.lineThrough}>OR</strong>
         <div className={s.formGroup}>
           <a className={s.google} href="/login/google">
             <svg
@@ -49,37 +49,6 @@ function Login(props, context) {
             <span>Log in with Google</span>
           </a>
         </div>
-        <strong className={s.lineThrough}>OR</strong>
-        <form method="post">
-          <div className={s.formGroup}>
-            <label className={s.label} htmlFor="usernameOrEmail">
-              Username or email address:
-            </label>
-            <input
-              className={s.input}
-              id="usernameOrEmail"
-              type="text"
-              name="usernameOrEmail"
-              autoFocus
-            />
-          </div>
-          <div className={s.formGroup}>
-            <label className={s.label} htmlFor="password">
-              Password:
-            </label>
-            <input
-              className={s.input}
-              id="password"
-              type="password"
-              name="password"
-            />
-          </div>
-          <div className={s.formGroup}>
-            <button className={s.button} type="submit">
-              Log in
-            </button>
-          </div>
-        </form>
       </div>
     </div>
   );
