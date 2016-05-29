@@ -4,7 +4,6 @@ import App from '../components/App';
 // Child routes
 import home from './home';
 import login from './login';
-import register from './register';
 import error from './error';
 import content from './content';
 
@@ -15,9 +14,8 @@ export default {
   children: [
     home,
     login,
-    register,
-    error,
     content,
+    error,
   ],
 
   async action({ next, render, context }) {

@@ -4,7 +4,7 @@ import fetch from '../../core/fetch';
 
 export default {
 
-  path: '/content',
+  path: '*',
 
   async action({ path }) { // eslint-disable-line react/prop-types
     const resp = await fetch('/graphql', {
