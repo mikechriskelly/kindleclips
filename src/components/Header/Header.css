@@ -1,17 +1,22 @@
-@import '../variables.scss';
+@import '../variables.css';
 
 .root {
-  background: $accent;
-  border-bottom: 3px solid $accent-dark;
+  background: var(--accent);
+  border-bottom: 3px solid var(--accent-dark);
   padding: 10px 0;
 }
 
 .container {
   height: auto;
   margin: 0 auto;
-  max-width: $max-content-width;
-  overflow: hidden;
-  vertical-align: middle;
+  padding: 0 0 25px 5px;
+  max-width: var(--max-content-width);
+}
+
+.brand {
+  color: var(--brand-color);
+  text-decoration: none;
+  font-size: 1.75em; /* ~28px */
 }
 
 .search {
@@ -20,7 +25,7 @@
 }
 
 .search > input {
-  color: $gray-darker;
+  color: var(--gray-darker);
   font-size: 20px;
   border: none;
   border-radius: 0;

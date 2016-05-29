@@ -1,10 +1,10 @@
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import s from './Register.css';
+import s from './Contact.css';
 
-const title = 'New User Registration';
+const title = 'Contact Us';
 
-function Register(props, context) {
+function Contact(props, context) {
   context.setTitle(title);
   return (
     <div className={s.root}>
@@ -16,6 +16,6 @@ function Register(props, context) {
   );
 }
 
-Register.contextTypes = { setTitle: PropTypes.func.isRequired };
+Contact.contextTypes = { setTitle: PropTypes.func.isRequired };
 
-export default withStyles(s)(Register);
+export default withStyles(s)(Contact);

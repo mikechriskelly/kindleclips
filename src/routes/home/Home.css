@@ -1,4 +1,4 @@
-@import '../../components/variables.scss';
+@import '../../components/variables.css';
 
 .root {
   padding-left: 20px;
@@ -8,12 +8,12 @@
 .container {
   margin: 0 auto;
   padding: 0 0 40px;
-  max-width: $max-content-width;
+  max-width: var(--max-content-width);
 }
 
 .clipList {
   padding: 0;
-  max-width: $max-text-width;
+  max-width: var(--max-text-width);
 }
 
 .clipItem {
@@ -23,7 +23,7 @@
 
 .clipTitle,
 .clipAuthor {
-  color: $primary;
+  color: var(--primary);
   display: block;
   clear: both;
   float: left;
@@ -32,7 +32,7 @@
 }
 
 .clipAuthor {
-  color: $gray-light;
+  color: var(--gray-light);
 }
 
 .clipText {
