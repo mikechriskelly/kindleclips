@@ -37,14 +37,22 @@ for (i in 1:length(tmp)) {
 # sorted similarity matrix for all clips
 tops_lst = apply(dist.mat, 2, function(x) names(sort(x)[2:dim(dist.mat)[1]]))
 
+# indexed list of mongo IDs
+id_index = lapply(X=tmp, FUN=`[[`, '_id')
+# re-create tops_lst but with mongoID instead of index #s
+tops_mongo = matrix(unlist(id_index)[as.numeric(tops_lst)], nrow=dim(tops_lst)[1])
+
 # write a function that will find the top n related clips
-top_results <- function(tops_lst, clip_number, top_n) {
-      as.integer(tops_lst[1:top_n,clip_number])
+make_tops <- function(tops_mongo, clip_number, top_n=dim(tops_mongo)[1]) {
+      tops_mongo[1:top_n,clip_number]
 }
 
-# store the top 30 most similar docs for each doc
+# # store the top 30 most similar docs for each doc
+# for (i in 1:length(tmp)) {
+#       tmp[[i]]$top30 <- top_results(tops_mongo, i, top_n=30)
+# }
 for (i in 1:length(tmp)) {
-      tmp[[i]]$top30 <- top_results(tops_lst, i, top_n=30)
+      tmp[[i]]$tops <- make_tops(tops_mongo, i)
 }
 # # Nullify the collapsed author element
 # for (i in 1:length(tmp)) {
@@ -65,7 +73,7 @@ for (i in 1:length(tmp)) {
 # list of collapsed author names
 author.collapse = tolower(unique( lapply(X=tmp, FUN= `[[`, "authorCollapse")))
 
-name.topic <- function(term_length, n_char, top_n_terms) {
+name_topic <- function(term_length, n_char, top_n_terms) {
       term = terms(lda, term_length) # pull top lda terms
       indx = apply(term, 2, nchar) > n_char 
       term[!indx] = NA # remove short terms
