@@ -74,6 +74,19 @@ const authenticateUser = (req, res) => {
   return res.redirect('/home');
 };
 
+const ensureAuthentication = (req, res, next) => {
+  console.log('CHECKING AUTH');
+  console.log(req.user);
+  console.log('req.isAuthenticated(): ' , req.isAuthenticated());
+
+  if (req.isAuthenticated()) { 
+    next(); 
+  } else {
+    res.redirect(401, '/'); 
+  }
+  
+};
+
 server.get('/login/facebook',
   passport.authenticate('facebook', { scope: ['email'], session: false })
 );
@@ -98,17 +111,19 @@ server.get('/logout', (req, res) => {
   res.redirect('/');
 });
 
-server.get('/verify',
-  passport.authorize('google', { scope: ['email'], failureRedirect: '/', session: false }),
-  (req, res) => {
-    res.json(res);
-  }
-);
-
 //
 // API for User Actions
 // -----------------------------------------------------------------------------
-server.get('api/user/delete', async (req, res) => {
+// Require authentication for all API endpoints
+server.all('/api/*', ensureAuthentication, async (req, res, next) => {
+  next(); // Passed auth check, so continue
+});
+
+server.get('/api/test', async (req, res) => {
+  res.send('OK. Passed auth check.');
+});
+
+server.get('/api/user/delete', async (req, res) => {
   const removedUser = await User.destroy({ where: { id: req.user.id } });
   if (removedUser) {
     res.redirect('/logout');
@@ -117,14 +132,15 @@ server.get('api/user/delete', async (req, res) => {
   }
 });
 
-server.post('api/clips/upload',
+server.post('/api/clips/upload',
   multer({
     storage: multer.memoryStorage(),
     limits: { files: 1, fileSize: 5000000 },
   }).single('myClippingsText'), async (req, res, next) => {
     try {
-      const clippingsString = req.file.buffer.toString('utf8');
-      insertClippings(clippingsString);
+      // const clippingsString = req.file.buffer.toString('utf8');
+      // insertClippings(clippingsString);
+      console.log('UPLOAD REQ: ', req.user);
       res.end('Success');
     } catch (err) {
       next(err);
