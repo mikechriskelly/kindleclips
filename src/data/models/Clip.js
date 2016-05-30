@@ -12,6 +12,6 @@ const clipSchema = new mongoose.Schema({
 
 clipSchema.index({ text: 'text', title: 'text', author: 'text' });
 
-// Compiles the schema into a model, opening (or creating, nonexistent)
-// the 'Clipping' collection in the MongoDB database
+// Compiles the schema into a model, opening (or creating, if nonexistent)
+// the 'clips' collection in the MongoDB database
 export default mongoose.model('Clip', clipSchema);

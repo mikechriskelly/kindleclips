@@ -19,7 +19,7 @@ import assets from './assets'; // eslint-disable-line import/no-unresolved
 import { port, auth, analytics, mondgodbUrl } from './config';
 // import { exec } from 'child_process';
 // import fs from 'fs';
-import { insertClips } from './data/queries/clips';
+import { insertClips, removeClips } from './data/queries/clips';
 import UserActions from './actions/UserActions';
 
 const server = express();
@@ -77,7 +77,7 @@ server.use(passport.initialize());
 const authenticateUser = (req, res) => {
   const expiresIn = 60 * 60 * 24 * 180; // 180 days
   const token = jwt.sign(req.user, auth.jwt.secret, { expiresIn });
-  res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true, secure: true });
+  res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
   UserActions.loginUser(token);
   return res.redirect('/home');
 };
@@ -145,14 +145,18 @@ server.post('/api/clips/upload',
   }).single('myClippingsTxt'), async (req, res, next) => {
     try {
       const fullString = req.file.buffer.toString('utf8');
-      insertClips(fullString, req.user);
-      console.log('UPLOAD REQ: ', req.user);
-      res.end('Success');
+      insertClips(fullString, req.user.id);
+      res.end('Clips added for user');
     } catch (err) {
       next(err);
     }
   }
 );
+
+server.get('/api/clips/remove', async (req, res) => {
+  removeClips(req.user.id);
+  res.end('All clips removed for this user');
+});
 
 //
 // Launch Data Analysis Process

@@ -71,5 +71,15 @@ const insertClips = (clipFile, clipowner) => {
   });
 };
 
+const removeClips = (clipowner) => {
+  Clip.collection.remove({ clipowner }, err => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.info('Clips were successfully removed.');
+    }
+  });
+};
+
 export default getOwnClips;
-export { insertClips };
+export { insertClips, removeClips };
