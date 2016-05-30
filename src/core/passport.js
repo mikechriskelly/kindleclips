@@ -18,7 +18,6 @@ passport.use(new FacebookStrategy({
   const loginName = 'facebook';
   const claimType = 'urn:facebook:access_token';
   const fooBar = async () => {
-    console.log('profile: ', profile);
     // AUTHORIZATION: User is already logged in and is connecting accounts.
     if (req.user) {
       const userLogin = await UserLogin.findOne({
@@ -87,7 +86,7 @@ passport.use(new FacebookStrategy({
         } else {
           user = await User.create({
             email: profile._json.email,
-            emailVerified: true,
+            emailConfirmed: true,
             logins: [
               { name: loginName, key: profile.id },
             ],
@@ -131,6 +130,8 @@ passport.use(new GoogleStrategy({
   const loginName = 'google';
   const claimType = 'urn:google:access_token';
   const fooBar = async () => {
+    console.log('profile: ', profile);
+    console.log('profile id: ', profile.id);
     // AUTHORIZATION: User is already logged in and is connecting accounts.
     if (req.user) {
       const userLogin = await UserLogin.findOne({
@@ -175,6 +176,7 @@ passport.use(new GoogleStrategy({
       }
     // AUTHENTICATION: User is logging in or signing up
     } else {
+      console.log('profile id: ', profile.id);
       const users = await User.findAll({
         attributes: ['id', 'email'],
         where: { '$logins.name$': loginName, '$logins.key$': profile.id },
@@ -204,9 +206,10 @@ passport.use(new GoogleStrategy({
           done(null, false, { message: 'Already account with this email address' });
         // Create a new account
         } else {
+          console.log('profile id: ', profile.id);
           user = await User.create({
             email: profile.emails[0] ? profile.emails[0].value : null,
-            emailVerified: true,
+            emailConfirmed: true,
             logins: [
               { name: loginName, key: profile.id },
             ],
@@ -225,6 +228,7 @@ passport.use(new GoogleStrategy({
               { model: UserProfile, as: 'profile' },
             ],
           });
+          console.log('user id: ', user.id);
           done(null, {
             id: user.id,
             email: user.email,

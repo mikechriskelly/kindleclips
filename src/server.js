@@ -18,10 +18,11 @@ import routes from './routes';
 import assets from './assets'; // eslint-disable-line import/no-unresolved
 import { port, auth, analytics, mondgodbUrl } from './config';
 // import { exec } from 'child_process';
-import fs from 'fs';
+// import fs from 'fs';
 import insertClippings from './data/queries/insertClippings';
+import UserActions from './actions/UserActions';
 
-const app = express();
+const server = express();
 
 // Connect to MongoDB
 // -----------------------------------------------------------------------------
@@ -48,67 +49,66 @@ global.navigator.userAgent = global.navigator.userAgent || 'all';
 //
 // Register Node.js middleware
 // -----------------------------------------------------------------------------
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(cookieParser());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+server.use(express.static(path.join(__dirname, 'public')));
+server.use(cookieParser());
+server.use(bodyParser.urlencoded({ extended: true }));
+server.use(bodyParser.json());
 
 //
 // Authentication
 // -----------------------------------------------------------------------------
-app.use(expressJwt({
+server.use(expressJwt({
   secret: auth.jwt.secret,
   credentialsRequired: false,
   /* jscs:disable requireCamelCaseOrUpperCaseIdentifiers */
   getToken: req => req.cookies.id_token,
   /* jscs:enable requireCamelCaseOrUpperCaseIdentifiers */
 }));
-app.use(passport.initialize());
+server.use(passport.initialize());
 
-app.get('/login/facebook',
-  passport.authenticate('facebook', { scope: ['email', 'user_location'], session: false })
-);
-app.get('/login/facebook/return',
-  passport.authenticate('facebook', { /* failureRedirect: '/login' ,*/ session: false }),
-  (req, res) => {
-    const expiresIn = 60 * 60 * 24 * 180; // 180 days
-    const token = jwt.sign(req.user, auth.jwt.secret, { expiresIn });
-    res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
-    res.redirect('/home');
-  }
+const authenticateUser = (req, res) => {
+  const expiresIn = 60 * 60 * 24 * 180; // 180 days
+  const token = jwt.sign(req.user, auth.jwt.secret, { expiresIn });
+  res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
+  UserActions.loginUser(token);
+  return res.redirect('/home');
+};
+
+server.get('/login/facebook',
+  passport.authenticate('facebook', { scope: ['email'], session: false })
 );
 
-app.get('/login/google',
+server.get('/login/facebook/return',
+  passport.authenticate('facebook', { failureRedirect: '/', session: false }),
+  authenticateUser
+);
+
+server.get('/login/google',
   passport.authenticate('google', { scope: ['email'], session: false })
 );
-app.get('/login/google/return',
-  passport.authenticate('google', { failureRedirect: '/login', session: false }),
-  (req, res) => {
-    const expiresIn = 60 * 60 * 24 * 180; // 180 days
-    const token = jwt.sign(req.user, auth.jwt.secret, { expiresIn });
-    res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
-    console.log('Server req.user: ', req.user);
-    res.redirect('/home');
-  }
+
+server.get('/login/google/return',
+  passport.authenticate('google', { failureRedirect: '/', session: false }),
+  authenticateUser
 );
 
-app.get('/logout', (req, res) => {
+server.get('/logout', (req, res) => {
   req.logout();
   res.clearCookie('id_token');
   res.redirect('/');
 });
 
-app.get('/verify',
-  passport.authorize('google', { scope: ['email'], failureRedirect: '/login', session: false }),
+server.get('/verify',
+  passport.authorize('google', { scope: ['email'], failureRedirect: '/', session: false }),
   (req, res) => {
     res.json(res);
   }
 );
 
-
-
-// TODO: Move this into client-side route
-app.get('/delete', async (req, res) => {
+//
+// API for User Actions
+// -----------------------------------------------------------------------------
+server.get('api/user/delete', async (req, res) => {
   const removedUser = await User.destroy({ where: { id: req.user.id } });
   if (removedUser) {
     res.redirect('/logout');
@@ -117,28 +117,28 @@ app.get('/delete', async (req, res) => {
   }
 });
 
-//
-// Uploading
-// -----------------------------------------------------------------------------
-const options = {
-  storage: multer.memoryStorage(),
-  limits: { files: 1, fileSize: 5000000 },
-};
-
-app.post('/upload', multer(options).single('myClippingsText'), async (req, res, next) => {
-  try {
-    const clippingsString = req.file.buffer.toString('utf8');
-    insertClippings(clippingsString);
-    res.end('Success');
-  } catch (err) {
-    next(err);
+server.post('api/clips/upload',
+  multer({
+    storage: multer.memoryStorage(),
+    limits: { files: 1, fileSize: 5000000 },
+  }).single('myClippingsText'), async (req, res, next) => {
+    try {
+      const clippingsString = req.file.buffer.toString('utf8');
+      insertClippings(clippingsString);
+      res.end('Success');
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
 
+//
+// Launch Data Analysis Process
+// -----------------------------------------------------------------------------
 // Make the R script executable for node (octal 0755 = decimal 493)
-fs.chmod('build/analysis/LDA.r', 493, (err) => {
-  if (err) throw err;
-});
+// fs.chmod('build/analysis/LDA.r', 493, (err) => {
+//   if (err) throw err;
+// });
 
 // exec('build/analysis/LDA.r', (error, stdout, stderr) => {
 //   console.log('stdout: ', stdout);
@@ -148,12 +148,10 @@ fs.chmod('build/analysis/LDA.r', 493, (err) => {
 //   }
 // });
 
-
-
 //
 // Register API middleware
 // -----------------------------------------------------------------------------
-app.use('/graphql', expressGraphQL(req => ({
+server.use('/graphql', expressGraphQL(req => ({
   schema,
   graphiql: true,
   rootValue: { request: req },
@@ -163,7 +161,7 @@ app.use('/graphql', expressGraphQL(req => ({
 //
 // Register server-side rendering middleware
 // -----------------------------------------------------------------------------
-app.get('*', async (req, res, next) => {
+server.get('*', async (req, res, next) => {
   try {
     let css = [];
     let statusCode = 200;
@@ -205,7 +203,7 @@ const pe = new PrettyError();
 pe.skipNodeFiles();
 pe.skipPackage('express');
 
-app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
+server.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   console.log(pe.render(err)); // eslint-disable-line no-console
   const template = require('./views/error.jade'); // eslint-disable-line global-require
   const statusCode = err.status || 500;
@@ -221,7 +219,7 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
 // -----------------------------------------------------------------------------
 /* eslint-disable no-console */
 sync().catch(err => console.error(err.stack)).then(() => {
-  app.listen(port, () => {
+  server.listen(port, () => {
     console.log(`The server is running at http://localhost:${port}/`);
   });
 });
