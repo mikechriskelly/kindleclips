@@ -19,7 +19,7 @@ import assets from './assets'; // eslint-disable-line import/no-unresolved
 import { port, auth, analytics, mondgodbUrl } from './config';
 // import { exec } from 'child_process';
 // import fs from 'fs';
-import insertClippings from './data/queries/insertClippings';
+import { insertClips } from './data/queries/clips';
 import UserActions from './actions/UserActions';
 
 const server = express();
@@ -57,34 +57,37 @@ server.use(bodyParser.json());
 //
 // Authentication
 // -----------------------------------------------------------------------------
+const getToken = req => {
+  let token = null;
+  if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+    token = req.headers.authorization.split(' ')[1];
+  } else if (req.cookies.id_token) {
+    token = req.cookies.id_token;
+  }
+  return token;
+};
+
 server.use(expressJwt({
   secret: auth.jwt.secret,
   credentialsRequired: false,
-  /* jscs:disable requireCamelCaseOrUpperCaseIdentifiers */
-  getToken: req => req.cookies.id_token,
-  /* jscs:enable requireCamelCaseOrUpperCaseIdentifiers */
+  getToken,
 }));
 server.use(passport.initialize());
 
 const authenticateUser = (req, res) => {
   const expiresIn = 60 * 60 * 24 * 180; // 180 days
   const token = jwt.sign(req.user, auth.jwt.secret, { expiresIn });
-  res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
+  res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true, secure: true });
   UserActions.loginUser(token);
   return res.redirect('/home');
 };
 
 const ensureAuthentication = (req, res, next) => {
-  console.log('CHECKING AUTH');
-  console.log(req.user);
-  console.log('req.isAuthenticated(): ' , req.isAuthenticated());
-
-  if (req.isAuthenticated()) { 
-    next(); 
+  if (req.isAuthenticated()) {
+    next();
   } else {
-    res.redirect(401, '/'); 
+    res.redirect(401, '/');
   }
-  
 };
 
 server.get('/login/facebook',
@@ -119,8 +122,11 @@ server.all('/api/*', ensureAuthentication, async (req, res, next) => {
   next(); // Passed auth check, so continue
 });
 
-server.get('/api/test', async (req, res) => {
-  res.send('OK. Passed auth check.');
+server.get('/api/user/showtoken', async (req, res) => {
+  res.end(`
+    User ID: ${req.user.id}
+    Token: ${getToken(req)}
+  `);
 });
 
 server.get('/api/user/delete', async (req, res) => {
@@ -136,10 +142,10 @@ server.post('/api/clips/upload',
   multer({
     storage: multer.memoryStorage(),
     limits: { files: 1, fileSize: 5000000 },
-  }).single('myClippingsText'), async (req, res, next) => {
+  }).single('myClippingsTxt'), async (req, res, next) => {
     try {
-      // const clippingsString = req.file.buffer.toString('utf8');
-      // insertClippings(clippingsString);
+      const fullString = req.file.buffer.toString('utf8');
+      insertClips(fullString, req.user);
       console.log('UPLOAD REQ: ', req.user);
       res.end('Success');
     } catch (err) {

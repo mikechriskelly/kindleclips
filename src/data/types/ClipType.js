@@ -5,14 +5,15 @@ import {
   GraphQLNonNull as NonNull,
 } from 'graphql';
 
-const ClippingsType = new ObjectType({
-  name: 'ClippingsItem',
+const ClipType = new ObjectType({
+  name: 'Clip',
   fields: {
     id: { type: new NonNull(ID) },
     title: { type: StringType },
     author: { type: StringType },
     text: { type: new NonNull(StringType) },
+    clipowner: { type: new NonNull(ID) },
   },
 });
 
-export default ClippingsType;
+export default ClipType;
