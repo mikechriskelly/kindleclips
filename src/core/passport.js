@@ -79,10 +79,12 @@ passport.use(new FacebookStrategy({
       } else {
         let user = await User.findOne({ where: { email: profile._json.email } });
         if (user) {
-          // There is already an account using this email address. Sign in to
-          // that account and link it with Facebook manually from Account Settings.
-          console.log('You already have an account with this email address');
-          done(null, false, { message: 'Already account with this email address' });
+          // There is already an account using this email address.
+          // Log user in matching account
+          done(null, {
+            id: user.id,
+            email: user.email,
+          });
         } else {
           user = await User.create({
             email: profile._json.email,
@@ -143,10 +145,7 @@ passport.use(new GoogleStrategy({
         // There is already a Google account that belongs to you.
         // Sign in with that account or delete it, then link it with your current account.
         console.log('You already have a Google login associated with your email address');
-        done(null, {
-          id: req.user.id,
-          email: req.user.email,
-        });
+        done(null, false, { message: 'Already account with Facebook' });
       } else {
         console.log('Associating this Google account with your existing account');
         const user = await User.create({
@@ -200,10 +199,12 @@ passport.use(new GoogleStrategy({
       } else {
         let user = await User.findOne({ where: { email: profile.emails[0].value } });
         if (user) {
-          // There is already an account using this email address. Sign in to
-          // that account and link it with Google manually from Account Settings.
-          console.log('You already have an account with this email address');
-          done(null, false, { message: 'Already account with this email address' });
+          // There is already an account using this email address.
+          // Log user in matching account
+          done(null, {
+            id: user.id,
+            email: user.email,
+          });
         // Create a new account
         } else {
           user = await User.create({

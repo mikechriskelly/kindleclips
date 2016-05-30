@@ -84,9 +84,10 @@ const authenticateUser = (req, res) => {
 
 const ensureAuthentication = (req, res, next) => {
   if (req.isAuthenticated()) {
+    console.log(req.user);
     next();
   } else {
-    res.redirect(401, '/');
+    res.sendStatus(401);
   }
 };
 
