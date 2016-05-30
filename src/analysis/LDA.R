@@ -5,6 +5,7 @@ library(topicmodels)
 mongo <- mongo.create(host="localhost")
 
 # create a list with every clip in it
+pretmp = mongo.find.all(mongo, "kindleclips.clippings")
 tmp = mongo.find.all(mongo, "kindleclips.clippings")
 
 # remove whitespace from author to create unique author token
@@ -14,10 +15,9 @@ for (i in 1:length(tmp)) {
 }
 
 # make a character vector with author, title, text elements
-clips <- NULL
-for (i in 1:length(tmp)) {
-      clips[i] <- paste(c(tmp[[i]]$authorCollapse, tmp[[i]]$title, tmp[[i]]$text), collapse=" ")
-}
+clips = paste(lapply(X=tmp, FUN=`[[`, 'authorCollapse'), 
+         lapply(X=tmp, FUN=`[[`, 'title'), 
+         lapply(X=tmp, FUN=`[[`, 'text'), sep=" ")
 
 dfm <- dfm(clips, toLower=TRUE, removeNumbers=TRUE, removePunct=TRUE, stem=FALSE,
                 ignoredFeatures=stopwords("english"))
