@@ -19,6 +19,10 @@ for (i in 1:length(tmp)) {
       clips[i] <- paste(c(tmp[[i]]$authorCollapse, tmp[[i]]$title, tmp[[i]]$text), collapse=" ")
 }
 
+dfm <- dfm(clips, toLower=TRUE, removeNumbers=TRUE, removePunct=TRUE, stem=FALSE,
+                ignoredFeatures=stopwords("english"))
+dict <- dfm@Dimnames$features #for de-stemming words
+
 dfm <- dfm(clips, toLower=TRUE, removeNumbers=TRUE, removePunct=TRUE, stem=TRUE,
                 ignoredFeatures=stopwords("english"))
 k <- 12 # number of topic clusters
@@ -47,10 +51,6 @@ make_tops <- function(tops_mongo, clip_number, top_n=dim(tops_mongo)[1]) {
       tops_mongo[1:top_n,clip_number]
 }
 
-# # store the top 30 most similar docs for each doc
-# for (i in 1:length(tmp)) {
-#       tmp[[i]]$top30 <- top_results(tops_mongo, i, top_n=30)
-# }
 for (i in 1:length(tmp)) {
       tmp[[i]]$tops <- make_tops(tops_mongo, i, 3) # set top_n at 3 to make output manageable
 }
@@ -60,15 +60,17 @@ for (i in 1:length(tmp)) {
 author.collapse = tolower(unique( lapply(X=tmp, FUN= `[[`, "authorCollapse")))
 
 name_topic <- function(term_length, n_char, top_n_terms) {
+      if (term_length > 80) { print("Watch your back. This might take awhile")}
       term = terms(lda, term_length) # pull top lda terms
+      # using stem completion really slows this function down
+      term = matrix(stemCompletion(as.character(term), dict), nrow=term_length)
       indx = apply(term, 2, nchar) > n_char 
       term[!indx] = NA # remove short terms
       term[term %in% author.collapse] <- NA # remove author names
       topic.names <- apply(term, 2, FUN=function(x) x[!is.na(x)][1:top_n_terms])
       topic.names }
 
-# derive topic name from top 3 of top 1000 terms over 9 char long
-topic.names = apply(name_topic(1000, 9, 3), 2, paste, collapse='/')
+topic.names = apply(name_topic(100, 6, 3), 2, paste, collapse='/')
 names(topic.names) <- NULL
 
 for (i in 1:length(tmp)) {
@@ -76,11 +78,12 @@ for (i in 1:length(tmp)) {
 }
 
 # Now write the list back into mongodb
-for (i in 1:length(tmp)) {
+system.time(for (i in 1:length(tmp)) {
       criteria    <- pretmp[[i]][3]
       fields      <- tmp[[i]][2:length(tmp[[1]])]
       b           <- mongo.bson.from.list(lst=fields)
       crit        <- mongo.bson.from.list(lst=criteria)
       mongo.update(mongo=mongo, ns="kindleclips.tc", criteria=crit,
                    objNew=b, flags=mongo.update.basic)
-}
+} )
+
