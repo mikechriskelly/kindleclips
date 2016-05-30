@@ -52,24 +52,10 @@ make_tops <- function(tops_mongo, clip_number, top_n=dim(tops_mongo)[1]) {
 #       tmp[[i]]$top30 <- top_results(tops_mongo, i, top_n=30)
 # }
 for (i in 1:length(tmp)) {
-      tmp[[i]]$tops <- make_tops(tops_mongo, i)
-}
-# # Nullify the collapsed author element
-# for (i in 1:length(tmp)) {
-#       tmp[[i]]$authorCollapse <- NULL
-# }
-
-# Now write the list back into mongodb
-for (i in 1:length(tmp)) {
-      criteria    <- pretmp[[i]][3]
-      fields      <- tmp[[i]][2:8]
-      b           <- mongo.bson.from.list(lst=fields)
-      crit        <- mongo.bson.from.list(lst=criteria)
-      mongo.update(mongo=mongo, ns="kindleclips.tc", criteria=crit,
-                   objNew=b, flags=mongo.update.basic)
+      tmp[[i]]$tops <- make_tops(tops_mongo, i, 3) # set top_n at 3 to make output manageable
 }
 
-###topic naming###
+#===topic naming==
 # list of collapsed author names
 author.collapse = tolower(unique( lapply(X=tmp, FUN= `[[`, "authorCollapse")))
 
@@ -80,3 +66,21 @@ name_topic <- function(term_length, n_char, top_n_terms) {
       term[term %in% author.collapse] <- NA # remove author names
       topic.names <- apply(term, 2, FUN=function(x) x[!is.na(x)][1:top_n_terms])
       topic.names }
+
+# derive topic name from top 3 of top 1000 terms over 9 char long
+topic.names = apply(name_topic(1000, 9, 3), 2, paste, collapse='/')
+names(topic.names) <- NULL
+
+for (i in 1:length(tmp)) {
+      tmp[[i]]$topicnames <- topic.names
+}
+
+# Now write the list back into mongodb
+for (i in 1:length(tmp)) {
+      criteria    <- pretmp[[i]][3]
+      fields      <- tmp[[i]][2:length(tmp[[1]])]
+      b           <- mongo.bson.from.list(lst=fields)
+      crit        <- mongo.bson.from.list(lst=criteria)
+      mongo.update(mongo=mongo, ns="kindleclips.tc", criteria=crit,
+                   objNew=b, flags=mongo.update.basic)
+}
