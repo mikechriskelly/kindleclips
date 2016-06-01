@@ -12,7 +12,7 @@ import { match } from 'universal-router';
 import PrettyError from 'pretty-error';
 import multer from 'multer';
 import passport from './core/passport';
-import { sync, User } from './data/models';
+import { sync, User, UserLogin, UserProfile } from './data/models';
 import schema from './data/schema';
 import routes from './routes';
 import assets from './assets'; // eslint-disable-line import/no-unresolved
@@ -39,6 +39,34 @@ const connect = () => {
 connect();
 mongoose.connection.on('error', console.log);
 mongoose.connection.on('disconnected', connect);
+
+// Create demo user if it doesn't already exist
+const setupDemoUser = async () => {
+  const demoID = '364deab3-b79c-4d02-aa2c-eebdeb0c45f4';
+  const existingUser = await User.findOne({ attributes: ['id'], where: { id: demoID } });
+  if (!existingUser) {
+    User.create({
+      id: demoID,
+      email: 'mikechriskelly+kindleclips@gmail.com',
+      emailConfirmed: true,
+      logins: [
+        { name: 'none', key: '0' },
+      ],
+      profile: {
+        displayName: 'Demo User',
+        gender: null,
+        picture: null,
+      },
+    }, {
+      include: [
+        { model: UserLogin, as: 'logins' },
+        { model: UserProfile, as: 'profile' },
+      ],
+    });
+  }
+};
+
+if (process.env.NODE_ENV !== 'production') { setupDemoUser(); }
 
 // Tell any CSS tooling (such as Material UI) to use all vendor prefixes if the
 // user agent is not known.
