@@ -12,7 +12,7 @@ const ClipType = new ObjectType({
     title: { type: StringType },
     author: { type: StringType },
     text: { type: new NonNull(StringType) },
-    clipowner: { type: new NonNull(ID) },
+    clipowner: { type: new NonNull(StringType) },
   },
 });
 

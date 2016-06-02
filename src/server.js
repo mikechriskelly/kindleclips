@@ -16,7 +16,7 @@ import { sync, User, UserLogin, UserProfile } from './data/models';
 import schema from './data/schema';
 import routes from './routes';
 import assets from './assets'; // eslint-disable-line import/no-unresolved
-import { port, auth, analytics, mondgodbUrl } from './config';
+import { port, auth, analytics, mondgodbUrl, demoUser } from './config';
 // import { exec } from 'child_process';
 // import fs from 'fs';
 import { insertClips, removeClips } from './data/queries/clips';
@@ -42,18 +42,17 @@ mongoose.connection.on('disconnected', connect);
 
 // Create demo user if it doesn't already exist
 const setupDemoUser = async () => {
-  const demoID = '364deab3-b79c-4d02-aa2c-eebdeb0c45f4';
-  const existingUser = await User.findOne({ attributes: ['id'], where: { id: demoID } });
+  const existingUser = await User.findOne({ attributes: ['id'], where: { id: demoUser.id } });
   if (!existingUser) {
     User.create({
-      id: demoID,
-      email: 'mikechriskelly+kindleclips@gmail.com',
+      id: demoUser.id,
+      email: demoUser.email,
       emailConfirmed: true,
       logins: [
-        { name: 'none', key: '0' },
+        { name: 'none', key: demoUser.loginKey },
       ],
       profile: {
-        displayName: 'Demo User',
+        displayName: demoUser.displayName,
         gender: null,
         picture: null,
       },

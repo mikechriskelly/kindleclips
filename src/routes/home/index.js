@@ -14,13 +14,13 @@ export default {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        query: '{clippings{id,title,author,text}}',
+        query: '{clips(search:"zen"){id,title,author,text}}',
       }),
       credentials: 'include',
     });
     const { data } = await resp.json();
-    if (!data || !data.clippings) throw new Error('Failed to load clippings.');
-    return <Home clippings={data.clippings} />;
+    if (!data || !data.clips) throw new Error('Failed to load clippings.');
+    return <Home clips={data.clips} />;
   },
 
 };

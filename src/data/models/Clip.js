@@ -7,7 +7,7 @@ const clipSchema = new mongoose.Schema({
   author: { type: String, required: false },
   text: { type: String, required: true },
   search: { type: String, required: false },
-  clipowner: { type: Number, required: true },
+  clipowner: { type: String, required: true },
 });
 
 clipSchema.index({ text: 'text', title: 'text', author: 'text' });

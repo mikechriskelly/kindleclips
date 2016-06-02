@@ -5,7 +5,7 @@ import Header from '../../components/Header';
 
 const title = 'Kindle Clips';
 
-function Home({ clippings }, context) {
+function Home({ clips }, context) {
   context.setTitle(title);
   return (
     <div className={s.root}>
@@ -13,7 +13,7 @@ function Home({ clippings }, context) {
       <div className={s.container}>
         <h2 className={s.title}>Highlights</h2>
         <ul className={s.clipList}>
-          {clippings.map((item, index) => (
+          {clips.map((item, index) => (
             <li key={index} className={s.clipItem}>
               <p
                 className={s.clipText}
@@ -30,7 +30,7 @@ function Home({ clippings }, context) {
 }
 
 Home.propTypes = {
-  clippings: PropTypes.arrayOf(PropTypes.shape({
+  clips: PropTypes.arrayOf(PropTypes.shape({
     title: PropTypes.string,
     author: PropTypes.string,
     text: PropTypes.string,

@@ -6,7 +6,7 @@ import {
 import me from './queries/me';
 import content from './queries/content';
 import news from './queries/news';
-import clippings from './queries/clips';
+import clips from './queries/clips';
 
 const schema = new Schema({
   query: new ObjectType({
@@ -15,7 +15,7 @@ const schema = new Schema({
       me,
       content,
       news,
-      clippings,
+      clips,
     },
   }),
 });

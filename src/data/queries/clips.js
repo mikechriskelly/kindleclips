@@ -1,6 +1,7 @@
 import ClipType from '../types/ClipType';
 import Clip from '../models/Clip';
 import { GraphQLList, GraphQLString, GraphQLID } from 'graphql';
+import { demoUser } from '../../config';
 
 //
 // Helper Functions
@@ -46,16 +47,20 @@ const getOwnClips = {
     text: { type: GraphQLString },
     author: { type: GraphQLString },
     search: { type: GraphQLString },
-    clipowner: { type: GraphQLID },
+    clipowner: { type: GraphQLString },
   },
   resolve: (root, params) => {
-    const filter = params.hasOwnProperty('search') ?
-      { $text: { $search: params.search, $language: 'en' } }
-      : params;
+    const filter = params;
+
+    filter.clipowner = null || demoUser.id;
+    if (filter.hasOwnProperty('search')) {
+      filter.$text = { $search: params.search, $language: 'en' };
+      delete filter.search;
+    }
 
     return Clip
       .find(filter, { score: { $meta: 'textScore' } })
-      .limit(25)
+      .limit(100)
       .exec();
   },
 };

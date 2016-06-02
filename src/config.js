@@ -8,6 +8,13 @@ export const analytics = {
   google: { trackingId: process.env.GOOGLE_TRACKING_ID || 'UA-XXXXX-X' },
 };
 
+export const demoUser = {
+  id: '364deab3-b79c-4d02-aa2c-eebdeb0c45f4',
+  email: 'mikechriskelly+kindleclips@gmail.com',
+  displayName: 'Demo User',
+  loginKey: '0',
+};
+
 export const auth = {
 
   jwt: { secret: process.env.JWT_SECRET },
