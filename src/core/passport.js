@@ -74,7 +74,10 @@ passport.use(new FacebookStrategy({
       // LOGIN
       if (users.length) {
         console.log('Logging in');
-        done(null, users[0]);
+        done(null, {
+          id: users[0].dataValues.id,
+          email: users[0].dataValues.email,
+        });
       // SIGNUP
       } else {
         let user = await User.findOne({ where: { email: profile._json.email } });
