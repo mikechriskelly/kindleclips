@@ -17,16 +17,27 @@ import schema from './data/schema';
 import routes from './routes';
 import assets from './assets'; // eslint-disable-line import/no-unresolved
 import { port, auth, analytics, mondgodbUrl, demoUser } from './config';
-// import { exec } from 'child_process';
-// import fs from 'fs';
 import { insertClips, removeClips } from './data/queries/clips';
 import UserActions from './actions/UserActions';
+// import { exec } from 'child_process';
+// import fs from 'fs';
+
+/* eslint-disable no-console */
 
 const server = express();
 
-// Connect to MongoDB
-// -----------------------------------------------------------------------------
-const connect = () => {
+// Tell CSS tooling to use all vendor prefixes if user agent is not known
+global.navigator = global.navigator || {};
+global.navigator.userAgent = global.navigator.userAgent || 'all';
+
+// Register Node.js middleware
+server.use(express.static(path.join(__dirname, 'public')));
+server.use(cookieParser());
+server.use(bodyParser.urlencoded({ extended: true }));
+server.use(bodyParser.json());
+
+// Connect to MongoDB Database
+function connect() {
   mongoose.connect(mondgodbUrl, (err) => {
     if (err) {
       console.log(`Error connecting to: ${mondgodbUrl} ${err}`);
@@ -34,15 +45,17 @@ const connect = () => {
       console.log(`Successful connecting to ${mondgodbUrl}`);
     }
   });
-};
-
+}
 connect();
 mongoose.connection.on('error', console.log);
 mongoose.connection.on('disconnected', connect);
 
 // Create demo user if it doesn't already exist
-const setupDemoUser = async () => {
-  const existingUser = await User.findOne({ attributes: ['id'], where: { id: demoUser.id } });
+async function setupDemoUser() {
+  const existingUser = await User.findOne({
+    attributes: ['id'], 
+    where: { id: demoUser.id }
+  });
   if (!existingUser) {
     User.create({
       id: demoUser.id,
@@ -63,28 +76,11 @@ const setupDemoUser = async () => {
       ],
     });
   }
-};
-
+}
 if (process.env.NODE_ENV !== 'production') { setupDemoUser(); }
 
-// Tell any CSS tooling (such as Material UI) to use all vendor prefixes if the
-// user agent is not known.
-// -----------------------------------------------------------------------------
-global.navigator = global.navigator || {};
-global.navigator.userAgent = global.navigator.userAgent || 'all';
-
-//
-// Register Node.js middleware
-// -----------------------------------------------------------------------------
-server.use(express.static(path.join(__dirname, 'public')));
-server.use(cookieParser());
-server.use(bodyParser.urlencoded({ extended: true }));
-server.use(bodyParser.json());
-
-//
-// Authentication
-// -----------------------------------------------------------------------------
-const getToken = req => {
+// Authentication Functions
+function getToken(req) {
   let token = null;
   if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
     token = req.headers.authorization.split(' ')[1];
@@ -92,7 +88,7 @@ const getToken = req => {
     token = req.cookies.id_token;
   }
   return token;
-};
+}
 
 server.use(expressJwt({
   secret: auth.jwt.secret,
@@ -101,23 +97,23 @@ server.use(expressJwt({
 }));
 server.use(passport.initialize());
 
-const authenticateUser = (req, res) => {
+function authenticateUser(req, res) {
   const expiresIn = 60 * 60 * 24 * 180; // 180 days
   const token = jwt.sign(req.user, auth.jwt.secret, { expiresIn });
   res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
   UserActions.loginUser(token);
   return res.redirect('/home');
-};
+}
 
-const ensureAuthentication = (req, res, next) => {
+function ensureAuthentication(req, res, next) {
   if (req.isAuthenticated()) {
-    console.log(req.user);
     next();
   } else {
     res.sendStatus(401);
   }
-};
+}
 
+// Authentication Routes
 server.get('/login/facebook',
   passport.authenticate('facebook', { scope: ['email'], session: false })
 );
@@ -142,9 +138,7 @@ server.get('/logout', (req, res) => {
   res.redirect('/');
 });
 
-//
-// API for User Actions
-// -----------------------------------------------------------------------------
+// API Routes
 // Require authentication for all API endpoints
 server.all('/api/*', ensureAuthentication, async (req, res, next) => {
   next(); // Passed auth check, so continue
@@ -186,9 +180,7 @@ server.get('/api/clips/remove', async (req, res) => {
   res.end('All clips removed for this user');
 });
 
-//
 // Launch Data Analysis Process
-// -----------------------------------------------------------------------------
 // Make the R script executable for node (octal 0755 = decimal 493)
 // fs.chmod('build/analysis/LDA.r', 493, (err) => {
 //   if (err) throw err;
@@ -202,9 +194,7 @@ server.get('/api/clips/remove', async (req, res) => {
 //   }
 // });
 
-//
 // Register API middleware
-// -----------------------------------------------------------------------------
 server.use('/graphql', expressGraphQL(req => ({
   schema,
   graphiql: true,
@@ -212,9 +202,7 @@ server.use('/graphql', expressGraphQL(req => ({
   pretty: process.env.NODE_ENV !== 'production',
 })));
 
-//
 // Register server-side rendering middleware
-// -----------------------------------------------------------------------------
 server.get('*', async (req, res, next) => {
   try {
     let css = [];
@@ -250,9 +238,7 @@ server.get('*', async (req, res, next) => {
   }
 });
 
-//
 // Error handling
-// -----------------------------------------------------------------------------
 const pe = new PrettyError();
 pe.skipNodeFiles();
 pe.skipPackage('express');
@@ -268,10 +254,7 @@ server.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   }));
 });
 
-//
 // Launch the server
-// -----------------------------------------------------------------------------
-/* eslint-disable no-console */
 sync().catch(err => console.error(err.stack)).then(() => {
   server.listen(port, () => {
     console.log(`The server is running at http://localhost:${port}/`);

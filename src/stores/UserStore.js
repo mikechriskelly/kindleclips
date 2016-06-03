@@ -8,30 +8,22 @@ class UserStore {
       handleLogin: UserActions.LOGIN_USER,
     });
 
-    this.token = null;
-
-    this.exportPublicMethods({
-      isLoggedIn: this.isLoggedIn,
-      getUser: this.getUser,
-    });
+    this.state = {
+      token: null,
+    };
   }
 
   handleLogin(token) {
-    this.token = token;
+    this.setState({ token });
   }
 
-  isLoggedIn() {
+  static isLoggedIn() {
     return !!this.token;
   }
 
-  getToken() {
-    return this.token;
-  }
-
-  onLogout() {
+  static onLogout() {
     this.token = null;
   }
-
 }
 
 export default alt.createStore(UserStore, 'UserStore');

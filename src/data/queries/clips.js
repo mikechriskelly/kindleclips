@@ -1,11 +1,13 @@
 import ClipType from '../types/ClipType';
 import Clip from '../models/Clip';
 import { GraphQLList, GraphQLString, GraphQLID } from 'graphql';
-import { demoUser } from '../../config';
+import jwt from 'jsonwebtoken';
+import { auth, demoUser } from '../../config';
+import UserStore from '../../stores/UserStore';
 
-//
+/* eslint-disable no-console */
+
 // Helper Functions
-// -----------------------------------------------------------------------------
 function generateGUID(str) {
   let i = str.length;
   let hash = 5381;
@@ -36,9 +38,20 @@ function parseMyClippingsTxt(clipFile, clipOwner) {
   return clips.filter(n => n !== null);
 }
 
-//
+function getClipOwner() {
+  try {
+    // Lookup a verified user ID
+    const token = UserStore.getState().token;
+    const secret = auth.jwt.secret;
+    const decrypted = jwt.verify(token, secret);
+    return decrypted.payload.id;
+  } catch (err) {
+    // Or else use the demo ID
+    return demoUser.id;
+  }
+}
+
 // Clip Queries
-// -----------------------------------------------------------------------------
 const getOwnClips = {
   type: new GraphQLList(ClipType),
   args: {
@@ -47,17 +60,14 @@ const getOwnClips = {
     text: { type: GraphQLString },
     author: { type: GraphQLString },
     search: { type: GraphQLString },
-    clipowner: { type: GraphQLString },
   },
   resolve: (root, params) => {
     const filter = params;
-
-    filter.clipowner = null || demoUser.id;
+    filter.clipowner = getClipOwner();
     if (filter.hasOwnProperty('search')) {
       filter.$text = { $search: params.search, $language: 'en' };
       delete filter.search;
     }
-
     return Clip
       .find(filter, { score: { $meta: 'textScore' } })
       .limit(100)
@@ -65,26 +75,26 @@ const getOwnClips = {
   },
 };
 
-const insertClips = (clipFile, clipowner) => {
+function insertClips(clipFile, clipowner = getClipOwner()) {
   const clips = parseMyClippingsTxt(clipFile, clipowner);
   Clip.collection.insert(clips, err => {
     if (err) {
       console.log(err);
     } else {
-      console.info('Clips were successfully stored.');
+      console.log('Clips were successfully stored.');
     }
   });
-};
+}
 
-const removeClips = (clipowner) => {
+function removeClips(clipowner = getClipOwner()) {
   Clip.collection.remove({ clipowner }, err => {
     if (err) {
       console.log(err);
     } else {
-      console.info('Clips were successfully removed.');
+      console.log('Clips were successfully removed.');
     }
   });
-};
+}
 
 export default getOwnClips;
 export { insertClips, removeClips };
