@@ -1,3 +1,7 @@
+#!/usr/bin/env Rscript
+args = commandArgs(trailingOnly=TRUE)
+
+library(tm)
 library(rmongodb)
 library(quanteda)
 library(topicmodels)
@@ -5,19 +9,23 @@ library(topicmodels)
 mongo <- mongo.create(host="localhost")
 
 # create a list with every clip in it
-pretmp = mongo.find.all(mongo, "kindleclips.clippings")
-tmp = mongo.find.all(mongo, "kindleclips.clippings")
+#tmp = mongo.find.all(mongo, "kindleclips.clippings")
+# list with just one author
+#tmp = mongo.find.all(mongo, "kindleclips.clippings", query=list(author="Dave Cullen"))
+print(args)
+tmp = mongo.find.all(mongo, "kindleclips.clippings", query=list(clipowner=args[1]))
 
 # remove whitespace from author to create unique author token
 for (i in 1:length(tmp)) {
       tmp[[i]]$authorCollapse <- gsub(" ", "", tmp[[i]]$author)
-      tmp[[i]]$index <- i
 }
 
 # make a character vector with author, title, text elements
-clips = paste(lapply(X=tmp, FUN=`[[`, 'authorCollapse'), 
-         lapply(X=tmp, FUN=`[[`, 'title'), 
-         lapply(X=tmp, FUN=`[[`, 'text'), sep=" ")
+clips = paste(
+			lapply(X=tmp, FUN=`[[`, 'authorCollapse'), 
+         	lapply(X=tmp, FUN=`[[`, 'title'), 
+         	lapply(X=tmp, FUN=`[[`, 'text'), 
+         	sep=" ")
 
 dfm <- dfm(clips, toLower=TRUE, removeNumbers=TRUE, removePunct=TRUE, stem=FALSE,
                 ignoredFeatures=stopwords("english"))
@@ -25,7 +33,19 @@ dict <- dfm@Dimnames$features #for de-stemming words
 
 dfm <- dfm(clips, toLower=TRUE, removeNumbers=TRUE, removePunct=TRUE, stem=TRUE,
                 ignoredFeatures=stopwords("english"))
-k <- 12 # number of topic clusters
+
+# simple, nonlinear function to keep x within an interpretable range
+make_k <- function(tmp) {
+      ua <- length(unique(sapply(X=tmp, FUN=`[[`, "authorCollapse")))
+      ut <- length(unique(sapply(X=tmp, FUN=`[[`, "title")))
+      # x <- log((ut+ua)^exp(1))
+      # x <- (ua+ut)/16
+      x <- (ua^2 + ut^2)^(1/4)
+      ifelse(x > 25, 25, x)
+      ifelse(x < 5, 5, x)
+      round(x, 0)
+}
+k <- make_k(tmp) # number of topic clusters
 lda <- LDA(x=dfm, k=k, method="Gibbs", control = list(verbose=800, alpha=50/k, seed=10)) # make the LDA model
 
 # pull topic probs for each clip and put them into tmp list
@@ -70,7 +90,7 @@ name_topic <- function(term_length, n_char, top_n_terms) {
       topic.names <- apply(term, 2, FUN=function(x) x[!is.na(x)][1:top_n_terms])
       topic.names }
 
-topic.names = apply(name_topic(100, 6, 3), 2, paste, collapse='/')
+topic.names = apply(name_topic(100, 6, 3), 2, paste, collapse='-')
 names(topic.names) <- NULL
 
 for (i in 1:length(tmp)) {
@@ -79,7 +99,7 @@ for (i in 1:length(tmp)) {
 
 # Now write the list back into mongodb
 system.time(for (i in 1:length(tmp)) {
-      criteria    <- pretmp[[i]][3]
+      criteria    <- tmp[[i]][3]
       fields      <- tmp[[i]][2:length(tmp[[1]])]
       b           <- mongo.bson.from.list(lst=fields)
       crit        <- mongo.bson.from.list(lst=criteria)
