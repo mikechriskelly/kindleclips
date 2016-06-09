@@ -14,7 +14,8 @@ export default {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        query: '{clips(search:"zen"){id,title,author,text}}',
+        // query: '{clips(search:"zen"){id,title,author,text}}',
+        query: '{clips{id,title,author,text}}',
       }),
       credentials: 'include',
     });

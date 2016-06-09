@@ -287,7 +287,12 @@ const serverConfig = extend(true, {}, config, {
 
     // Copy R scripts to build folder so they can be run by server
     new CopyWebpackPlugin([{ from: path.resolve(__dirname, '../src/analysis'),
-                            to: path.resolve(__dirname, '../build/analysis') }]),
+                             to: path.resolve(__dirname, '../build/analysis') },
+                           { from: path.resolve(__dirname, '../init.r'),
+                             to: path.resolve(__dirname, '../build') },
+                          { from: path.resolve(__dirname, '../Procfile'),
+                             to: path.resolve(__dirname, '../build') },
+                            ]),
   ],
 
   node: {
