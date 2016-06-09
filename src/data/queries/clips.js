@@ -1,9 +1,8 @@
 import ClipType from '../types/ClipType';
 import Clip from '../models/Clip';
 import { GraphQLList, GraphQLString, GraphQLID } from 'graphql';
-import jwt from 'jsonwebtoken';
-import { auth, demoUser } from '../../config';
-import UserStore from '../../stores/UserStore';
+import { demoUser } from '../../config';
+import { getID } from '../../core/auth';
 
 /* eslint-disable no-console */
 
@@ -38,19 +37,6 @@ function parseMyClippingsTxt(clipFile, clipOwner) {
   return clips.filter(n => n !== null);
 }
 
-function getClipOwner() {
-  try {
-    // Lookup a verified user ID
-    const token = UserStore.getState().token;
-    const secret = auth.jwt.secret;
-    const decrypted = jwt.verify(token, secret);
-    return decrypted.payload.id;
-  } catch (err) {
-    // Or else use the demo ID
-    return demoUser.id;
-  }
-}
-
 // Clip Queries
 const getOwnClips = {
   type: new GraphQLList(ClipType),
@@ -63,7 +49,7 @@ const getOwnClips = {
   },
   resolve: (root, params) => {
     const filter = params;
-    filter.clipowner = getClipOwner();
+    filter.clipowner = getID();
     if (filter.hasOwnProperty('search')) {
       filter.$text = { $search: params.search, $language: 'en' };
       delete filter.search;
@@ -75,7 +61,7 @@ const getOwnClips = {
   },
 };
 
-function insertClips(clipFile, clipowner = getClipOwner()) {
+function insertClips(clipFile, clipowner = getID()) {
   const clips = parseMyClippingsTxt(clipFile, clipowner);
   Clip.collection.insert(clips, err => {
     if (err) {
@@ -86,7 +72,7 @@ function insertClips(clipFile, clipowner = getClipOwner()) {
   });
 }
 
-function removeClips(clipowner = getClipOwner()) {
+function removeClips(clipowner = getID()) {
   Clip.collection.remove({ clipowner }, err => {
     if (err) {
       console.log(err);

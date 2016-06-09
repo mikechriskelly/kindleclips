@@ -5,7 +5,6 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import expressJwt from 'express-jwt';
 import expressGraphQL from 'express-graphql';
-import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import ReactDOM from 'react-dom/server';
 import { match } from 'universal-router';
@@ -18,6 +17,7 @@ import routes from './routes';
 import assets from './assets'; // eslint-disable-line import/no-unresolved
 import { port, auth, analytics, mondgodbUrl, demoUser } from './config';
 import { insertClips, removeClips } from './data/queries/clips';
+import { getToken, authenticateUser, ensureAuthentication } from './core/auth';
 import UserActions from './actions/UserActions';
 // import { exec } from 'child_process';
 // import fs from 'fs';
@@ -53,8 +53,8 @@ mongoose.connection.on('disconnected', connect);
 // Create demo user if it doesn't already exist
 async function setupDemoUser() {
   const existingUser = await User.findOne({
-    attributes: ['id'], 
-    where: { id: demoUser.id }
+    attributes: ['id'],
+    where: { id: demoUser.id },
   });
   if (!existingUser) {
     User.create({
@@ -79,39 +79,13 @@ async function setupDemoUser() {
 }
 if (process.env.NODE_ENV !== 'production') { setupDemoUser(); }
 
-// Authentication Functions
-function getToken(req) {
-  let token = null;
-  if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
-    token = req.headers.authorization.split(' ')[1];
-  } else if (req.cookies.id_token) {
-    token = req.cookies.id_token;
-  }
-  return token;
-}
-
+// Authentication
 server.use(expressJwt({
   secret: auth.jwt.secret,
   credentialsRequired: false,
   getToken,
 }));
 server.use(passport.initialize());
-
-function authenticateUser(req, res) {
-  const expiresIn = 60 * 60 * 24 * 180; // 180 days
-  const token = jwt.sign(req.user, auth.jwt.secret, { expiresIn });
-  res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: true });
-  UserActions.loginUser(token);
-  return res.redirect('/home');
-}
-
-function ensureAuthentication(req, res, next) {
-  if (req.isAuthenticated()) {
-    next();
-  } else {
-    res.sendStatus(401);
-  }
-}
 
 // Authentication Routes
 server.get('/login/facebook',
@@ -133,6 +107,7 @@ server.get('/login/google/return',
 );
 
 server.get('/logout', (req, res) => {
+  UserActions.logout();
   req.logout();
   res.clearCookie('id_token');
   res.redirect('/');

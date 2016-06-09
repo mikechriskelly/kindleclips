@@ -5,7 +5,8 @@ class UserStore {
 
   constructor() {
     this.bindListeners({
-      handleLogin: UserActions.LOGIN_USER,
+      handleLogin: UserActions.LOGIN,
+      handleLogout: UserActions.LOGOUT,
     });
 
     this.state = {
@@ -14,16 +15,21 @@ class UserStore {
   }
 
   handleLogin(token) {
-    this.setState({ token });
+    this.state.token = token;
+  }
+
+  handleLogout() {
+    this.state.token = null;
   }
 
   static isLoggedIn() {
-    return !!this.token;
+    return !!this.state.token;
   }
 
-  static onLogout() {
-    this.token = null;
+  static getToken() {
+    return this.state.token;
   }
+
 }
 
 export default alt.createStore(UserStore, 'UserStore');

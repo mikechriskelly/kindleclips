@@ -1,8 +1,11 @@
 import alt from '../core/alt';
 
 class UserActions {
-  loginUser(token) {
+  login(token) {
     return token;
+  }
+  logout() {
+    return true;
   }
 }
 

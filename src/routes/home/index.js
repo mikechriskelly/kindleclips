@@ -4,7 +4,7 @@ import fetch from '../../core/fetch';
 
 export default {
 
-  path: '/home',
+  path: '/',
 
   async action() {
     const resp = await fetch('/graphql', {
