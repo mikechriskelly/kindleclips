@@ -13,21 +13,22 @@ const userLinks =
 const guestLinks =
   (<span>
     <Link className={s.link} to="/login">Log in</Link>
-    <span className={s.spacer}>or</span>
     <Link className={cx(s.link, s.highlight)} to="/login">Sign up</Link>
   </span>);
 
 class Navigation extends Component {
   constructor(props) {
     super(props);
-    this.state = UserStore.getState();
-    this.state.className = props.className;
+    this.state = {
+      isLoggedIn: UserStore.isLoggedIn(),
+      className: props.className,
+    };
   }
 
   render() {
     return (
       <div className={cx(s.root, this.state.className)} role="navigation">
-        {this.state.token ? userLinks : guestLinks}
+        {this.state.isLoggedIn ? userLinks : guestLinks}
       </div>
     );
   }
