@@ -16,8 +16,8 @@ class SearchActions {
       credentials: 'include',
     });
     const { data } = await resp.json();
-    if (!data || !data.clips) this.searchFailed();
-    this.updateResults(data.clips);
+    if (!data || !data.clips) this.failedClips();
+    this.updateClips(data.clips);
     return true;
   }
 

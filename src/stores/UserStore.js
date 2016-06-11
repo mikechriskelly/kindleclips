@@ -11,19 +11,18 @@ class UserStore {
 
     this.state = {
       token: null,
+      isLoggedIn: false,
     };
   }
 
   handleLogin(token) {
     this.state.token = token;
+    this.state.isLoggedIn = true;
   }
 
   handleLogout() {
     this.state.token = null;
-  }
-
-  static isLoggedIn() {
-    return !!this.state.token;
+    this.state.isLoggedIn = false;
   }
 
   static getToken() {

@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Header.css';
 import Navigation from '../Navigation';
 
-function Header() {
+function Header({ isLoggedIn }) {
   return (
     <div className={s.root}>
       <div className={s.container}>
-        <Navigation className={s.nav} />
+        <Navigation className={s.nav} isLoggedIn={isLoggedIn} />
         <div className={s.search}>
           <svg
             className={s.icon}
@@ -33,5 +33,9 @@ function Header() {
     </div>
   );
 }
+
+Header.propTypes = {
+  isLoggedIn: PropTypes.bool,
+};
 
 export default withStyles(s)(Header);
