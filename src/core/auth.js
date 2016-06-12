@@ -23,7 +23,7 @@ function getID() {
     const decrypted = jwt.verify(token, secret);
     return decrypted.id;
   } catch (err) {
-    console.log('Error getting ID: ', err);
+    console.log('Using demo clips');
     // Or else use the demo ID
     return demoUser.id;
   }
