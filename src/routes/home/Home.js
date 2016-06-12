@@ -9,11 +9,6 @@ import SearchStore from '../../stores/SearchStore';
 import SearchActions from '../../actions/SearchActions';
 
 class Home extends Component {
-
-  static contextTypes = {
-    setTitle: PropTypes.func.isRequired,
-  };
-
   static getStores() {
     return [UserStore, SearchStore];
   }

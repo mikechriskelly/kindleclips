@@ -23,31 +23,3 @@
   float: right;
   padding-right: 15px;
 }
-
-.icon {
-  display: inline-block;
-  margin: -2px 0 -2px 10px;
-  width: 30px;
-  height: 30px;
-  vertical-align: middle;
-  fill: var(--white-base);
-}
-
-.search {
-  float: left;
-  padding-left: 15px;
-  vertical-align: middle;
-}
-
-.search > input {
-  color: var(--white-base);
-  font-size: 20px;
-  border: none;
-  border-radius: 0;
-  background-color: inherit;
-  outline: none;
-}
-
-.search > input::placeholder {
-  color: #fff;
-}

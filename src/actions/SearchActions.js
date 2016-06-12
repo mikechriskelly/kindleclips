@@ -3,16 +3,17 @@ import fetch from '../core/fetch';
 
 
 class SearchActions {
-  async fetchClips() {
+  async fetchClips(searchTerm) {
+    const query = searchTerm ? 
+      `{clips(search:"${searchTerm}"){id,title,author,text}}` :
+      '{clips{id,title,author,text}}';
     const resp = await fetch('/graphql', {
       method: 'post',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        query: '{clips(search:"zen"){id,title,author,text}}',
-      }),
+      body: JSON.stringify({ query }),
       credentials: 'include',
     });
     const { data } = await resp.json();
