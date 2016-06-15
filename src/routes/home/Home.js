@@ -9,6 +9,20 @@ import SearchStore from '../../stores/SearchStore';
 import SearchActions from '../../actions/SearchActions';
 
 class Home extends Component {
+
+  static contextTypes = {
+    setTitle: PropTypes.func.isRequired,
+  };
+
+  static propTypes = {
+    isLoggedIn: PropTypes.bool,
+    clips: PropTypes.arrayOf(PropTypes.shape({
+      title: PropTypes.string,
+      author: PropTypes.string,
+      text: PropTypes.string,
+    })),
+  };
+
   static getStores() {
     return [UserStore, SearchStore];
   }
@@ -25,6 +39,11 @@ class Home extends Component {
     SearchActions.fetchClips();
   }
 
+  componentWillMount() {
+    this.context.setTitle('Kindle Clips');
+  }
+
+
   render() {
     return (
       <div className={s.root}>
@@ -37,14 +56,5 @@ class Home extends Component {
     );
   }
 }
-
-Home.propTypes = {
-  isLoggedIn: PropTypes.bool,
-  clips: PropTypes.arrayOf(PropTypes.shape({
-    title: PropTypes.string,
-    author: PropTypes.string,
-    text: PropTypes.string,
-  })),
-};
 
 export default withStyles(s)(connectToStores(Home));
