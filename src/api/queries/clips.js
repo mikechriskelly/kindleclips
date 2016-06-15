@@ -2,7 +2,7 @@ import ClipType from '../types/ClipType';
 import Clip from '../models/Clip';
 import { GraphQLList, GraphQLString, GraphQLID } from 'graphql';
 import { demoUser } from '../../config';
-import { getID } from '../../core/auth';
+import { getID } from '../auth';
 
 /* eslint-disable no-console */
 

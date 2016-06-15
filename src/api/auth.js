@@ -23,13 +23,12 @@ function getID() {
     const decrypted = jwt.verify(token, secret);
     return decrypted.id;
   } catch (err) {
-    console.log('Using demo clips');
     // Or else use the demo ID
     return demoUser.id;
   }
 }
 
-function authenticateUser(req, res) {
+function loginUser(req, res) {
   // Create token
   const expiresIn = 60 * 60 * 24 * 180; // 180 days
   const token = jwt.sign(req.user, auth.jwt.secret, { expiresIn });
@@ -41,7 +40,7 @@ function authenticateUser(req, res) {
   return res.redirect('/');
 }
 
-function ensureAuthentication(req, res, next) {
+function protectRoute(req, res, next) {
   if (req.isAuthenticated()) {
     next();
   } else {
@@ -49,4 +48,4 @@ function ensureAuthentication(req, res, next) {
   }
 }
 
-export { getToken, getID, authenticateUser, ensureAuthentication };
+export { getToken, getID, loginUser, protectRoute };
