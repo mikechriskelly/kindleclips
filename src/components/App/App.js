@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import emptyFunction from 'fbjs/lib/emptyFunction';
 import s from './App.css';
+import UserActions from '../../actions/UserActions';
 
 class App extends Component {
 
@@ -32,6 +33,7 @@ class App extends Component {
   componentWillMount() {
     const { insertCss } = this.props.context;
     this.removeCss = insertCss(s);
+    UserActions.login();
   }
 
   componentWillUnmount() {

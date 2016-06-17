@@ -14,6 +14,7 @@ import assets from './assets'; // eslint-disable-line import/no-unresolved
 import { port, analytics, mondgodbUrl, demoUser } from './config';
 import { loginUser } from './api/auth';
 import apiRoutes from './api/routes.js';
+import cookie from 'react-cookie';
 // import { exec } from 'child_process';
 // import fs from 'fs';
 
@@ -98,7 +99,7 @@ server.get('/login/google/return',
 
 server.get('/logout', (req, res) => {
   req.logout();
-  res.clearCookie('id_token');
+  res.clearCookie('token');
   res.redirect('/');
 });
 
@@ -128,6 +129,8 @@ server.get('*', async (req, res, next) => {
     let statusCode = 200;
     const template = require('./views/index.jade'); // eslint-disable-line global-require
     const data = { title: '', description: '', css: '', body: '', entry: assets.main.js };
+
+    cookie.plugToRequest(req, res);
 
     if (process.env.NODE_ENV === 'production') {
       data.trackingId = analytics.google.trackingId;

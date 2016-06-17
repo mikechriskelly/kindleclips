@@ -4,7 +4,7 @@ import fetch from '../core/fetch';
 
 class SearchActions {
   async fetchClips(searchTerm) {
-    const query = searchTerm ? 
+    const query = searchTerm ?
       `{clips(search:"${searchTerm}"){id,title,author,text}}` :
       '{clips{id,title,author,text}}';
     const resp = await fetch('/graphql', {

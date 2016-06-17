@@ -1,16 +1,12 @@
 import jwt from 'jsonwebtoken';
 import { auth, demoUser } from '../config';
-import UserActions from '../actions/UserActions';
-import UserStore from '../stores/UserStore';
 
 function getToken(req) {
   let token = null;
   if (req && req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
     token = req.headers.authorization.split(' ')[1];
-  } else if (req && req.cookies.id_token) {
-    token = req.cookies.id_token;
-  } else {
-    token = UserStore.getToken();
+  } else if (req && req.cookies.token) {
+    token = req.cookies.token;
   }
   return token;
 }
@@ -34,9 +30,7 @@ function loginUser(req, res) {
   const token = jwt.sign(req.user, auth.jwt.secret, { expiresIn });
 
   // Save token as cookie and in store
-  res.cookie('id_token', token, { maxAge: 1000 * expiresIn, httpOnly: false });
-  UserActions.login(token);
-
+  res.cookie('token', token, { maxAge: 1000 * expiresIn, httpOnly: false, path: '/' });
   return res.redirect('/');
 }
 

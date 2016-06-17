@@ -29,13 +29,6 @@ server.all('/api/*', protectRoute, async (req, res, next) => {
   next(); // Passed auth check, so continue
 });
 
-server.get('/api/user/showtoken', async (req, res) => {
-  res.end(`
-    User ID: ${req.user.id}
-    Token: ${getToken(req)}
-  `);
-});
-
 server.get('/api/user/delete', async (req, res) => {
   const removedUser = await User.destroy({ where: { id: req.user.id } });
   if (removedUser) {

@@ -1,5 +1,6 @@
 import alt from '../core/alt';
 import UserActions from '../actions/UserActions';
+import cookie from 'react-cookie';
 
 class UserStore {
 
@@ -10,17 +11,18 @@ class UserStore {
     });
 
     this.state = {
-      token: null,
-      isLoggedIn: false,
+      token: cookie.load('token'),
+      isLoggedIn: !!cookie.load('token'),
     };
   }
 
-  handleLogin(token) {
-    this.state.token = token;
-    this.state.isLoggedIn = true;
+  handleLogin() {
+    this.state.token = cookie.load('token');
+    this.state.isLoggedIn = !!cookie.load('token');
   }
 
   handleLogout() {
+    cookie.remove('token');
     this.state.token = null;
     this.state.isLoggedIn = false;
   }
