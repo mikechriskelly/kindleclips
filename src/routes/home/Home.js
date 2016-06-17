@@ -5,7 +5,6 @@ import connectToStores from 'alt-utils/lib/connectToStores';
 import Header from '../../components/Header';
 import ClipList from '../../components/ClipList';
 import UserStore from '../../stores/UserStore';
-import UserActions from '../../actions/UserActions';
 import SearchStore from '../../stores/SearchStore';
 import SearchActions from '../../actions/SearchActions';
 
