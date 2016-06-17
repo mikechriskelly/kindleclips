@@ -2,7 +2,6 @@ import ClipType from '../types/ClipType';
 import Clip from '../models/Clip';
 import { GraphQLList, GraphQLString, GraphQLID } from 'graphql';
 import { demoUser } from '../../config';
-import { getID } from '../auth';
 
 /* eslint-disable no-console */
 
@@ -46,14 +45,22 @@ const getOwnClips = {
     text: { type: GraphQLString },
     author: { type: GraphQLString },
     search: { type: GraphQLString },
+    clipowner: { type: GraphQLString },
   },
   resolve: (root, params) => {
     const filter = params;
-    filter.clipowner = getID();
+    
+    try {
+      filter.clipowner = root.request.user.id;
+    } catch (err) {
+      filter.clipowner = demoUser.id;
+    }
+
     if (filter.hasOwnProperty('search')) {
       filter.$text = { $search: params.search, $language: 'en' };
       delete filter.search;
     }
+
     return Clip
       .find(filter, { score: { $meta: 'textScore' } })
       .limit(100)
@@ -61,7 +68,7 @@ const getOwnClips = {
   },
 };
 
-function insertClips(clipFile, clipowner = getID()) {
+function insertClips(clipFile, clipowner) {
   const clips = parseMyClippingsTxt(clipFile, clipowner);
   Clip.collection.insert(clips, err => {
     if (err) {
@@ -72,7 +79,7 @@ function insertClips(clipFile, clipowner = getID()) {
   });
 }
 
-function removeClips(clipowner = getID()) {
+function removeClips(clipowner) {
   Clip.collection.remove({ clipowner }, err => {
     if (err) {
       console.log(err);

@@ -7,6 +7,7 @@ class SearchActions {
     const query = searchTerm ?
       `{clips(search:"${searchTerm}"){id,title,author,text}}` :
       '{clips{id,title,author,text}}';
+
     const resp = await fetch('/graphql', {
       method: 'post',
       headers: {
@@ -16,10 +17,14 @@ class SearchActions {
       body: JSON.stringify({ query }),
       credentials: 'include',
     });
+
     const { data } = await resp.json();
-    if (!data || !data.clips) this.failedClips();
-    this.updateClips(data.clips);
-    return true;
+
+    if (!data || !data.clips) {
+      this.failedClips();
+    } else {
+      this.updateClips(data.clips);
+    }
   }
 
   updateClips(results) {
