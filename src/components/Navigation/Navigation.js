@@ -6,7 +6,8 @@ import Link from '../Link';
 
 const userLinks =
   (<span>
-    <a className={cx(s.link, s.highlight)} href="/logout">Log Out</a>
+    <a className={s.link} href="/upload">Upload</a>
+    <a className={s.link} href="/logout">Log Out</a>
   </span>);
 
 const guestLinks =

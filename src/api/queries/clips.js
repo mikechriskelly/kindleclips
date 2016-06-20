@@ -49,7 +49,7 @@ const getOwnClips = {
   },
   resolve: (root, params) => {
     const filter = params;
-    
+
     try {
       filter.clipowner = root.request.user.id;
     } catch (err) {
@@ -70,10 +70,8 @@ const getOwnClips = {
 
 function insertClips(clipFile, clipowner) {
   const clips = parseMyClippingsTxt(clipFile, clipowner);
-  Clip.collection.insert(clips, err => {
-    if (err) {
-      console.log(err);
-    } else {
+  Clip.collection.insert(clips, { keepGoing: true }, err => {
+    if (!err) {
       console.log('Clips were successfully stored.');
     }
   });

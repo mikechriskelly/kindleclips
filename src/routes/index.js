@@ -6,6 +6,7 @@ import home from './home';
 import login from './login';
 import error from './error';
 import content from './content';
+import upload from './upload';
 
 export default {
 
@@ -14,6 +15,7 @@ export default {
   children: [
     home,
     login,
+    upload,
     content,
     error,
   ],
