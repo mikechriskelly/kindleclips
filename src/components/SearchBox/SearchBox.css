@@ -1,27 +1,36 @@
 @import '../variables.css';
 
 .root {
-  float: left;
-  padding-left: 15px;
+  background-color: var(--accent-dark);
+  display: flex;
+  flex: 1 1 250px;
+  height: auto;
+  border-radius: 3px;
+  padding-left: 0px;
   vertical-align: middle;
+  margin: 0;
+  width: 60%;
 }
 
 .icon {
   display: inline-block;
-  margin: -2px 0 -2px 10px;
-  width: 30px;
-  height: 30px;
-  vertical-align: middle;
   fill: var(--white-base);
+  height: 30px;
+  margin: 7px 0 0 5px;
+  vertical-align: middle;
+  width: 30px;
 }
 
 input {
   color: var(--white-base);
-  font-size: 20px;
+  background-color: inherit;
   border: none;
   border-radius: 0;
-  background-color: inherit;
+  font-size: 18px;
+  line-height: 32px;
   outline: none;
+  padding: 2px;
+  width: calc(100% - 40px);
 }
 
 input::placeholder {

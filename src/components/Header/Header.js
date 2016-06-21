@@ -6,11 +6,11 @@ import SearchBox from '../SearchBox';
 
 function Header({ isLoggedIn }) {
   return (
-    <div className={s.root}>
-      <div className={s.container}>
-        <Navigation className={s.nav} isLoggedIn={isLoggedIn} />
+    <div className={s.container}>
+      <header>
         <SearchBox />
-      </div>
+        <Navigation className={s.nav} isLoggedIn={isLoggedIn} />
+      </header>
     </div>
   );
 }

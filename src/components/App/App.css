@@ -17,6 +17,12 @@ a {
   color: #0074c2;
 }
 
+h1, h2, h3 {
+  font-weight: 300;
+  font-size: 2em;
+  color: var(--gray-light);
+}
+
 /*
  * Remove text-shadow in selection highlight:
  * https://twitter.com/miketaylr/status/12228805301
