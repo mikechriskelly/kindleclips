@@ -5,9 +5,10 @@ class SearchStore {
 
   constructor() {
     this.bindListeners({
-      handleFetchClips: SearchActions.FETCH_CLIPS,
+      handleSearchClips: SearchActions.SEARCH_CLIPS,
       handleUpdateClips: SearchActions.UPDATE_CLIPS,
       handleFailedClips: SearchActions.FAILED_CLIPS,
+      handleClearClips: SearchActions.CLEAR_CLIPS,
     });
 
     this.state = {
@@ -16,7 +17,11 @@ class SearchStore {
     };
   }
 
-  handleFetchClips() {
+  handleSearchClips() {
+    this.state.clips = [];
+  }
+
+  handleClearClips() {
     this.state.clips = [];
   }
 

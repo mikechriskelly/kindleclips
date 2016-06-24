@@ -6,7 +6,6 @@ import Header from '../../components/Header';
 import ClipList from '../../components/ClipList';
 import UserStore from '../../stores/UserStore';
 import SearchStore from '../../stores/SearchStore';
-import SearchActions from '../../actions/SearchActions';
 
 class Home extends Component {
 
@@ -32,11 +31,6 @@ class Home extends Component {
       ...UserStore.getState(),
       ...SearchStore.getState(),
     };
-  }
-
-  constructor(props) {
-    super(props);
-    SearchActions.fetchClips();
   }
 
   componentWillMount() {

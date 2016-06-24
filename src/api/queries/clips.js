@@ -2,6 +2,7 @@ import ClipType from '../types/ClipType';
 import Clip from '../models/Clip';
 import { GraphQLList, GraphQLString, GraphQLID } from 'graphql';
 import { demoUser } from '../../config';
+import { getID } from '../auth';
 
 /* eslint-disable no-console */
 
@@ -50,9 +51,16 @@ const getOwnClips = {
   resolve: (root, params) => {
     const filter = params;
 
-    try {
+    if (root.request &&
+        root.request.user &&
+        root.request.user.id) {
       filter.clipowner = root.request.user.id;
-    } catch (err) {
+    } else if (root.request &&
+               root.request.headers.authorization &&
+               root.request.headers.authorization.split(' ')[0] === 'Bearer') {
+      const token = root.request.headers.authorization.split(' ')[1];
+      filter.clipowner = getID(token);
+    } else {
       filter.clipowner = demoUser.id;
     }
 

@@ -1,10 +1,15 @@
 import alt from '../core/alt';
 import fetch from '../core/fetch';
 import history from '../core/history';
-
+import UserStore from '../stores/UserStore';
 
 class SearchActions {
-  async fetchClips(searchTerm) {
+
+  async initialFetch() {
+    return await this.searchClips();
+  }
+
+  async searchClips(searchTerm) {
     const query = searchTerm ?
       `{clips(search:"${searchTerm}"){id,title,author,text}}` :
       '{clips{id,title,author,text}}';
@@ -14,22 +19,29 @@ class SearchActions {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
+        Authorization: `Bearer ' + ${UserStore.getToken()}`,
       },
       body: JSON.stringify({ query }),
       credentials: 'include',
     });
 
     const { data } = await resp.json();
-
+    let result;
     if (!data || !data.clips) {
       this.failedClips();
     } else {
       this.updateClips(data.clips);
+      result = data.clips;
     }
+    return result;
   }
 
   updateClips(results) {
     return results;
+  }
+
+  clearClips() {
+    return true;
   }
 
   failedClips() {

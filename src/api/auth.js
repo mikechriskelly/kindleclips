@@ -11,10 +11,9 @@ function getToken(req) {
   return token;
 }
 
-function getID() {
+function getID(token = getToken()) {
   try {
     // Lookup a verified user ID
-    const token = getToken();
     const secret = auth.jwt.secret;
     const decrypted = jwt.verify(token, secret);
     return decrypted.id;

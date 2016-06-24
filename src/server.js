@@ -15,6 +15,7 @@ import { port, analytics, mondgodbUrl, demoUser } from './config';
 import { loginUser } from './api/auth';
 import apiRoutes from './api/routes.js';
 import cookie from 'react-cookie';
+import alt from './core/alt';
 // import { exec } from 'child_process';
 // import fs from 'fs';
 
@@ -155,6 +156,7 @@ server.get('*', async (req, res, next) => {
 
     res.status(statusCode);
     res.send(template(data));
+    alt.flush();
   } catch (err) {
     next(err);
   }
