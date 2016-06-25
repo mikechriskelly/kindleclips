@@ -78,7 +78,9 @@ const getOwnClips = {
 function insertClips(clipFile, clipowner) {
   const clips = parseMyClippingsTxt(clipFile, clipowner);
   Clip.collection.insert(clips, { keepGoing: true }, err => {
-    if (!err) {
+    if (err) {
+      console.log('Some write operations failed. Usually due to duplicates.');
+    } else {
       console.log('Clips were successfully stored.');
     }
   });

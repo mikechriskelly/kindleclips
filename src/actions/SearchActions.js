@@ -6,12 +6,10 @@ import UserStore from '../stores/UserStore';
 class SearchActions {
 
   async initialFetch() {
-    console.log('initialFetch');
     return await this.searchClips();
   }
 
   async searchClips(searchTerm) {
-    console.log('searchClips');
     const query = searchTerm ?
       `{clips(search:"${searchTerm}"){id,title,author,text}}` :
       '{clips{id,title,author,text}}';
@@ -64,7 +62,7 @@ class SearchActions {
     if (resp.status === 200) {
       history.push('/');
     } else {
-      console.log('Error');
+      console.log('Error uploading clips');
     }
   }
 }
