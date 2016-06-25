@@ -6,20 +6,23 @@ import UserStore from '../stores/UserStore';
 class SearchActions {
 
   async initialFetch() {
+    console.log('initialFetch');
     return await this.searchClips();
   }
 
   async searchClips(searchTerm) {
+    console.log('searchClips');
     const query = searchTerm ?
       `{clips(search:"${searchTerm}"){id,title,author,text}}` :
       '{clips{id,title,author,text}}';
 
+    const token = UserStore.getToken();
     const resp = await fetch('/graphql', {
       method: 'post',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        Authorization: `Bearer ' + ${UserStore.getToken()}`,
+        Authorization: token ? `Bearer ${token}` : null,
       },
       body: JSON.stringify({ query }),
       credentials: 'include',

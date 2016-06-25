@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { auth, demoUser } from '../config';
+import { auth } from '../config';
 
 function getToken(req) {
   let token = null;
@@ -11,15 +11,14 @@ function getToken(req) {
   return token;
 }
 
-function getID(token = getToken()) {
+function getID(token) {
   try {
-    // Lookup a verified user ID
     const secret = auth.jwt.secret;
     const decrypted = jwt.verify(token, secret);
     return decrypted.id;
   } catch (err) {
-    // Or else use the demo ID
-    return demoUser.id;
+    console.log('Failed to get ID: ', err);
+    return null;
   }
 }
 

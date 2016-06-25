@@ -50,7 +50,6 @@ const getOwnClips = {
   },
   resolve: (root, params) => {
     const filter = params;
-
     if (root.request &&
         root.request.user &&
         root.request.user.id) {

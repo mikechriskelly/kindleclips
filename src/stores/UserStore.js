@@ -28,7 +28,7 @@ class UserStore {
   }
 
   static getToken() {
-    return this.state.token;
+    return this.state.token || cookie.load('token');
   }
 
 }
