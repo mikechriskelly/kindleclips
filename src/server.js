@@ -9,9 +9,10 @@ import { match } from 'universal-router';
 import PrettyError from 'pretty-error';
 import passport from './core/passport';
 import { sync, User, UserLogin, UserProfile } from './api/models';
+import pg from 'pg';
 import routes from './routes';
 import assets from './assets'; // eslint-disable-line import/no-unresolved
-import { port, analytics, mondgodbUrl, demoUser } from './config';
+import { port, analytics, mondgodbUrl, demoUser, databaseUrl } from './config';
 import { loginUser } from './api/auth';
 import apiRoutes from './api/routes.js';
 import cookie from 'react-cookie';
@@ -46,6 +47,13 @@ function connect() {
 connect();
 mongoose.connection.on('error', console.log);
 mongoose.connection.on('disconnected', connect);
+
+// Connect to PostgreSQL
+pg.defaults.ssl = true;
+pg.connect(databaseUrl, (err) => {
+  if (err) throw err;
+  console.log('Connected to Postgres');
+});
 
 // Create demo user if it doesn't already exist
 async function setupDemoUser() {
