@@ -22,7 +22,7 @@ for (i in 1:length(tmp)) {
 
 # make a character vector with author, title, text elements
 clips <- paste(
-			lapply(X=tmp, FUN=`[[`, 'authorCollapse'), 
+		lapply(X=tmp, FUN=`[[`, 'authorCollapse'), 
          	lapply(X=tmp, FUN=`[[`, 'title'), 
          	lapply(X=tmp, FUN=`[[`, 'text'), 
          	sep=" ")
@@ -46,7 +46,12 @@ make_k <- function(tmp) {
       round(x, 0)
 }
 k <- make_k(tmp) # number of topic clusters
+set.seed(10)
 lda <- LDA(x=dfm, k=k, method="Gibbs", control = list(verbose=800, alpha=50/k, seed=10)) # make the LDA model
+
+#### method to create gammaDF for new documents using an existing LDA model
+# lda_inf <- posterior(ldaModel, NewDoc.dfm)
+# new.gammaDF <- lda_inf$topics
 
 # pull topic probs for each clip and put them into tmp list
 gammaDF <- as.data.frame(lda@gamma)
@@ -97,7 +102,7 @@ for (i in 1:length(tmp)) {
       tmp[[i]]$topicnames <- topic.names
 }
 
-# Now write the list back into mongodb
+# Write the list back into mongodb
 for (i in 1:length(tmp)) {
       criteria    <- tmp[[i]][3]
       fields      <- tmp[[i]][2:length(tmp[[1]])]
