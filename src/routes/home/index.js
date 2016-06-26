@@ -7,7 +7,7 @@ export default {
   path: '/',
 
   async action() {
-    // const clips = await SearchActions.initialFetch();
+    const clips = await SearchActions.initialFetch();
     return <Home clips={[]} />;
   },
 

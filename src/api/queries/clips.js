@@ -6,8 +6,12 @@ import { getID } from '../auth';
 
 /* eslint-disable no-console */
 
-// Helper Functions
-function generateGUID(str) {
+/**
+ * Generate a hash number from a text string
+ * @param  {string} str - Unparsed string of onw clip
+ * @return {number} hash - Number to use as unique field
+ */
+function hashText(str) {
   let i = str.length;
   let hash = 5381;
   while (i) {
@@ -20,6 +24,12 @@ function generateGUID(str) {
   return hash >>> 0;
 }
 
+/**
+ * Parse My Clippings.txt
+ * @param  {string} clipFile - String of My Clippings.txt
+ * @param  {string} clipOwner - User ID who owns them
+ * @return {array} clips - Array of clip objects
+ */
 function parseMyClippingsTxt(clipFile, clipOwner) {
   const seperator = '==========';
   const clips = clipFile.split(seperator).map(section => {
@@ -27,11 +37,11 @@ function parseMyClippingsTxt(clipFile, clipOwner) {
     const defaultValue = ['', '', ''];
 
     const clip = {};
-    clip.id = generateGUID(section);
+    clip.hash = hashText(section);
     clip.title = (lines[0].match(/(.+?)\((.*?)\)$/) || defaultValue)[1].trim();
     clip.text = lines.slice(2).join('\n').trim();
     clip.author = (lines[0].match(/(.+?)\((.*?)\)$/) || defaultValue)[2].trim();
-    clip.clipowner = clipOwner;
+    clip.userId = clipOwner;
     return clip.text.length ? clip : null;
   });
   return clips.filter(n => n !== null);
@@ -46,32 +56,33 @@ const getOwnClips = {
     text: { type: GraphQLString },
     author: { type: GraphQLString },
     search: { type: GraphQLString },
-    clipowner: { type: GraphQLString },
+    userId: { type: GraphQLString },
   },
   resolve: (root, params) => {
     const filter = params;
     if (root.request &&
         root.request.user &&
         root.request.user.id) {
-      filter.clipowner = root.request.user.id;
+      filter.userId = root.request.user.id;
     } else if (root.request &&
                root.request.headers.authorization &&
                root.request.headers.authorization.split(' ')[0] === 'Bearer') {
       const token = root.request.headers.authorization.split(' ')[1];
-      filter.clipowner = getID(token);
+      filter.userId = getID(token);
     } else {
-      filter.clipowner = demoUser.id;
+      filter.userId = demoUser.id;
     }
 
     if (filter.hasOwnProperty('search')) {
+      // TODO: FTS for Postgres
       filter.$text = { $search: params.search, $language: 'en' };
       delete filter.search;
     }
 
-    return Clip
-      .find(filter, { score: { $meta: 'textScore' } })
-      .limit(100)
-      .exec();
+    return Clip.findAll({
+      attributes: ['id', 'title', 'author', 'text'],
+      where: filter,
+    });
   },
 };
 
