@@ -3,7 +3,6 @@ import path from 'path';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
-import mongoose from 'mongoose';
 import ReactDOM from 'react-dom/server';
 import { match } from 'universal-router';
 import PrettyError from 'pretty-error';
@@ -12,7 +11,7 @@ import { sync, User, UserLogin, UserProfile } from './api/models';
 import pg from 'pg';
 import routes from './routes';
 import assets from './assets'; // eslint-disable-line import/no-unresolved
-import { port, analytics, mondgodbUrl, demoUser, databaseUrl } from './config';
+import { port, analytics, demoUser, databaseUrl } from './config';
 import { loginUser } from './api/auth';
 import apiRoutes from './api/routes.js';
 import cookie from 'react-cookie';
@@ -33,20 +32,6 @@ server.use(express.static(path.join(__dirname, 'public')));
 server.use(cookieParser());
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
-
-// Connect to MongoDB Database
-function connect() {
-  mongoose.connect(mondgodbUrl, (err) => {
-    if (err) {
-      console.log(`Error connecting to: ${mondgodbUrl} ${err}`);
-    } else {
-      console.log(`Successful connecting to ${mondgodbUrl}`);
-    }
-  });
-}
-connect();
-mongoose.connection.on('error', console.log);
-mongoose.connection.on('disconnected', connect);
 
 // Connect to PostgreSQL
 pg.defaults.ssl = true;

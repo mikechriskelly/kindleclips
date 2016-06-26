@@ -8,7 +8,7 @@ export default {
 
   async action() {
     const clips = await SearchActions.initialFetch();
-    return <Home clips={[]} />;
+    return <Home clips={clips} />;
   },
 
 };

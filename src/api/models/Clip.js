@@ -17,7 +17,7 @@ const Clip = Model.define('Clip', {
   },
 
   hash: {
-    type: DataType.INTEGER,
+    type: DataType.BIGINT,
     unique: 'compositeIndex',
     comment: 'Protects against duplicate clips',
     allowNull: false,

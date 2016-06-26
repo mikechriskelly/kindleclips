@@ -27,10 +27,10 @@ function hashText(str) {
 /**
  * Parse My Clippings.txt
  * @param  {string} clipFile - String of My Clippings.txt
- * @param  {string} clipOwner - User ID who owns them
+ * @param  {string} userId - Clip owner
  * @return {array} clips - Array of clip objects
  */
-function parseMyClippingsTxt(clipFile, clipOwner) {
+function parseMyClippingsTxt(clipFile, userId) {
   const seperator = '==========';
   const clips = clipFile.split(seperator).map(section => {
     const lines = section.trim().split(/\r?\n/);
@@ -41,7 +41,7 @@ function parseMyClippingsTxt(clipFile, clipOwner) {
     clip.title = (lines[0].match(/(.+?)\((.*?)\)$/) || defaultValue)[1].trim();
     clip.text = lines.slice(2).join('\n').trim();
     clip.author = (lines[0].match(/(.+?)\((.*?)\)$/) || defaultValue)[2].trim();
-    clip.userId = clipOwner;
+    clip.userId = userId;
     return clip.text.length ? clip : null;
   });
   return clips.filter(n => n !== null);
@@ -79,32 +79,40 @@ const getOwnClips = {
       delete filter.search;
     }
 
-    return Clip.findAll({
-      attributes: ['id', 'title', 'author', 'text'],
-      where: filter,
-    });
+    try {
+      return Clip.findAll({
+        attributes: ['id', 'title', 'author', 'text'],
+        where: filter,
+        limit: 100,
+      });
+    } catch (err) {
+      console.log('Could not retrieve clips.', err);
+      return [];
+    }
   },
 };
 
-function insertClips(clipFile, clipowner) {
-  const clips = parseMyClippingsTxt(clipFile, clipowner);
-  Clip.collection.insert(clips, { keepGoing: true }, err => {
-    if (err) {
-      console.log('Some write operations failed. Usually due to duplicates.');
-    } else {
-      console.log('Clips were successfully stored.');
-    }
-  });
+async function insertClips(clipFile, userId) {
+  const clips = parseMyClippingsTxt(clipFile, userId);
+  try {
+    await Clip.bulkCreate(clips, { validate: true });
+    console.log('Clips inserted.');
+    return true;
+  } catch (err) {
+    console.log('Some write operations failed. Usually due to duplicates.', err);
+    return false;
+  }
 }
 
-function removeClips(clipowner) {
-  Clip.collection.remove({ clipowner }, err => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log('Clips were successfully removed.');
-    }
-  });
+async function removeClips(userId) {
+  try { 
+    await Clip.destroy({ where: { userId } });
+    console.log('Clips removed.');
+    return true;
+  } catch (err) {
+    console.log('Could not remove clips.', err);
+    return false;
+  }
 }
 
 export default getOwnClips;
