@@ -38,6 +38,28 @@ const Clip = Model.define('Clip', {
     allowNull: false,
   },
 
+}, {
+  classMethods: {
+    vectorName: 'search',
+    async addFullTextIndex() {
+      const searchFields = ['title', 'author', 'text'];
+      try {
+        await Model.query(`ALTER TABLE "${this.tableName}" ADD COLUMN "${this.vectorName}" TSVECTOR`);
+        await Model.query(`UPDATE "${this.tableName}" SET "${this.vectorName}" = to_tsvector(\'english\', '${searchFields.join('\' || \'')}')`);
+        await Model.query(`CREATE INDEX post_search_idx ON "${this.tableName}" USING gin("${this.vectorName}");`);
+        await Model.query(`CREATE TRIGGER post_vector_update BEFORE INSERT OR UPDATE ON "${this.tableName}"
+                           FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger("${this.vectorName}",
+                           'pg_catalog.english', ${searchFields.join(', ')})`);
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async search(query) {
+      const cleanQuery = Model.getQueryInterface().escape(query);
+      console.log(cleanQuery);
+      return Model.query(`SELECT * FROM "${this.tableName}" WHERE "${this.vectorname}" @@ plainto_tsquery(\'english\', ${cleanQuery})`, this);
+    },
+  },
 });
 
 export default Clip;

@@ -33,9 +33,15 @@ User.hasMany(Clip, {
   onDelete: 'cascade',
 });
 
-function sync(...args) {
-  return sequelize.sync(...args);
+async function syncDatabase(...args) {
+  await sequelize.sync(...args);
+  try {
+    await Clip.addFullTextIndex();
+  } catch (err) {
+    console.log('Full Text Index already added.');
+  }
+  return sequelize;
 }
 
-export default { sync };
-export { sync, User, UserLogin, UserClaim, UserProfile, Clip };
+export default { syncDatabase };
+export { syncDatabase, User, UserLogin, UserClaim, UserProfile, Clip };

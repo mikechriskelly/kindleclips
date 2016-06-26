@@ -7,7 +7,7 @@ import ReactDOM from 'react-dom/server';
 import { match } from 'universal-router';
 import PrettyError from 'pretty-error';
 import passport from './core/passport';
-import { sync, User, UserLogin, UserProfile } from './api/models';
+import { syncDatabase, User, UserLogin, UserProfile } from './api/models';
 import pg from 'pg';
 import routes from './routes';
 import assets from './assets'; // eslint-disable-line import/no-unresolved
@@ -173,9 +173,9 @@ server.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   }));
 });
 
-// Launch the server
-sync().catch(err => console.error(err.stack)).then(() => {
-  server.listen(port, () => {
-    console.log(`The server is running at http://localhost:${port}/`);
+// Sync models with DB and then launch server
+syncDatabase()
+  .catch(err => console.error(err.stack))
+  .then(() => {
+    server.listen(port, () => { console.log(`The server is running at http://localhost:${port}/`) });
   });
-});

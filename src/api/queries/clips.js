@@ -75,9 +75,9 @@ const getOwnClips = {
 
     if (filter.hasOwnProperty('search')) {
       // TODO: FTS for Postgres
-      filter.$text = { $search: params.search, $language: 'en' };
       delete filter.search;
     }
+    console.log(filter);
 
     try {
       return Clip.findAll({
@@ -105,7 +105,7 @@ async function insertClips(clipFile, userId) {
 }
 
 async function removeClips(userId) {
-  try { 
+  try {
     await Clip.destroy({ where: { userId } });
     console.log('Clips removed.');
     return true;
