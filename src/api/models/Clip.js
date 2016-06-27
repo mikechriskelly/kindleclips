@@ -37,6 +37,15 @@ const Clip = Model.define('Clip', {
     type: DataType.TEXT,
     allowNull: false,
   },
+  topicProbs: {
+    type: DataType.ARRAY(DataType.REAL),
+    allowNull: true,
+ },
+
+  simClips: {
+    type: DataType.ARRAY(DataType.UUID),
+    allowNull: true,
+ },
 
 }, {
   classMethods: {
