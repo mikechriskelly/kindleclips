@@ -77,7 +77,6 @@ const getOwnClips = {
       // TODO: FTS for Postgres
       delete filter.search;
     }
-    console.log(filter);
 
     try {
       return Clip.findAll({

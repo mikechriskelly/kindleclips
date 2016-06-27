@@ -34,7 +34,8 @@ server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
 
 // Connect to PostgreSQL
-pg.defaults.ssl = true;
+// Use SSL if DB is not local
+pg.defaults.ssl = !!process.env.DATABASE_URL;
 pg.connect(databaseUrl, (err) => {
   if (err) throw err;
   console.log('Connected to Postgres');
