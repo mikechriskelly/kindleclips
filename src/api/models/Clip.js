@@ -50,32 +50,34 @@ const Clip = Model.define('Clip', {
 
 }, {
   classMethods: {
-    vectorName: 'search',
+    getVectorName: () => 'search',
     async addFullTextIndex() {
       const searchFields = ['title', 'author', 'text'];
+      const vectorName = this.getVectorName();
       try {
         await Model.query(`ALTER TABLE "${this.tableName}"
-                           ADD COLUMN "${this.vectorName}" TSVECTOR`);
+                           ADD COLUMN "${vectorName}" TSVECTOR`);
         await Model.query(`UPDATE "${this.tableName}"
-                           SET "${this.vectorName}" = to_tsvector(\'english\',
+                           SET "${vectorName}" = to_tsvector(\'english\',
                            '${searchFields.join('\' || \'')}')`);
         await Model.query(`CREATE INDEX post_search_idx ON "${this.tableName}"
-                           USING gin("${this.vectorName}");`);
+                           USING gin("${vectorName}");`);
         await Model.query(`CREATE TRIGGER post_vector_update
                            BEFORE INSERT OR UPDATE ON "${this.tableName}"
                            FOR EACH ROW EXECUTE PROCEDURE
-                           tsvector_update_trigger("${this.vectorName}",
+                           tsvector_update_trigger("${vectorName}",
                            'pg_catalog.english', ${searchFields.join(', ')})`);
       } catch (err) {
-        console.log(err);
+        console.log('Full Text Search already added.');
       }
     },
-    async search(query) {
-      const cleanQuery = Model.getQueryInterface().escape(query);
-      console.log(cleanQuery);
-      return Model.query(`SELECT * FROM "${this.tableName}"
-                          WHERE "${this.vectorname}"
-                          @@ plainto_tsquery(\'english\', ${cleanQuery})`, this);
+    async search(userId, searchPhrase, resultLimit) {
+      const query = Model.getQueryInterface().escape(searchPhrase);
+      const vectorName = this.getVectorName();
+      return Model.query(`SELECT id, title, author, text FROM ${this.tableName}
+                          WHERE userId = "${userId}"
+                          AND ${vectorName} @@ plainto_tsquery(\'english\', ${query})
+                          LIMIT ${resultLimit}`, this);
     },
   },
 });

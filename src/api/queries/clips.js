@@ -48,45 +48,56 @@ function parseMyClippingsTxt(clipFile, userId) {
 }
 
 // Clip Queries
-const getOwnClips = {
+const userClips = {
   type: new GraphQLList(ClipType),
   args: {
-    id: { type: GraphQLID },
-    title: { type: GraphQLString },
-    text: { type: GraphQLString },
-    author: { type: GraphQLString },
     search: { type: GraphQLString },
-    userId: { type: GraphQLString },
   },
-  resolve: (root, params) => {
-    const filter = params;
+  resolve: (root, args) => {
+    const resultLimit = 100;
+    let userId = demoUser.id;
+
     if (root.request &&
         root.request.user &&
         root.request.user.id) {
-      filter.userId = root.request.user.id;
+      userId = root.request.user.id;
     } else if (root.request &&
                root.request.headers.authorization &&
                root.request.headers.authorization.split(' ')[0] === 'Bearer') {
       const token = root.request.headers.authorization.split(' ')[1];
-      filter.userId = getID(token);
-    } else {
-      filter.userId = demoUser.id;
-    }
-
-    if (filter.hasOwnProperty('search')) {
-      // TODO: FTS for Postgres
-      delete filter.search;
+      userId = getID(token);
     }
 
     try {
-      return Clip.findAll({
-        attributes: ['id', 'title', 'author', 'text'],
-        where: filter,
-        limit: 100,
-      });
-    } catch (err) {
+      return args.search ?
+        Clip.search(userId, args.search, resultLimit) :
+        Clip.findAll({
+          attributes: ['id', 'title', 'author', 'text'],
+          where: { userId },
+          limit: resultLimit,
+        });
+    } catch (err) { 
       console.log('Could not retrieve clips.', err);
       return [];
+    }
+  },
+};
+
+// Clip Queries
+const singleClip = {
+  type: new GraphQLList(ClipType),
+  args: {
+    id: { type: GraphQLID },
+  },
+  resolve: (root, args) => {
+    try {
+      return Clip.findOne({
+        attributes: ['id', 'title', 'author', 'text'],
+        where: { id: args.id },
+      });
+    } catch (err) {
+      console.log('Could not retrieve clip.', err);
+      return {};
     }
   },
 };
@@ -114,5 +125,5 @@ async function removeClips(userId) {
   }
 }
 
-export default getOwnClips;
-export { insertClips, removeClips };
+export default userClips;
+export { userClips, singleClip, insertClips, removeClips };

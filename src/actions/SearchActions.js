@@ -11,8 +11,8 @@ class SearchActions {
 
   async searchClips(searchTerm) {
     const query = searchTerm ?
-      `{clips(search:"${searchTerm}"){id,title,author,text}}` :
-      '{clips{id,title,author,text}}';
+      `{userClips(search:"${searchTerm}"){id,title,author,text}}` :
+      '{userClips{id,title,author,text}}';
 
     const token = UserStore.getToken();
     const resp = await fetch('/graphql', {

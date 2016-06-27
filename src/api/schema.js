@@ -4,14 +4,15 @@ import {
 } from 'graphql';
 
 import content from './queries/content';
-import clips from './queries/clips';
+import { userClips, singleClip } from './queries/clips';
 
 const schema = new Schema({
   query: new ObjectType({
     name: 'Query',
     fields: {
       content,
-      clips,
+      userClips,
+      singleClip,
     },
   }),
 });

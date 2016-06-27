@@ -35,11 +35,7 @@ User.hasMany(Clip, {
 
 async function syncDatabase(...args) {
   await sequelize.sync(...args);
-  try {
-    await Clip.addFullTextIndex();
-  } catch (err) {
-    console.log('Full Text Index already added.');
-  }
+  await Clip.addFullTextIndex();
   return sequelize;
 }
 
