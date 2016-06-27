@@ -37,7 +37,7 @@ const Clip = Model.define('Clip', {
     type: DataType.TEXT,
     allowNull: false,
   },
-  
+
   topicProbs: {
     type: DataType.ARRAY(DataType.REAL),
     allowNull: true,
