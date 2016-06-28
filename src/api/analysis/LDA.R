@@ -2,52 +2,55 @@
 args = commandArgs(trailingOnly=TRUE)
 
 library(tm)
-library(rmongodb)
+library(RPostgreSQL)
 library(quanteda)
 library(topicmodels)
 
-mongo <- mongo.create(host="localhost")
+host <- "localhost"
+port <- 5432
+user <- "christophercastle"
+dbname <- "christophercastle"
+pw <- "password"
+userid <- "userid"
 
-# create a list with every clip in it
-#tmp = mongo.find.all(mongo, "kindleclips.clippings")
-# list with just one author
-#tmp <- mongo.find.all(mongo, "kindleclips.clippings", query=list(author="Dave Cullen"))
-print(args)
-tmp <- mongo.find.all(mongo, "kindleclips.clippings", query=list(clipowner=args[1]))
+# loads the PostgreSQL driver
+drv <- RPostgreSQL::PostgreSQL()
 
-# remove whitespace from author to create unique author token
-for (i in 1:length(tmp)) {
-      tmp[[i]]$authorCollapse <- gsub(" ", "", tmp[[i]]$author)
-}
+con <- dbConnect(drv, dbname = dbname,
+                 host = host, port = port,
+                 user = user)
 
-# make a character vector with author, title, text elements
-clips <- paste(
-		lapply(X=tmp, FUN=`[[`, 'authorCollapse'), 
-         	lapply(X=tmp, FUN=`[[`, 'title'), 
-         	lapply(X=tmp, FUN=`[[`, 'text'), 
-         	sep=" ")
+# query to extract only clips for a single user
+# tmp2 <- dbGetQuery(con, "select * from \"Clip\" where \"userId\" = 'e9579f90-3bfc-11e6-9c95-c79599221550'::uuid")
+# dbGetQuery(con, "select title from \"Clip\" where author = 'Seth Godin'")
 
-dfm <- dfm(clips, toLower=TRUE, removeNumbers=TRUE, removePunct=TRUE, stem=FALSE,
-                ignoredFeatures=stopwords("english"))
+# extract the entire Clip table, for localhosting only
+tmp <- dbReadTable(con, "Clip")
+
+# create collapsed author, title, text vector
+clips <- paste(tmp$title, gsub(" ", "", tmp$author), tmp$text)
+
+dfm <- dfm(clips, toLower = TRUE, removeNumbers = TRUE, removePunct = TRUE, stem = FALSE,
+                ignoredFeatures = stopwords("english"))
 dict <- dfm@Dimnames$features #for de-stemming words
 
-dfm <- dfm(clips, toLower=TRUE, removeNumbers=TRUE, removePunct=TRUE, stem=TRUE,
-                ignoredFeatures=stopwords("english"))
+dfm <- dfm(clips, toLower = TRUE, removeNumbers = TRUE, removePunct = TRUE, stem = TRUE,
+                ignoredFeatures = stopwords("english"))
 
 # simple, nonlinear function to keep x within an interpretable range
 make_k <- function(tmp) {
-      ua <- length(unique(sapply(X=tmp, FUN=`[[`, "authorCollapse")))
-      ut <- length(unique(sapply(X=tmp, FUN=`[[`, "title")))
+      ua <- length(unique(tmp$author))
+      ut <- length(unique(tmp$title))
       # x <- log((ut+ua)^exp(1))
       # x <- (ua+ut)/16
-      x <- (ua^2 + ut^2)^(1/4)
+      x <- (ua ^ 2 + ut ^ 2) ^ (1/4)
       ifelse(x > 25, 25, x)
       ifelse(x < 5, 5, x)
       round(x, 0)
 }
 k <- make_k(tmp) # number of topic clusters
 set.seed(10)
-lda <- LDA(x=dfm, k=k, method="Gibbs", control = list(verbose=800, alpha=50/k, seed=10)) # make the LDA model
+lda <- LDA(x = dfm, k = k, method = "Gibbs", control = list(verbose = 800, alpha = 50/k, seed = 10)) # make the LDA model
 
 #### method to create gammaDF for new documents using an existing LDA model
 # lda_inf <- posterior(ldaModel, NewDoc.dfm)
@@ -59,56 +62,64 @@ gammaDF <- as.data.frame(lda@gamma)
 dist.mat <- as.matrix(dist(gammaDF), method = "Bhjattacharyya")
 
 gammaDF <- round(gammaDF, 6)
-for (i in 1:length(tmp)) {
-      tmp[[i]]$topicprobs <- gammaDF[i,]
-}
+
+topicProbs <- split(as.matrix(gammaDF), 1:NROW(gammaDF))
 
 # sorted similarity matrix for all clips
 tops_lst <- apply(dist.mat, 2, function(x) names(sort(x)[2:dim(dist.mat)[1]]))
 
-# indexed list of mongo IDs
-id_index <- lapply(X=tmp, FUN=`[[`, '_id')
 # re-create tops_lst but with mongoID instead of index #s
-tops_mongo <- matrix(unlist(id_index)[as.numeric(tops_lst)], nrow=dim(tops_lst)[1])
+tops_id <- matrix(tmp$id[as.numeric(tops_lst)], nrow = dim(tops_lst)[1])
 
 # write a function that will find the top n related clips
-make_tops <- function(tops_mongo, clip_number, top_n=dim(tops_mongo)[1]) {
-      tops_mongo[1:top_n,clip_number]
+make_tops <- function(tops_id, clip_number, top_n=dim(tops_id)[1]) {
+      tops_id[1:top_n,clip_number]
 }
 
-for (i in 1:length(tmp)) {
-      tmp[[i]]$tops <- make_tops(tops_mongo, i, 3) # set top_n at 3 to make output manageable
+simClips <- list()
+for (i in 1:NROW(tmp)) {
+      simClips[[i]] <- make_tops(tops_id, i, 3) # set top_n at 3 to make output manageable
 }
 
 #===topic naming==
 # list of collapsed author names
-author.collapse <- tolower(unique( lapply(X=tmp, FUN= `[[`, "authorCollapse")))
+author.collapse <- tolower(unique(gsub(" ", "", tmp$author)))
 
 name_topic <- function(term_length, n_char, top_n_terms) {
       if (term_length > 80) { print("Watch your back. This might take awhile")}
       term <- terms(lda, term_length) # pull top lda terms
       # using stem completion really slows this function down
-      term <- matrix(stemCompletion(as.character(term), dict), nrow=term_length)
+      term <- matrix(stemCompletion(as.character(term), dict), nrow = term_length)
       indx <- apply(term, 2, nchar) > n_char 
       term[!indx] <- NA # remove short terms
       term[term %in% author.collapse] <- NA # remove author names
-      topic.names <- apply(term, 2, FUN=function(x) x[!is.na(x)][1:top_n_terms])
+      topic.names <- apply(term, 2, FUN = function(x) x[!is.na(x)][1:top_n_terms])
       topic.names }
 
-topic.names <- apply(name_topic(100, 6, 3), 2, paste, collapse='-')
+topic.names <- apply(name_topic(60, 6, 5), 2, paste, collapse = '_') # there must be a faster way to do this
 names(topic.names) <- NULL
 
-for (i in 1:length(tmp)) {
-      tmp[[i]]$topicnames <- topic.names
+# hacky way to put arrays into sql as char vectors in R
+topic.names <- paste("'", topic.names, "'", sep = "")
+topic.names <- paste("{", paste(topic.names, collapse = ", "), "}")
+topic.namesDAT <- data.frame("userId" = tmp$userId[1], "topicNames" = topic.names)
+
+# hacky function to make lists into array looking char vectors
+make_string_array <- function(lst) {
+      char <- NULL
+      for (i in 1:length(lst)) {
+            char[i] <- paste("{", paste(paste("'", as.character(lst[[i]]), "'", sep = ""), collapse = ", "), "}")
+      }
+      char
 }
 
-# Write the list back into mongodb
-for (i in 1:length(tmp)) {
-      criteria    <- tmp[[i]][3]
-      fields      <- tmp[[i]][2:length(tmp[[1]])]
-      b           <- mongo.bson.from.list(lst=fields)
-      crit        <- mongo.bson.from.list(lst=criteria)
-      mongo.update(mongo=mongo, ns="kindleclips.tc", criteria=crit,
-                   objNew=b, flags=mongo.update.basic)
-}
+tmp$topicProbs <- make_string_array(topicProbs)
+tmp$simClips <- make_string_array(simClips)
 
+# dbListTables(con)
+# 
+# # create a new table, this function doesn't work for updating
+# dbWriteTable(con, "test",
+#              value = topic.namesDAT, row.names = FALSE)
+
+test <- dbReadTable(con, "test")
