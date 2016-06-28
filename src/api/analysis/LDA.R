@@ -21,11 +21,11 @@ con <- dbConnect(drv, dbname = dbname,
                  user = user)
 
 # query to extract only clips for a single user
-# tmp2 <- dbGetQuery(con, "select * from \"Clip\" where \"userId\" = 'e9579f90-3bfc-11e6-9c95-c79599221550'::uuid")
+tmp <- dbGetQuery(con, "select * from \"Clip\" where \"userId\" = 'e9579f90-3bfc-11e6-9c95-c79599221550'::uuid")
 # dbGetQuery(con, "select title from \"Clip\" where author = 'Seth Godin'")
 
 # extract the entire Clip table, for localhosting only
-tmp <- dbReadTable(con, "Clip")
+# tmp <- dbReadTable(con, "Clip")
 
 # create collapsed author, title, text vector
 clips <- paste(tmp$title, gsub(" ", "", tmp$author), tmp$text)
@@ -50,8 +50,8 @@ make_k <- function(tmp) {
 }
 k <- make_k(tmp) # number of topic clusters
 set.seed(10)
-lda <- LDA(x = dfm, k = k, method = "Gibbs", control = list(verbose = 800, alpha = 50/k, seed = 10)) # make the LDA model
-
+# lda.gibbs <- LDA(x = dfm, k = k, method = "Gibbs", control = list(verbose = 800, alpha = 50/k, seed = 10)) # make the LDA model
+lda <- LDA(x = dfm, k = k, control = list(verbose = 800, alpha = 50/k, seed = 10))# make the LDA model
 #### method to create gammaDF for new documents using an existing LDA model
 # lda_inf <- posterior(ldaModel, NewDoc.dfm)
 # new.gammaDF <- lda_inf$topics
@@ -113,13 +113,27 @@ make_string_array <- function(lst) {
       char
 }
 
+make_string_array <- function(lst) {
+      char <- NULL
+      for (i in 1:length(lst)) {
+            char[i] <- paste("'{", paste(as.character(lst[[i]]), sep = "", collapse = ", "), "}'")
+      }
+      char
+}
+
 tmp$topicProbs <- make_string_array(topicProbs)
 tmp$simClips <- make_string_array(simClips)
+
+for (i in 1:NROW(tmp)) {
+      # double check column names
+      txt <- paste("UPDATE test2 SET topicprobs=",tmp$topicProbs[i],",simclips=",tmp$simClips[i]," where id=","'",tmp$id[i],"'", sep = "")
+      dbGetQuery(con, txt)
+}
 
 # dbListTables(con)
 # 
 # # create a new table, this function doesn't work for updating
-# dbWriteTable(con, "test",
-#              value = topic.namesDAT, row.names = FALSE)
+dbWriteTable(con, "test",
+              value = tmp.original2, row.names = FALSE)
 
 test <- dbReadTable(con, "test")
