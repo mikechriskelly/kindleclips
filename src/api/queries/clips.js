@@ -38,9 +38,9 @@ function parseMyClippingsTxt(clipFile, userId) {
 
     const clip = {};
     clip.hash = hashText(section);
-    clip.title = (lines[0].match(/(.+?)\((.*?)\)$/) || defaultValue)[1].trim();
+    clip.title = (lines[0].match(/(.+?)\((.*?)\)$/) || defaultValue)[1].trim().substring(0, 400);
     clip.text = lines.slice(2).join('\n').trim();
-    clip.author = (lines[0].match(/(.+?)\((.*?)\)$/) || defaultValue)[2].trim();
+    clip.author = (lines[0].match(/(.+?)\((.*?)\)$/) || defaultValue)[2].trim().substring(0, 120);
     clip.userId = userId;
     return clip.text.length ? clip : null;
   });
@@ -67,7 +67,6 @@ const userClips = {
       const token = root.request.headers.authorization.split(' ')[1];
       userId = getID(token);
     }
-
     try {
       return args.search ?
         Clip.search(userId, args.search, resultLimit) :
@@ -77,7 +76,7 @@ const userClips = {
           limit: resultLimit,
         });
     } catch (err) {
-      console.log('Could not retrieve clips.', err);
+      console.log('Could not retrieve clips.', err.SequelizeDatabaseError);
       return [];
     }
   },
@@ -105,11 +104,11 @@ const singleClip = {
 async function insertClips(clipFile, userId) {
   const clips = parseMyClippingsTxt(clipFile, userId);
   try {
-    await Clip.bulkCreate(clips, { validate: true });
+    await Clip.bulkCreate(clips, { validate: false });
     console.log('Clips inserted.');
     return true;
   } catch (err) {
-    console.log('Some write operations failed. Usually due to duplicates.');
+    console.log('Some write operations failed. Usually due to duplicates.', err);
     return false;
   }
 }

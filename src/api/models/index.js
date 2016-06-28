@@ -35,7 +35,8 @@ User.hasMany(Clip, {
 
 async function syncDatabase(...args) {
   await sequelize.sync(...args);
-  await Clip.addFullTextIndex();
+  Clip.addFullTextIndex();
+  Clip.addIgnoreDuplicateRule();
   return sequelize;
 }
 

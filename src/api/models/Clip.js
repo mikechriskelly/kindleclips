@@ -29,7 +29,7 @@ const Clip = Model.define('Clip', {
   },
 
   author: {
-    type: DataType.STRING(80),
+    type: DataType.STRING(120),
     allowNull: true,
   },
 
@@ -69,6 +69,16 @@ const Clip = Model.define('Clip', {
                            'pg_catalog.english', ${searchFields.join(', ')})`);
       } catch (err) {
         console.log('Full Text Search already added.');
+      }
+    },
+    async addIgnoreDuplicateRule() {
+      try {
+        await Model.query(`CREATE RULE "Clip_on_duplicate_ignore" AS ON INSERT TO "Clip"
+                           WHERE EXISTS(SELECT 1 FROM "Clip"
+                           WHERE ("userId", "hash")=(NEW."userId", NEW."hash"))
+                           DO INSTEAD NOTHING;`);
+      } catch (err) {
+        console.log('Ignore Duplicate rule already exists');
       }
     },
     async search(userId, searchPhrase, resultLimit) {
