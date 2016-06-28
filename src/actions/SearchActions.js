@@ -25,14 +25,13 @@ class SearchActions {
       body: JSON.stringify({ query }),
       credentials: 'include',
     });
-
     const { data } = await resp.json();
     let result;
-    if (!data || !data.clips) {
+    if (!data || !data.userClips) {
       this.failedClips();
     } else {
-      this.updateClips(data.clips);
-      result = data.clips;
+      this.updateClips(data.userClips);
+      result = data.userClips;
     }
     return result;
   }
@@ -46,7 +45,7 @@ class SearchActions {
   }
 
   failedClips() {
-    return 'Could not fetch clips';
+    return true;
   }
 
   async uploadClips(files) {

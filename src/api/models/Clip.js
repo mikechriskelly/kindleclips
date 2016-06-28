@@ -74,10 +74,12 @@ const Clip = Model.define('Clip', {
     async search(userId, searchPhrase, resultLimit) {
       const query = Model.getQueryInterface().escape(searchPhrase);
       const vectorName = this.getVectorName();
-      return Model.query(`SELECT id, title, author, text FROM ${this.tableName}
-                          WHERE userId = "${userId}"
+      return Model.query(`SELECT id, title, author, text FROM "${this.tableName}"
+                          WHERE "userId" = '${userId}'
                           AND ${vectorName} @@ plainto_tsquery(\'english\', ${query})
-                          LIMIT ${resultLimit}`, this);
+                          LIMIT ${resultLimit}`,
+                          { type: Model.QueryTypes.SELECT })
+                  .then(results => results);
     },
   },
 });

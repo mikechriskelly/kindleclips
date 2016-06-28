@@ -6,7 +6,7 @@ const sequelize = new Sequelize(databaseUrl, {
   define: {
     freezeTableName: true,
   },
-  logging: true,
+  logging: false,
 });
 
 export default sequelize;

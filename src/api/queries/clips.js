@@ -76,7 +76,7 @@ const userClips = {
           where: { userId },
           limit: resultLimit,
         });
-    } catch (err) { 
+    } catch (err) {
       console.log('Could not retrieve clips.', err);
       return [];
     }
@@ -109,7 +109,7 @@ async function insertClips(clipFile, userId) {
     console.log('Clips inserted.');
     return true;
   } catch (err) {
-    console.log('Some write operations failed. Usually due to duplicates.', err);
+    console.log('Some write operations failed. Usually due to duplicates.');
     return false;
   }
 }
