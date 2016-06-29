@@ -20,6 +20,8 @@ con <- dbConnect(drv, dbname = dbname,
                  host = host, port = port,
                  user = user)
 
+rm(list = setdiff(ls(), "con"))
+
 # query to extract only clips for a single user
 tmp <- dbGetQuery(con, "select * from \"Clip\" where \"userId\" = 'e9579f90-3bfc-11e6-9c95-c79599221550'::uuid")
 # dbGetQuery(con, "select title from \"Clip\" where author = 'Seth Godin'")
@@ -48,10 +50,12 @@ make_k <- function(tmp) {
       ifelse(x < 5, 5, x)
       round(x, 0)
 }
-k <- make_k(tmp) # number of topic clusters
+k_tops <- make_k(tmp) # number of topic clusters
+topic_len <- 1:k_tops
+
 set.seed(10)
 # lda.gibbs <- LDA(x = dfm, k = k, method = "Gibbs", control = list(verbose = 800, alpha = 50/k, seed = 10)) # make the LDA model
-lda <- LDA(x = dfm, k = k, control = list(verbose = 800, alpha = 50/k, seed = 10))# make the LDA model
+lda <- LDA(x = dfm, k = k_tops, control = list(verbose = 800, alpha = 50/k_tops, seed = 10))# make the LDA model
 #### method to create gammaDF for new documents using an existing LDA model
 # lda_inf <- posterior(ldaModel, NewDoc.dfm)
 # new.gammaDF <- lda_inf$topics
@@ -59,27 +63,31 @@ lda <- LDA(x = dfm, k = k, control = list(verbose = 800, alpha = 50/k, s
 # pull topic probs for each clip and put them into tmp list
 gammaDF <- as.data.frame(lda@gamma)
 # use Hellinger distance for similarity measure of vectors
-dist.mat <- as.matrix(dist(gammaDF), method = "Bhjattacharyya")
-
+distMat <- as.matrix(dist(gammaDF), method = "Bhjattacharyya")
 gammaDF <- round(gammaDF, 6)
 
-topicProbs <- split(as.matrix(gammaDF), 1:NROW(gammaDF))
+# create normalized clip similarity table
+distVec <- as.vector(distMat)
+idDistVec <- rep(tmp$id, times = 1, each = NROW(tmp))
+simIdVec <- rep(tmp$id, times = NROW(tmp))
+sim_clip_table <- data.frame("sim_clip_key" = paste(idDistVec, simIdVec, sep = "-"),
+                        "clip_id" = idDistVec, "sim_clip_id" = simIdVec, 
+                        "distance" = distVec, stringsAsFactors = FALSE)
+rem <- which(sim_clip_table$distance == 0)
+sim_clip_table <- sim_clip_table[-rem, ]
 
-# sorted similarity matrix for all clips
-tops_lst <- apply(dist.mat, 2, function(x) names(sort(x)[2:dim(dist.mat)[1]]))
-
-# re-create tops_lst but with mongoID instead of index #s
-tops_id <- matrix(tmp$id[as.numeric(tops_lst)], nrow = dim(tops_lst)[1])
+# create normalized topic probability table
+gamVec <- as.vector(t(gammaDF)) # topic probability vector
+topVec <- rep(topic_len, NROW(tmp)) # repeating topic id vector
+idVec <- rep(tmp$id, times = 1, each = k_tops) # repeating clip id vector
+prob_key <- paste(idVec,topVec, sep = "-") # primary key, clip id + topic id
+topic_prob_table <- data.frame("prob_key" = prob_key, "clip_id" = idVec, "topic_id" = topVec, "topic_prob" = gamVec)
 
 # write a function that will find the top n related clips
 make_tops <- function(tops_id, clip_number, top_n=dim(tops_id)[1]) {
       tops_id[1:top_n,clip_number]
 }
 
-simClips <- list()
-for (i in 1:NROW(tmp)) {
-      simClips[[i]] <- make_tops(tops_id, i, 3) # set top_n at 3 to make output manageable
-}
 
 #===topic naming==
 # list of collapsed author names
@@ -96,44 +104,18 @@ name_topic <- function(term_length, n_char, top_n_terms) {
       topic.names <- apply(term, 2, FUN = function(x) x[!is.na(x)][1:top_n_terms])
       topic.names }
 
-topic.names <- apply(name_topic(60, 6, 5), 2, paste, collapse = '_') # there must be a faster way to do this
+topic.names <- apply(name_topic(100, 8, 3), 2, paste, collapse = '_') # there must be a faster way to do this
 names(topic.names) <- NULL
 
-# hacky way to put arrays into sql as char vectors in R
-topic.names <- paste("'", topic.names, "'", sep = "")
-topic.names <- paste("{", paste(topic.names, collapse = ", "), "}")
-topic.namesDAT <- data.frame("userId" = tmp$userId[1], "topicNames" = topic.names)
-
-# hacky function to make lists into array looking char vectors
-make_string_array <- function(lst) {
-      char <- NULL
-      for (i in 1:length(lst)) {
-            char[i] <- paste("{", paste(paste("'", as.character(lst[[i]]), "'", sep = ""), collapse = ", "), "}")
-      }
-      char
-}
-
-make_string_array <- function(lst) {
-      char <- NULL
-      for (i in 1:length(lst)) {
-            char[i] <- paste("'{", paste(as.character(lst[[i]]), sep = "", collapse = ", "), "}'")
-      }
-      char
-}
-
-tmp$topicProbs <- make_string_array(topicProbs)
-tmp$simClips <- make_string_array(simClips)
+# create normalized table with topic names
+topic_names_table <- data.frame("topic_key" = paste(tmp$userId[1], topic_len, sep = "-"),
+                        "user_id" = tmp$userId[1], "topic_id" = topic_len,
+                        "topic_names" = topic.names)
 
 for (i in 1:NROW(tmp)) {
       # double check column names
-      txt <- paste("UPDATE test2 SET topicprobs=",tmp$topicProbs[i],",simclips=",tmp$simClips[i]," where id=","'",tmp$id[i],"'", sep = "")
+      txt <- paste("UPDATE test2 SET topicprobs=", tmp$topicProbs[i], ",simclips=", tmp$simClips[i], " where id=", "'", tmp$id[i], "'", sep = "")
       dbGetQuery(con, txt)
 }
 
 # dbListTables(con)
-# 
-# # create a new table, this function doesn't work for updating
-dbWriteTable(con, "test",
-              value = tmp.original2, row.names = FALSE)
-
-test <- dbReadTable(con, "test")
