@@ -94,4 +94,98 @@ const Clip = Model.define('Clip', {
   },
 });
 
+// I outlined 3 new tables below, syntax could be problematic and
+// I'm not sure what to put in classMethods -chris
+
+const topic_prob = Model.define('topic_prob', {
+
+  topic_prob_id: {
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV1,
+    primaryKey: true,
+  },
+
+  clip_id: {
+    type: DataType.UUID,
+    unique: 'compositeIndex',
+    allowNull: false,
+  },
+
+  topic_id: {
+    type: DataType.STRING(10),
+    allowNull: false,
+  },
+
+  prob: {
+    type: DataType.ARRAY(DataType.REAL),
+    allowNull: false,
+  },
+
+}, {
+  classMethods: {
+    // beats me what goes in here
+  },
+});
+
+const clip_dist = Model.define('clip_dist', {
+
+  clip_sim_clip_id: {
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV1,
+    primaryKey: true,
+  },
+
+  clip_id: {
+    type: DataType.UUID,
+    unique: 'compositeIndex',
+    allowNull: false,
+  },
+
+  sim_clip_id: {
+    type: DataType.UUID,
+    unique: 'compositeIndex',
+    allowNull: false,
+  },
+
+  distance: {
+    type: DataType.ARRAY(DataType.REAL),
+    allowNull: false,
+  },
+
+}, {
+  classMethods: {
+    // beats me what goes in here
+  },
+});
+
+const topic_name = Model.define('topic_name', {
+
+  topic_name_id: {
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV1,
+    primaryKey: true,
+  },
+
+  user_id: {
+    type: DataType.UUID,
+    unique: 'compositeIndex',
+    allowNull: false,
+  },
+
+  topic_id: {
+    type: DataType.STRING(10),
+    allowNull: false,
+  },
+
+  name: {
+    type: DataType.STRING(100),
+    allowNull: false,
+  },
+
+}, {
+  classMethods: {
+    // beats me what goes in here
+  },
+});
+
 export default Clip;
