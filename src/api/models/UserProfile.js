@@ -1,15 +1,17 @@
 import DataType from 'sequelize';
 import Model from '../sequelize';
 
-const UserProfile = Model.define('UserProfile', {
+const UserProfile = Model.define('user_profile', {
 
   userId: {
     type: DataType.UUID,
     primaryKey: true,
+    field: 'user_id',
   },
 
   displayName: {
     type: DataType.STRING(100),
+    field: 'display_name',
   },
 
   picture: {

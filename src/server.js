@@ -48,7 +48,7 @@ async function setupDemoUser() {
     where: { id: demoUser.id },
   });
   if (!existingUser) {
-    User.create({
+    await User.create({
       id: demoUser.id,
       email: demoUser.email,
       emailConfirmed: true,

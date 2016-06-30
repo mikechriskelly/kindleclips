@@ -1,7 +1,7 @@
 import DataType from 'sequelize';
 import Model from '../sequelize';
 
-const User = Model.define('User', {
+const User = Model.define('user', {
 
   id: {
     type: DataType.UUID,
@@ -17,6 +17,7 @@ const User = Model.define('User', {
   emailConfirmed: {
     type: DataType.BOOLEAN,
     defaultValue: false,
+    field: 'email_confirmed',
   },
 
 }, {
