@@ -72,7 +72,6 @@ distVec <- as.vector(distMat)
 idDistVec <- rep(tmp$id, times = 1, each = NROW(tmp))
 simIdVec <- rep(tmp$id, times = NROW(tmp))
 sim_clip_table <- data.frame(
-                  "sim_clip_key" = paste(idDistVec, simIdVec, sep = "-"),
                   "clip_id" = idDistVec,
                   "sim_clip_id" = simIdVec, 
                   "distance" = distVec, stringsAsFactors = FALSE)
@@ -93,7 +92,6 @@ top_30 <- make_smaller_table(sim_clip_table, 30)
 
 # create normalized topic probability table
 topic_prob_table <- data.frame(
-      "prob_key" = paste(rep(tmp$id, times = 1, each = k_tops), rep(topic_len, NROW(tmp)), sep = "-"), # primary key, clip id + topic id
       "topic_prob" = as.vector(t(gammaDF)), # topic probability vector
       "topic_id" = rep(topic_len, NROW(tmp)), # repeating topic id vector
       "clip_id" = rep(tmp$id, times = 1, each = k_tops), # repeating clip id vector
@@ -125,7 +123,6 @@ names(topic.names) <- NULL
 
 # create normalized table with topic names
 topic_names_table <- data.frame(
-                        "topic_key" = paste(tmp$userId[1], topic_len, sep = "-"),
                         "user_id" = tmp$userId[1], 
                         "topic_id" = topic_len,
                         "topic_names" = topic.names, 
