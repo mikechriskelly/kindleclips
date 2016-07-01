@@ -64,19 +64,20 @@ lda <- LDA(x = dfm, k = k_tops, control = list(verbose = 800, alpha = 50
 # pull topic probs for each clip and put them into tmp list
 gammaDF <- as.data.frame(lda@gamma)
 # use Hellinger distance for similarity measure of vectors
-distMat <- as.matrix(dist(gammaDF), method = "Bhjattacharyya")
+# can this be made to vector w/o breaking anything? distMat <- as.matrix(dist(gammaDF), method = "Bhjattacharyya")
 gammaDF <- round(gammaDF, 6)
 
 # create normalized clip similarity table
 distVec <- as.vector(distMat)
 idDistVec <- rep(tmp$id, times = 1, each = NROW(tmp))
 simIdVec <- rep(tmp$id, times = NROW(tmp))
-sim_clip_table <- data.frame(
+clip_dist_table <- data.frame(
+                  "clip_dist_key" = paste(idDistVec, simIdVec, sep = "-"),
                   "clip_id" = idDistVec,
-                  "sim_clip_id" = simIdVec, 
+                  "clip_dist_id" = simIdVec, 
                   "distance" = distVec, stringsAsFactors = FALSE)
-rem <- which(sim_clip_table$distance == 0)
-sim_clip_table <- sim_clip_table[-rem, ]
+rem <- which(clip_dist_table$distance == 0)
+clip_dist_table <- clip_dist_table[-rem, ]
 
 make_smaller_table <- function(table, n) {
       clip_array <- split(table, table$clip_id)
@@ -88,7 +89,7 @@ make_smaller_table <- function(table, n) {
       df
 }
 
-top_30 <- make_smaller_table(sim_clip_table, 30)
+top_30 <- make_smaller_table(clip_dist_table, 30)
 
 # create normalized topic probability table
 topic_prob_table <- data.frame(
@@ -128,12 +129,50 @@ topic_names_table <- data.frame(
                         "topic_names" = topic.names, 
                         stringsAsFactors = FALSE)
 
-Sys.time() - timeChk
+# dbRemoveTable(con, "topic_name")
+# dbRemoveTable(con, "topic_prob")
+# dbRemoveTable(con, "clip_dist")
 
-for (i in 1:NROW(tmp)) {
-      # double check column names
-      txt <- paste("UPDATE test2 SET topicprobs=", tmp$topicProbs[i], ",simclips=", tmp$simClips[i], " where id=", "'", tmp$id[i], "'", sep = "")
+# initialize topic_name table
+dbWriteTable(con, "topic_name", value = topic_names_table[1,], row.names = FALSE)
+# insert addtional rows into table
+for (i in 2:NROW(topic_names_table)) {
+      txt <- paste("insert into topic_name (topic_key, user_id, topic_id, topic_names) values",
+                   "('", topic_names_table$topic_key[i], "',",
+                   "'", topic_names_table$user_id[i], "',",
+                   "'", topic_names_table$topic_id[i], "',",
+                   "'", topic_names_table$topic_names[i], "')",
+                   sep = "")
       dbGetQuery(con, txt)
 }
+
+# initialize topic_prob table
+dbWriteTable(con, "topic_prob", value = topic_prob_table[1,], row.names = FALSE)
+# insert addtional rows into table
+for (i in 2:NROW(topic_prob_table)) {
+      txt <- paste("insert into topic_prob (prob_key, clip_id, topic_id, topic_prob) values",
+                   "('", topic_prob_table$prob_key[i], "',",
+                   "'", topic_prob_table$clip_id[i], "',",
+                   "'", topic_prob_table$topic_id[i], "',",
+                   "'", topic_prob_table$topic_prob[i], "')",
+                   sep = "")
+      dbGetQuery(con, txt)
+}
+
+# initialize clip_dist table
+clip_dist_table <- top_30
+dbWriteTable(con, "clip_dist", value = clip_dist_table[1,], row.names = FALSE)
+# insert addtional rows into table
+for (i in 2:NROW(clip_dist_table)) {
+      txt <- paste("insert into clip_dist (clip_dist_key, clip_id, clip_dist_id, distance) values",
+                   "('", clip_dist_table$clip_dist_key[i], "',",
+                   "'", clip_dist_table$clip_id[i], "',",
+                   "'", clip_dist_table$clip_dist_key[i], "',",
+                   "'", clip_dist_table$distance[i], "')",
+                   sep = "")
+      dbGetQuery(con, txt)
+}
+
+print(Sys.time() - timeChk)
 
 # dbListTables(con)
