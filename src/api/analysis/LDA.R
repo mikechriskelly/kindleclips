@@ -64,7 +64,10 @@ lda <- LDA(x = dfm, k = k_tops, control = list(verbose = 800, alpha = 50
 # pull topic probs for each clip and put them into tmp list
 gammaDF <- as.data.frame(lda@gamma)
 # use Hellinger distance for similarity measure of vectors
-# can this be made to vector w/o breaking anything? distMat <- as.matrix(dist(gammaDF), method = "Bhjattacharyya")
+# can this be made to vector w/o breaking anything?
+distMat <- distHellinger(as.matrix(gammaDF))
+
+
 gammaDF <- round(gammaDF, 6)
 
 # create normalized clip similarity table
