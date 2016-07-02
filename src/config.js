@@ -2,6 +2,14 @@ export const port = process.env.PORT || 3000;
 export const host = process.env.WEBSITE_HOSTNAME || `localhost:${port}`;
 
 export const databaseUrl = process.env.DATABASE_URL || process.env.LOCAL_DATABASE_URL;
+export const db = {
+  url: databaseUrl,
+  host: process.env.DATABASE_HOST || process.env.LOCAL_DATABASE_HOST,
+  port: process.env.DATABASE_PORT || process.env.LOCAL_DATABASE_PORT || 5432,
+  user: process.env.DATABASE_USER || process.env.LOCAL_DATABASE_USER,
+  name: process.env.DATABASE_NAME || process.env.LOCAL_DATABASE_NAME,
+  pw: process.env.DATABASE_PW || process.env.LOCAL_DATABASE_PW,
+};
 
 export const analytics = {
   google: { trackingId: process.env.GOOGLE_TRACKING_ID || 'UA-XXXXX-X' },

@@ -5,8 +5,9 @@ import schema from './schema';
 import { insertClips, removeClips } from './queries/clips';
 import User from './models/User';
 import expressJwt from 'express-jwt';
-import { auth } from '../config';
+import { auth, db } from '../config';
 import { getToken, protectRoute } from './auth';
+import { exec } from 'child_process';
 
 const server = Router();
 
@@ -44,6 +45,20 @@ server.get('/api/user/delete', async (req, res) => {
   } else {
     res.redirect('/');
   }
+});
+
+// Data Analysis Process
+server.get('/api/clips/analyze', async (req, res) => {
+  const parameters = [req.user.id, db.name, db.host, db.port, db.user, db.pw].join(' ');
+  const command = `build/analysis/LDA.r ${parameters}`;
+
+  exec(command, (error, stdout, stderr) => {
+    console.log('stdout: ', stdout);
+    console.log('stderr: ', stderr);
+    if (error !== null) {
+      console.log('exec error: ', error);
+    }
+  });
 });
 
 server.post('/api/clips/upload',
