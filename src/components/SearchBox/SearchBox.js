@@ -7,7 +7,7 @@ import s from './SearchBox.css';
 class SearchBox extends Component {
   onChange = (event) => {
     const searchTerm = event.target.value;
-    ClipActions.searchClips(searchTerm);
+    ClipActions.search(searchTerm);
   }
 
   render() {
