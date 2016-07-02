@@ -5,7 +5,7 @@ import connectToStores from 'alt-utils/lib/connectToStores';
 import Header from '../../components/Header';
 import ClipList from '../../components/ClipList';
 import UserStore from '../../stores/UserStore';
-import SearchStore from '../../stores/SearchStore';
+import ClipStore from '../../stores/ClipStore';
 
 class Home extends Component {
 
@@ -23,13 +23,13 @@ class Home extends Component {
   };
 
   static getStores() {
-    return [UserStore, SearchStore];
+    return [UserStore, ClipStore];
   }
 
   static getPropsFromStores() {
     return {
       ...UserStore.getState(),
-      ...SearchStore.getState(),
+      ...ClipStore.getState(),
     };
   }
 

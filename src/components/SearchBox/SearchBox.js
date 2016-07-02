@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import SearchActions from '../../actions/SearchActions';
+import ClipActions from '../../actions/ClipActions';
 import DebounceInput from 'react-debounce-input';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './SearchBox.css';
@@ -7,7 +7,7 @@ import s from './SearchBox.css';
 class SearchBox extends Component {
   onChange = (event) => {
     const searchTerm = event.target.value;
-    SearchActions.searchClips(searchTerm);
+    ClipActions.searchClips(searchTerm);
   }
 
   render() {

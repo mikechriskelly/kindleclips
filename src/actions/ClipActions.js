@@ -3,13 +3,13 @@ import fetch from '../core/fetch';
 import history from '../core/history';
 import UserStore from '../stores/UserStore';
 
-class SearchActions {
+class ClipActions {
 
-  async initialFetch() {
-    return await this.searchClips();
+  async fetch() {
+    return await this.search();
   }
 
-  async searchClips(searchTerm) {
+  async search(searchTerm) {
     const query = searchTerm ?
       `{userClips(search:"${searchTerm}"){id,title,author,text}}` :
       '{userClips{id,title,author,text}}';
@@ -28,27 +28,27 @@ class SearchActions {
     const { data } = await resp.json();
     let result;
     if (!data || !data.userClips) {
-      this.failedClips();
+      this.fail();
     } else {
-      this.updateClips(data.userClips);
+      this.update(data.userClips);
       result = data.userClips;
     }
     return result;
   }
 
-  updateClips(results) {
+  update(results) {
     return results;
   }
 
-  clearClips() {
+  clear() {
     return true;
   }
 
-  failedClips() {
+  fail() {
     return true;
   }
 
-  async uploadClips(files) {
+  async upload(files) {
     const formData = new FormData();
     formData.append('myClippingsTxt', files[0]);
 
@@ -59,7 +59,7 @@ class SearchActions {
     });
 
     if (resp.status === 200) {
-      await this.initialFetch();
+      await this.fetch();
       history.push('/');
     } else {
       console.log('Error uploading clips');
@@ -67,4 +67,4 @@ class SearchActions {
   }
 }
 
-export default alt.createActions(SearchActions);
+export default alt.createActions(ClipActions);
