@@ -7,7 +7,8 @@ library(quanteda)
 library(topicmodels)
 library(uuid)
 
-timeChk <- Sys.time()
+userid <- args[1]
+
 
 host <- "localhost"
 port <- 5432
@@ -23,7 +24,6 @@ con <- dbConnect(drv, dbname = dbname,
                  user = user)
 
 # query to extract only clips for a single user
-userid <- '8f411ee0-4080-11e6-94cc-891a1b04a17e' # user arg fun to pull clips for specific user
 qry <- paste("select id, user_id, hash, title, author, text from clip where user_id =", paste("'", userid, "'", "::uuid", sep = ""))
 tmp <- dbGetQuery(con, qry)
 # dbGetQuery(con, "select title from \"Clip\" where author = 'Seth Godin'")
@@ -65,9 +65,8 @@ lda <- LDA(x = dfm, k = k_tops, control = list(verbose = 800, alpha = 50
 # pull topic probs for each clip and put them into tmp list
 gammaDF <- as.data.frame(lda@gamma)
 # use Hellinger distance for similarity measure of vectors
-# can this be made to vector w/o breaking anything?
 distMat <- distHellinger(as.matrix(gammaDF))
-
+distMat <- distMat * 1000
 
 gammaDF <- round(gammaDF, 6)
 
@@ -93,7 +92,9 @@ make_smaller_table <- function(table, n) {
       df
 }
 
-top_30 <- make_smaller_table(clip_dist_table, 30)
+top_10 <- make_smaller_table(clip_dist_table, 10)
+z <- which(top_10$distance > quantile(clip_dist_table$distance, 0.09)) # set threshold
+top_10 <- top_10[-z,] # remove rows which don't meet threshold
 
 # create normalized topic probability table
 topic_prob_table <- data.frame(
@@ -160,7 +161,7 @@ for (i in 1:NROW(topic_prob_table)) {
 }
 
 # initialize clip_dist table
-clip_dist_table <- top_30 # don't want to write 400K rows
+clip_dist_table <- top_10 # don't want to write 400K rows
 # insert addtional rows into table
 for (i in 1:NROW(clip_dist_table)) {
       txt <- paste("insert into clip_dist (id, clip_id, sim_clip_id, distance, created_at, updated_at) values",
@@ -173,7 +174,5 @@ for (i in 1:NROW(clip_dist_table)) {
                    sep = "")
       dbGetQuery(con, txt)
 }
-
-print(Sys.time() - timeChk)
 
 # dbListTables(con)
