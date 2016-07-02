@@ -16,7 +16,6 @@ import { loginUser } from './api/auth';
 import apiRoutes from './api/routes.js';
 import cookie from 'react-cookie';
 import alt from './core/alt';
-import { exec } from 'child_process';
 import fs from 'fs';
 
 /* eslint-disable no-console */
@@ -102,21 +101,10 @@ server.get('/logout', (req, res) => {
 server.use(apiRoutes);
 
 
-// Launch Data Analysis Process
-function runAnalysis() {
-  // Make R script executable for node (octal 0755 = decimal 493)
-  fs.chmod('build/analysis/LDA.r', 493, (err) => {
-    if (err) throw err;
-  });
-
-  exec('build/analysis/LDA.r', (error, stdout, stderr) => {
-    console.log('stdout: ', stdout);
-    console.log('stderr: ', stderr);
-    if (error !== null) {
-      console.log('exec error: ', error);
-    }
-  });
-}
+// Make LDA script executable
+fs.chmod('build/analysis/LDA.r', 493, (err) => {
+  if (err) throw err;
+});
 
 
 // Register server-side rendering middleware

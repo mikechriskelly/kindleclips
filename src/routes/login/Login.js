@@ -9,7 +9,7 @@ function Login(props, context) {
   return (
     <div className={s.root}>
       <div className={s.container}>
-        <h1>{title}</h1>
+        <h3>{title}</h3>
         <div className={s.formGroup}>
           <a className={s.facebook} href="/login/facebook">
             <svg

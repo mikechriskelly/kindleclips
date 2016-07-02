@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import Dropzone from 'react-dropzone';
-import SearchActions from '../../actions/SearchActions';
+import ClipActions from '../../actions/ClipActions';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Upload.css';
 
@@ -16,10 +16,10 @@ function Upload(props, context) {
           accept="text/plain"
           className={s.dropzone}
           multiple={false}
-          onDrop={SearchActions.uploadClips}
+          onDrop={ClipActions.upload}
         >
           <p>
-            Add "My Clippings.txt" file from your Kindle
+            Add <strong>My Clippings.txt</strong> file from your Kindle
           </p>
         </Dropzone>
       </div>
