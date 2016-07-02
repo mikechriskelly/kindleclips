@@ -5,6 +5,7 @@ library(tm)
 library(RPostgreSQL)
 library(quanteda)
 library(topicmodels)
+library(uuid)
 
 timeChk <- Sys.time()
 
@@ -22,8 +23,8 @@ con <- dbConnect(drv, dbname = dbname,
                  user = user)
 
 # query to extract only clips for a single user
-userid <- 'e9579f90-3bfc-11e6-9c95-c79599221550' # user arg fun to pull clips for specific user
-qry <- paste("select id, \"userId\", hash, title, author, text from \"Clip\" where \"userId\" =", paste("'", userid, "'", "::uuid", sep = ""))
+userid <- '8f411ee0-4080-11e6-94cc-891a1b04a17e' # user arg fun to pull clips for specific user
+qry <- paste("select id, user_id, hash, title, author, text from clip where user_id =", paste("'", userid, "'", "::uuid", sep = ""))
 tmp <- dbGetQuery(con, qry)
 # dbGetQuery(con, "select title from \"Clip\" where author = 'Seth Godin'")
 
@@ -127,51 +128,48 @@ names(topic.names) <- NULL
 
 # create normalized table with topic names
 topic_names_table <- data.frame(
-                        "user_id" = tmp$userId[1], 
+                        "user_id" = tmp$user_id[1], 
                         "topic_id" = topic_len,
                         "topic_names" = topic.names, 
                         stringsAsFactors = FALSE)
 
-# dbRemoveTable(con, "topic_name")
-# dbRemoveTable(con, "topic_prob")
-# dbRemoveTable(con, "clip_dist")
-
-# initialize topic_name table
-dbWriteTable(con, "topic_name", value = topic_names_table[1,], row.names = FALSE)
 # insert addtional rows into table
-for (i in 2:NROW(topic_names_table)) {
-      txt <- paste("insert into topic_name (topic_key, user_id, topic_id, topic_names) values",
-                   "('", topic_names_table$topic_key[i], "',",
-                   "'", topic_names_table$user_id[i], "',",
-                   "'", topic_names_table$topic_id[i], "',",
-                   "'", topic_names_table$topic_names[i], "')",
+for (i in 1:NROW(topic_names_table)) {
+      txt <- paste("insert into topic (id, user_id, topic_id, name, created_at, updated_at) values",
+                   "('", UUIDgenerate(), "', ",
+                   "'", topic_names_table$user_id[i], "', ",
+                   topic_names_table$topic_id[i], ", ",
+                   "'", topic_names_table$topic_names[i], "',",
+                   "'", Sys.time(), "', ",
+                   "'", Sys.time(), "')",
                    sep = "")
       dbGetQuery(con, txt)
 }
 
-# initialize topic_prob table
-dbWriteTable(con, "topic_prob", value = topic_prob_table[1,], row.names = FALSE)
 # insert addtional rows into table
-for (i in 2:NROW(topic_prob_table)) {
-      txt <- paste("insert into topic_prob (prob_key, clip_id, topic_id, topic_prob) values",
-                   "('", topic_prob_table$prob_key[i], "',",
+for (i in 1:NROW(topic_prob_table)) {
+      txt <- paste("insert into topic_prob (id, clip_id, topic_id, prob, created_at, updated_at) values",
+                   "('", UUIDgenerate(), "', ",
                    "'", topic_prob_table$clip_id[i], "',",
-                   "'", topic_prob_table$topic_id[i], "',",
-                   "'", topic_prob_table$topic_prob[i], "')",
+                   topic_prob_table$topic_id[i], ",",
+                   topic_prob_table$topic_prob[i], ",",
+                   "'", Sys.time(), "', ",
+                   "'", Sys.time(), "')",
                    sep = "")
       dbGetQuery(con, txt)
 }
 
 # initialize clip_dist table
-clip_dist_table <- top_30
-dbWriteTable(con, "clip_dist", value = clip_dist_table[1,], row.names = FALSE)
+clip_dist_table <- top_30 # don't want to write 400K rows
 # insert addtional rows into table
-for (i in 2:NROW(clip_dist_table)) {
-      txt <- paste("insert into clip_dist (clip_dist_key, clip_id, clip_dist_id, distance) values",
-                   "('", clip_dist_table$clip_dist_key[i], "',",
+for (i in 1:NROW(clip_dist_table)) {
+      txt <- paste("insert into clip_dist (id, clip_id, sim_clip_id, distance, created_at, updated_at) values",
+                   "('",  UUIDgenerate(), "', ",
                    "'", clip_dist_table$clip_id[i], "',",
-                   "'", clip_dist_table$clip_dist_key[i], "',",
-                   "'", clip_dist_table$distance[i], "')",
+                   "'", clip_dist_table$clip_dist_id[i], "',",
+                   clip_dist_table$distance[i], ",",
+                   "'", Sys.time(), "', ",
+                   "'", Sys.time(), "')",
                    sep = "")
       dbGetQuery(con, txt)
 }
