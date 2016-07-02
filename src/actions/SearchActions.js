@@ -59,6 +59,7 @@ class SearchActions {
     });
 
     if (resp.status === 200) {
+      await this.initialFetch();
       history.push('/');
     } else {
       console.log('Error uploading clips');
