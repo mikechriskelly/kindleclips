@@ -59,6 +59,8 @@ server.get('/api/clips/analyze', async (req, res) => {
       console.log('exec error: ', error);
     }
   });
+
+  res.end('Running analysis');
 });
 
 server.post('/api/clips/upload',

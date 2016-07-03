@@ -4,12 +4,6 @@ html {
   background-color: var(--accent);
 }
 
-h1 {
-  font-size: 1.4em;
-  margin: 0 0 20px 0;
-  text-align: center;
-}
-
 .root {
   height: 100%;
   position: absolute;
@@ -21,8 +15,9 @@ h1 {
   background-color: var(--white-base);
   border-radius: 5px;
   margin: auto auto;
-  padding: 25px;
   max-width: 650px;
+  padding: 25px;
+  text-align: center;
 }
 
 .dropzone {
@@ -32,39 +27,28 @@ h1 {
   border-style: dashed;
   border-width: 2px;
   cursor: pointer;
+  display: inline-flex;
   height: 200px;
   width: 100%;
 }
 
-.dropzone p {
+.content {
   color:  var(--gray-dark);
-  padding-top: 70px;
+  margin: auto auto;
   text-align: center;
 }
 
-.button {
-  display: block;
-  box-sizing: border-box;
+.content p {
   margin: 0;
-  padding: 10px 16px;
-  width: 150px;
-  outline: 0;
-  border: 1px solid #373277;
-  border-radius: 0;
-  background: #373277;
-  color: #fff;
-  text-align: center;
-  text-decoration: none;
-  font-size: 18px;
-  line-height: 1.3333333;
-  cursor: pointer;
 }
 
-.button:hover {
-  background: rgba(54, 50, 119, 0.8);
+.action {
+  margin-top: 25px;
 }
 
-.button:focus {
-  border-color: #0074c2;
-  box-shadow: 0 0 8px rgba(0, 116, 194, 0.6);
+.clear {
+  border: none;
+  display: inline-block;
+  height: auto;
+  width: auto;
 }

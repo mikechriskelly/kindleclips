@@ -17,10 +17,21 @@ a {
   color: #0074c2;
 }
 
-h1, h2, h3 {
-  font-weight: 300;
-  font-size: 2em;
+h1, h2, h3, h4, h5, h6 {
   color: var(--gray-light);
+  font-weight: 300;
+  margin: 0 0 10px 0;
+}
+
+h1 { font-size: 2em; }
+h2 { font-size: 1.6em; }
+h3 { font-size: 1.4em; }
+h4 { font-size: 1.2em; }
+h5 { font-size: 1.2em; }
+h6 { font-size: 1.2em; }
+
+strong {
+  font-weight: 600;
 }
 
 /*

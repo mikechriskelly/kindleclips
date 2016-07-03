@@ -9,8 +9,9 @@
    * Colors
    * ========================================================================== */
 
-  --brand-color: #61dafb;
-  --link-color: #4078c0;
+  --brand-color: #8CB5BF;
+  --link-color: #6184DB;
+  --link-color-light: color(#6184DB lightness(+5%));
 
   --white-base: hsla(0, 100%, 100%, 1);
   --gray-darker: color(black lightness(+13.5%));  /* #222 */
@@ -33,15 +34,15 @@
    * ======================================================================== */
 
   --max-content-width: 1000px;
-  --max-text-width: 780px;
+  --max-text-width: 750px;
 
   /*
    * Media queries breakpoints
    * ======================================================================== */
 
-  --screen-xs-min: 480px;  /* Extra small screen / phone */
-  --screen-sm-min: 768px;  /* Small screen / tablet */
-  --screen-md-min: 992px;  /* Medium screen / desktop */
-  --screen-lg-min: 1200px; /* Large screen / wide desktop */
+  --screen-xs-min: 400px;  /* Larger than mobile */
+  --screen-sm-min: 550px;  /* Larger than phablet */
+  --screen-md-min: 750px;  /* Larger than tablet */
+  --screen-lg-min: 1000px; /* Larger than desktop */
+  --screen-xl-min: 1200px; /* Larger than Desktop HD */
 }
-

@@ -3,17 +3,54 @@ import cx from 'classnames';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Button.css';
 import Link from '../Link';
+import { FaFacebook, FaGoogle } from 'react-icons/lib/fa';
 
-function Button({ className }) {
-  return (
-    <div className={cx(s.root, className)}>
-    </div>
-  );
+const types = {
+  facebook: {
+    href: '/login/facebook',
+    text: 'Continue with Facebook',
+    icon: (<FaFacebook size={24} className={s.icon} />),
+  },
+  google: {
+    href: '/login/google',
+    text: 'Continue with Google',
+    icon: (<FaGoogle size={24} className={s.icon} />),
+  },
+};
+
+function Button({ className, href, onClick, text, type }) {
+  // Button or link?
+  let button;
+  if (href) {
+    button = (
+      <Link className={cx(s.button, className)} to={href}>
+        {text}
+      </Link>
+    );
+  } else if (types[type] && types[type].href) {
+    button = (
+      <a className={cx(s.button, className, s[type])} href={types[type].href}>
+        {types[type].icon}
+        {types[type].text}
+      </a>
+    );
+  } else {
+    button = (
+      <button className={cx(s.button, className, s[type])} onClick={onClick}>
+        {text}
+      </button>
+    );
+  }
+
+  return button;
 }
 
 Button.propTypes = {
   className: PropTypes.string,
+  href: PropTypes.string,
+  onClick: PropTypes.func,
   text: PropTypes.string,
+  type: PropTypes.string,
 };
 
 export default withStyles(s)(Button);
