@@ -1,9 +1,11 @@
 @import '../../components/variables.css';
 
 .root {
-  display: flex;
-  flex: 0 0 170px;
+  position: absolute;
+  right: 10px;
+  top: 15px;
   margin: 0;
+  max-height: 40px;
 }
 
 .link {

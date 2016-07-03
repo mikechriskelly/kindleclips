@@ -2,15 +2,49 @@
 
 .root {
   background-color: var(--accent-dark);
-  display: flex;
-  flex: 1 1 250px;
-  height: auto;
   border-radius: 3px;
+  max-height: 37px;
+  margin: auto;
   padding-left: 0px;
+  position: relative;
   vertical-align: middle;
-  margin: 0;
-  width: 60%;
+  width: 100%;
 }
+
+@media (min-width: 400px) {
+  .root {
+    margin: 0 10px;
+    max-width: 200px;
+  }
+}
+@media (min-width: 550px) {
+  .root { 
+    margin: 0 10px;
+    max-width: 350px;
+  }
+}
+@media (min-width: 750px) {
+  .root {
+    margin: 0 10px;
+    max-width: 550px;
+  }
+}
+@media (min-width: 1000px) {
+  .root {
+    margin: auto;
+    max-width: 700px;
+  }
+}
+@media (min-width: 1200px) {
+  .root {
+    margin: auto;
+    max-width: var(--max-text-width);
+  }
+}
+
+
+
+
 
 .icon {
   display: inline-block;

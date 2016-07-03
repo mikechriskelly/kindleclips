@@ -43,7 +43,7 @@ class Home extends Component {
       <div className={s.root}>
         <Header isLoggedIn={this.props.isLoggedIn} />
         <div className={s.container}>
-          <h1 className={s.title}>Highlights</h1>
+          <h2 className={s.title}>Highlights</h2>
           <ClipList clips={this.props.clips} />
         </div>
       </div>

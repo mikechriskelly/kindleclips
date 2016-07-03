@@ -1,11 +1,12 @@
 @import '../../components/variables.css';
 
-.root {
-
-}
-
 .container {
   margin: 0 auto;
   padding: 0 0 40px;
   max-width: var(--max-text-width);
+}
+
+.title {
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
