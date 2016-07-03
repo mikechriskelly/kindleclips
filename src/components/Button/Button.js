@@ -21,18 +21,18 @@ const types = {
 function Button({ className, href, onClick, text, type }) {
   // Button or link?
   let button;
-  if (href) {
+  if (type === 'plain' || (types[type] && types[type].href)) {
+    button = (
+      <a className={cx(s.button, className, s[type])} href={href || (types[type] && types[type].href)}>
+        {(types[type] && types[type].icon)}
+        {text || (types[type] && types[type].text)}
+      </a>
+    );
+  } else if (href) {
     button = (
       <Link className={cx(s.button, className)} to={href}>
         {text}
       </Link>
-    );
-  } else if (types[type] && types[type].href) {
-    button = (
-      <a className={cx(s.button, className, s[type])} href={types[type].href}>
-        {types[type].icon}
-        {types[type].text}
-      </a>
     );
   } else {
     button = (

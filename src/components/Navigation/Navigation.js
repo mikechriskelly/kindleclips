@@ -2,14 +2,13 @@ import React, { PropTypes } from 'react';
 import cx from 'classnames';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Navigation.css';
-import Link from '../Link';
 import Button from '../Button';
 
 const userLinks =
-  (<span>
-    <Link className={s.link} to="/upload">Upload</Link>
-    <a className={s.link} href="/logout">Log Out</a>
-  </span>);
+  (<div>
+    <Button className={s.link} href="/upload" text="Upload" />
+    <Button className={s.link} href="/logout" text="Log Out" type="plain" />
+  </div>);
 
 const guestLinks =
   (<Button href="/login" text="Sign up" type="primary" />);
