@@ -7,14 +7,12 @@ library(quanteda)
 library(topicmodels)
 library(uuid)
 
-userid <- args[1]
-
-
-host <- "localhost"
-port <- 5432
-user <- "christophercastle"
-dbname <- "christophercastle"
-pw <- "password"
+userid      <- args[1]
+dbname      <- args[2]
+host        <- args[3]
+port        <- args[4]
+user        <- args[5]
+pw          <- args[6]
 
 # loads the PostgreSQL driver
 drv <- RPostgreSQL::PostgreSQL()
