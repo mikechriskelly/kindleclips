@@ -5,10 +5,19 @@ import UserStore from '../stores/UserStore';
 
 class ClipActions {
 
+  /**
+   * Fetch all clips for current user. Used on page load.
+   * Effect: Calls ClipAction search
+   */
   async fetch() {
     return await this.search();
   }
 
+  /**
+   * Search for matching clips
+   * @param  {string} searchTerm - Search words from search box
+   * Effect: Calls ClipAction update
+   */
   async search(searchTerm) {
     const query = searchTerm ?
       `{userClips(search:"${searchTerm}"){id,title,author,text}}` :
@@ -48,7 +57,14 @@ class ClipActions {
     return true;
   }
 
+  /**
+   * Upload clips to database
+   * @param  {object} containing one text file
+   * Effects: Redirects to home page
+   */
   async upload(files) {
+    // Put UI in loading state while processing file
+    history.push('/uploading');
     const formData = new FormData();
     formData.append('myClippingsTxt', files[0]);
 
@@ -59,8 +75,12 @@ class ClipActions {
     });
 
     if (resp.status === 200) {
-      await this.fetch();
-      history.push('/');
+      fetch('/api/clips/analyze', {
+        method: 'get',
+        credentials: 'include',
+      });
+      // Delayed redirect to ensure DB returns new results
+      setTimeout(() => history.push('/'), 1000);
     } else {
       console.log('Error uploading clips');
     }

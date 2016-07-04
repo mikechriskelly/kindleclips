@@ -3,10 +3,11 @@ import Upload from './Upload';
 
 export default {
 
-  path: '/upload',
+  path: ['/upload', '/uploading'],
 
-  action() {
-    return <Upload />;
+  action({ path }) { // eslint-disable-line react/prop-types
+    const isLoading = (path === '/uploading');
+    return <Upload isLoading={isLoading} />;
   },
 
 };
