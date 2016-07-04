@@ -102,7 +102,7 @@ server.use(apiRoutes);
 
 
 // Make LDA script executable
-fs.chmod('build/analysis/LDA.r', 493, (err) => {
+fs.chmod('analysis/LDA.R', 493, (err) => {
   if (err) throw err;
 });
 

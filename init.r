@@ -1,4 +1,5 @@
 install.packages("tm")
-install.packages("rmongodb")
+install.packages("RPostgreSQL")
 install.packages("quanteda")
 install.packages("topicmodels")
+install.packages("uuid")

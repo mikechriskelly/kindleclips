@@ -50,7 +50,7 @@ server.get('/api/user/delete', async (req, res) => {
 // Data Analysis Process
 server.get('/api/clips/analyze', async (req, res) => {
   const parameters = [req.user.id, db.name, db.host, db.port, db.user, db.pw].join(' ');
-  const command = `build/analysis/LDA.r ${parameters}`;
+  const command = `analysis/LDA.R ${parameters}`;
 
   exec(command, (error, stdout, stderr) => {
     console.log('stdout: ', stdout);
