@@ -16,6 +16,7 @@ class Home extends Component {
   static propTypes = {
     isLoggedIn: PropTypes.bool,
     clips: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.string,
       title: PropTypes.string,
       author: PropTypes.string,
       text: PropTypes.string,

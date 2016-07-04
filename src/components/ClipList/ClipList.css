@@ -1,36 +1,6 @@
 @import '../../components/variables.css';
 
-.root {
-  margin: 0;
-}
-
 .clipList {
   padding: 0;
   max-width: var(--max-text-width);
-}
-
-.clipItem {
-  list-style-type: none;
-  margin-bottom: 5em;
-}
-
-.clipTitle,
-.clipAuthor {
-  color: var(--primary);
-  display: block;
-  clear: both;
-  float: left;
-  font-size: 0.75em;
-  padding: 0;
-}
-
-.clipAuthor {
-  color: var(--gray-light);
-}
-
-.clipText {
-  color: var(--gray-dark);
-  display: block;
-  margin: 5px 0;
-  padding: 0;
 }

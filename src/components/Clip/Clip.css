@@ -1,0 +1,27 @@
+@import '../../components/variables.css';
+
+.listItem {
+  list-style-type: none;
+  margin-bottom: 5em;
+}
+
+.title,
+.author {
+  color: var(--primary);
+  display: block;
+  clear: both;
+  float: left;
+  font-size: 0.75em;
+  padding: 0;
+}
+
+.author {
+  color: var(--gray-light);
+}
+
+.text {
+  color: var(--gray-dark);
+  display: block;
+  margin: 5px 0;
+  padding: 0;
+}

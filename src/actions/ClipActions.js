@@ -80,7 +80,7 @@ class ClipActions {
         credentials: 'include',
       });
       // Delayed redirect to ensure DB returns new results
-      setTimeout(() => history.push('/'), 2500);
+      setTimeout(() => history.push('/'), 2200);
     } else {
       console.log('Error uploading clips');
     }
