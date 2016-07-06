@@ -7,6 +7,7 @@ import ClipList from '../../components/ClipList';
 import Clip from '../../components/Clip';
 import UserStore from '../../stores/UserStore';
 import ClipStore from '../../stores/ClipStore';
+import LoadSpinner from '../../components/LoadSpinner';
 
 class Home extends Component {
 
@@ -16,6 +17,7 @@ class Home extends Component {
 
   static propTypes = {
     isLoggedIn: PropTypes.bool,
+    loading: PropTypes.bool,
     primaryClip: PropTypes.object,
     matchingClips: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.string,
@@ -41,11 +43,12 @@ class Home extends Component {
   }
 
   render() {
-    let title = 'Search Results';
+    let title = null;
     let mainMarkup = null;
     let listMarkup = null;
 
     if (this.props.primaryClip) {
+      title = 'Similar Clips';
       mainMarkup = (
         <div className={s.container}>
           <Clip
@@ -55,10 +58,17 @@ class Home extends Component {
           />
         </div>
       );
-      title = 'Similar Clips';
+    } else if (!this.props.loading) {
+      title = 'No Results Found';
+      listMarkup = (
+        <div className={s.container}>
+          <h2 className={s.title}>{title}</h2>
+        </div>
+      );
     }
 
     if (this.props.matchingClips.length > 0) {
+      title = 'Search Results';
       listMarkup = (
         <div className={s.container}>
           <h2 className={s.title}>{title}</h2>
@@ -70,6 +80,7 @@ class Home extends Component {
     return (
       <div className={s.root}>
         <Header isLoggedIn={this.props.isLoggedIn} />
+        {this.props.loading ? <LoadSpinner clear /> : null}
         {mainMarkup}
         {listMarkup}
       </div>

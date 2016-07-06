@@ -46,7 +46,7 @@ async function setupDemoUser() {
     where: { id: demoUser.id },
   });
   if (!existingUser) {
-    await User.create({
+    User.create({
       id: demoUser.id,
       email: demoUser.email,
       emailConfirmed: true,
@@ -158,5 +158,5 @@ server.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
 syncDatabase()
   .catch(err => console.error(err.stack))
   .then(() => {
-    server.listen(port, () => { console.log(`The server is running at http://localhost:${port}/`) });
+    server.listen(port, () => { console.log(`The server is running at http://localhost:${port}/`); });
   });

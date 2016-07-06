@@ -34,6 +34,7 @@ class SearchBox extends Component {
           debounceTimeout={300}
           onChange={this.onChange}
           placeholder="Search..."
+          autofocus="autofocus"
         />
       </div>
     );
