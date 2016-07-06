@@ -16,7 +16,6 @@ import { loginUser } from './api/auth';
 import apiRoutes from './api/routes.js';
 import cookie from 'react-cookie';
 import alt from './core/alt';
-import fs from 'fs';
 
 /* eslint-disable no-console */
 
@@ -99,13 +98,6 @@ server.get('/logout', (req, res) => {
 
 // API Routes
 server.use(apiRoutes);
-
-
-// Make LDA script executable
-fs.chmod('analysis/LDA.R', 493, (err) => {
-  if (err) throw err;
-});
-
 
 // Register server-side rendering middleware
 server.get('*', async (req, res, next) => {

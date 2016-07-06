@@ -1,6 +1,7 @@
 import ClipType from '../types/ClipType';
 import Clip from '../models/Clip';
-import { GraphQLList, GraphQLString, GraphQLID } from 'graphql';
+import Model from '../sequelize';
+import { GraphQLList, GraphQLString, GraphQLID, GraphQLBoolean } from 'graphql';
 import { demoUser } from '../../config';
 import { getID } from '../auth';
 
@@ -47,42 +48,54 @@ function parseMyClippingsTxt(clipFile, userId) {
   return clips.filter(n => n !== null);
 }
 
-// Clip Queries
+/**
+ * Get User Id via query credentials
+ * @param  {object} root - Root variable object from client query
+ * @return {string} userId
+ */
+function getUserId(root) {
+  let userId = demoUser.id;
+
+  if (root.request &&
+      root.request.user &&
+      root.request.user.id) {
+    userId = root.request.user.id;
+  } else if (root.request &&
+             root.request.headers.authorization &&
+             root.request.headers.authorization.split(' ')[0] === 'Bearer') {
+    const token = root.request.headers.authorization.split(' ')[1];
+    userId = getID(token);
+  }
+  return userId;
+}
+
+// Clip Query: All Clips for Current User
 const userClips = {
   type: new GraphQLList(ClipType),
   args: {
     search: { type: GraphQLString },
+    random: { type: GraphQLBoolean },
   },
   resolve: (root, args) => {
-    const resultLimit = 100;
-    let userId = demoUser.id;
-
-    if (root.request &&
-        root.request.user &&
-        root.request.user.id) {
-      userId = root.request.user.id;
-    } else if (root.request &&
-               root.request.headers.authorization &&
-               root.request.headers.authorization.split(' ')[0] === 'Bearer') {
-      const token = root.request.headers.authorization.split(' ')[1];
-      userId = getID(token);
-    }
+    const userId = getUserId(root);
+    const resultLimit = 1000;
     try {
       return args.search ?
         Clip.search(userId, args.search, resultLimit) :
         Clip.findAll({
           attributes: ['id', 'title', 'author', 'text'],
           where: { userId },
+          order: [Model.fn('RANDOM')],
           limit: resultLimit,
         });
     } catch (err) {
-      console.log('Could not retrieve clips.', err.SequelizeDatabaseError);
+      console.log('Could not retrieve clips.', err);
       return [];
     }
   },
 };
 
-// Clip Queries
+// Clip Query: Any single clip by ID
 const singleClip = {
   type: new GraphQLList(ClipType),
   args: {

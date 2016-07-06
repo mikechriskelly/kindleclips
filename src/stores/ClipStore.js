@@ -6,31 +6,45 @@ class ClipStore {
   constructor() {
     this.bindListeners({
       handleSearch: ClipActions.SEARCH,
-      handleUpdate: ClipActions.UPDATE,
-      handleFail: ClipActions.FAIL,
-      handleClear: ClipActions.CLEAR,
+      handleUpdateAll: ClipActions.UPDATE_ALL,
+      handleUpdateMatching: ClipActions.UPDATE_MATCHING,
+      handleFail: ClipActions.UPDATE_FAIL,
+      handleRandom: ClipActions.RANDOM,
     });
 
     this.state = {
-      clips: [],
+      allClips: [],
+      matchingClips: [],
+      similarClips: [],
+      primaryClip: null,
       errorMessage: null,
     };
   }
 
   handleSearch() {
-    this.state.clips = [];
+    this.state.matchingClips = [];
+    this.state.primaryClip = null;
+    this.state.similarClips = null;
+    this.state.errorMessage = null;
   }
 
-  handleClear() {
-    this.state.clips = [];
+  handleUpdateAll(clips) {
+    this.state.allClips = clips;
   }
 
-  handleUpdate(clips) {
-    this.state.clips = clips;
+  handleUpdateMatching(clips) {
+    this.state.primaryClip = null;
+    this.state.matchingClips = clips;
   }
 
   handleFail(errorMessage) {
     this.state.errorMessage = errorMessage;
+  }
+
+  handleRandom() {
+    this.state.matchingClips = [];
+    const all = this.state.allClips;
+    this.state.primaryClip = all[Math.floor(Math.random() * all.length)];
   }
 
 }

@@ -25,3 +25,11 @@
   margin: 5px 0;
   padding: 0;
 }
+
+.primary {
+  margin: 4em 0 1em 0;
+}
+
+.primary p {
+  font-size: 28px;
+}

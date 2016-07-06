@@ -5,20 +5,11 @@ import UserStore from '../stores/UserStore';
 
 class ClipActions {
 
-  /**
-   * Fetch all clips for current user. Used on page load.
-   * Effect: Calls ClipAction search
-   */
   async fetch() {
-    return await this.search();
+    this.search(null, true);
   }
 
-  /**
-   * Search for matching clips
-   * @param  {string} searchTerm - Search words from search box
-   * Effect: Calls ClipAction update
-   */
-  async search(searchTerm) {
+  async search(searchTerm, updateAll = false) {
     const query = searchTerm ?
       `{userClips(search:"${searchTerm}"){id,title,author,text}}` :
       '{userClips{id,title,author,text}}';
@@ -37,31 +28,37 @@ class ClipActions {
     const { data } = await resp.json();
     let result;
     if (!data || !data.userClips) {
-      this.fail();
+      this.updateFail('There was an error loading your clips. Please try again.');
     } else {
-      this.update(data.userClips);
       result = data.userClips;
+
+      if (updateAll) this.updateAll(result);
+
+      if (searchTerm) {
+        this.updateMatching(result);
+      } else {
+        this.random();
+      }
     }
     return result;
   }
 
-  update(results) {
-    return results;
+  updateAll(clips) {
+    return clips;
   }
 
-  clear() {
+  updateMatching(clips) {
+    return clips;
+  }
+
+  updateFail(message) {
+    return message;
+  }
+
+  random() {
     return true;
   }
 
-  fail() {
-    return true;
-  }
-
-  /**
-   * Upload clips to database
-   * @param  {object} containing one text file
-   * Effects: Redirects to home page
-   */
   async upload(files) {
     // Put UI in loading state while processing file
     history.push('/uploading');

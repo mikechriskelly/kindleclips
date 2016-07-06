@@ -2,9 +2,9 @@ import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Clip.css';
 
-function Clip({ title, author, text, inList, className }) {
+function Clip({ title, author, text, inList }) {
   const clipMarkup = (
-    <div className={className}>
+    <div className={inList ? null : s.primary}>
       <p
         className={s.text}
         dangerouslySetInnerHTML={{ __html: text }}
@@ -25,7 +25,6 @@ Clip.propTypes = {
   text: PropTypes.string,
   inList: PropTypes.bool,
   index: PropTypes.number,
-  className: PropTypes.string,
 };
 
 export default withStyles(s)(Clip);

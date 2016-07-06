@@ -3,11 +3,11 @@ import Clip from '../Clip';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './ClipList.css';
 
-function ClipList({ clips }) {
+function ClipList({ clipList }) {
   return (
     <ul className={s.clipList}>
-      {clips.map((clip) => (
-        <Clip 
+      {clipList.map((clip) => (
+        <Clip
           key={clip.id}
           title={clip.title}
           author={clip.author}
@@ -20,7 +20,7 @@ function ClipList({ clips }) {
 }
 
 ClipList.propTypes = {
-  clips: PropTypes.arrayOf(PropTypes.shape({
+  clipList: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string,
     title: PropTypes.string,
     author: PropTypes.string,
