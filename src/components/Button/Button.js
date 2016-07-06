@@ -3,7 +3,8 @@ import cx from 'classnames';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Button.css';
 import Link from '../Link';
-import { FaFacebook, FaGoogle } from 'react-icons/lib/fa';
+import FaFacebook from 'react-icons/lib/fa/facebook';
+import FaGoogle from 'react-icons/lib/fa/google';
 
 const types = {
   facebook: {

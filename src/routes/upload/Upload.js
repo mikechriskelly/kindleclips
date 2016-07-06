@@ -5,7 +5,7 @@ import Button from '../../components/Button';
 import LoadSpinner from '../../components/LoadSpinner';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Upload.css';
-import { FaCloudUpload } from 'react-icons/lib/fa';
+import FaCloudUpload from 'react-icons/lib/fa/cloud-upload';
 
 const title = 'Upload Your Clippings';
 
