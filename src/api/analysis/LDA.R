@@ -46,8 +46,8 @@ make_k <- function(tmp) {
       # x <- log((ut+ua)^exp(1))
       # x <- (ua+ut)/16
       x <- (ua ^ 2 + ut ^ 2) ^ (1/4)
-      ifelse(x > 25, 25, x)
-      ifelse(x < 5, 5, x)
+      x <- ifelse(x > 25, 25, x)
+      x <- ifelse(x < 5, 5, x)
       round(x, 0)
 }
 k_tops <- make_k(tmp) # number of topic clusters
