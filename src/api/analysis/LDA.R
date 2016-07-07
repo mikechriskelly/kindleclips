@@ -87,12 +87,12 @@ make_smaller_table <- function(table, n) {
       for (i in 1:NROW(clip_array)) {
             df <- rbind(df, clip_array[[i]][1:n,])
       }
+      z <- which(df$distance > quantile(clip_dist_table$distance, 0.1)) # set threshold at closest 10%
+      if (length(z) != 0) {df <- df[-z,] } # remove rows which don't meet threshold
       df
 }
 
 top_10 <- make_smaller_table(clip_dist_table, 10)
-z <- which(top_10$distance > quantile(clip_dist_table$distance, 0.09)) # set threshold
-top_10 <- top_10[-z,] # remove rows which don't meet threshold
 
 # create normalized topic probability table
 topic_prob_table <- data.frame(
@@ -105,7 +105,6 @@ topic_prob_table <- data.frame(
 make_tops <- function(tops_id, clip_number, top_n=dim(tops_id)[1]) {
       tops_id[1:top_n,clip_number]
 }
-
 
 #===topic naming==
 # list of collapsed author names
