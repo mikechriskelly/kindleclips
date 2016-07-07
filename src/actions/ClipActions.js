@@ -10,6 +10,11 @@ class ClipActions {
   }
 
   async search(searchTerm, updateAll = false) {
+    if (!searchTerm && !updateAll) {
+      this.random();
+      return;
+    }
+
     const query = searchTerm ?
       `{userClips(search:"${searchTerm}"){id,title,author,text}}` :
       '{userClips{id,title,author,text}}';
@@ -31,16 +36,14 @@ class ClipActions {
       this.updateFail('There was an error loading your clips. Please try again.');
     } else {
       result = data.userClips;
-
       if (updateAll) this.updateAll(result);
-
       if (searchTerm) {
         this.updateMatching(result);
       } else {
         this.random();
       }
     }
-    return result;
+    return;
   }
 
   updateAll(clips) {
