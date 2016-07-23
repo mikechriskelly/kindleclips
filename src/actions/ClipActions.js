@@ -46,11 +46,38 @@ class ClipActions {
     return;
   }
 
+  async similar(clipId) {
+    const query = `{similarClips(id:"${clipId}"){id,title,author,text}}`;
+    const token = UserStore.getToken();
+    const resp = await fetch('/graphql', {
+      method: 'post',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: token ? `Bearer ${token}` : null,
+      },
+      body: JSON.stringify({ query }),
+      credentials: 'include',
+    });
+    const { data } = await resp.json();
+    let result;
+    if (!data || !data.similarClips) {
+      this.updateFail('There was an error loading your clips. Please try again.');
+    } else {
+      result = data.similarClips;
+      this.updateSimilar(result);
+    }
+  }
+
   updateAll(clips) {
     return clips;
   }
 
   updateMatching(clips) {
+    return clips;
+  }
+
+  updateSimilar(clips) {
     return clips;
   }
 

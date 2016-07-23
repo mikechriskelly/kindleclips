@@ -25,6 +25,12 @@ class Home extends Component {
       author: PropTypes.string,
       text: PropTypes.string,
     })),
+    similarClips: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.string,
+      title: PropTypes.string,
+      author: PropTypes.string,
+      text: PropTypes.string,
+    })),
   };
 
   static getStores() {
@@ -48,7 +54,6 @@ class Home extends Component {
     let listMarkup = null;
 
     if (this.props.primaryClip) {
-      title = 'Similar Clips';
       mainMarkup = (
         <div className={s.container}>
           <Clip
@@ -73,6 +78,16 @@ class Home extends Component {
         <div className={s.container}>
           <h2 className={s.title}>{title}</h2>
           <ClipList clipList={this.props.matchingClips} />
+        </div>
+      );
+    }
+
+    if (this.props.similarClips.length > 0) {
+      title = 'Similar Clips';
+      listMarkup = (
+        <div className={s.container}>
+          <h2 className={s.title}>{title}</h2>
+          <ClipList clipList={this.props.similarClips} />
         </div>
       );
     }

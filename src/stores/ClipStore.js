@@ -8,6 +8,7 @@ class ClipStore {
       handleUpdating: ClipActions.SEARCH,
       handleUpdateAll: ClipActions.UPDATE_ALL,
       handleUpdateMatching: ClipActions.UPDATE_MATCHING,
+      handleUpdateSimilar: ClipActions.UPDATE_SIMILAR,
       handleFail: ClipActions.UPDATE_FAIL,
       handleRandom: ClipActions.RANDOM,
     });
@@ -41,8 +42,13 @@ class ClipStore {
 
   handleUpdateMatching(clips) {
     this.state.primaryClip = null;
+    this.state.similarClips = [];
     this.state.matchingClips = clips;
     this.handleComplete();
+  }
+
+  handleUpdateSimilar(clips) {
+    this.state.similarClips = clips;
   }
 
   handleFail(errorMessage) {
@@ -51,9 +57,12 @@ class ClipStore {
 
   handleRandom() {
     this.state.matchingClips = [];
+    this.state.similarClips = [];
     const all = this.state.allClips;
     this.state.primaryClip = all[Math.floor(Math.random() * all.length)];
     this.handleComplete();
+
+    ClipActions.similar(this.state.primaryClip.id);
   }
 
 }
