@@ -82,6 +82,16 @@ const Clip = Model.define('clip', {
                           { type: Model.QueryTypes.SELECT })
                   .then(results => results);
     },
+    async getSimilar(clipId) {
+      return Model.query(`SELECT id, title, author, text FROM "${this.tableName}"
+                          WHERE id IN (
+                            SELECT sim_clip_id 
+                            FROM clip_dist
+                            WHERE clip_id = '${clipId}'
+                          )`,
+                          { type: Model.QueryTypes.SELECT })
+                  .then(results => results);
+    },
   },
 });
 

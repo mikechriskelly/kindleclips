@@ -1,5 +1,6 @@
 import ClipType from '../types/ClipType';
 import Clip from '../models/Clip';
+import ClipDist from '../models/ClipDist';
 import Model from '../sequelize';
 import { GraphQLList, GraphQLString, GraphQLID, GraphQLBoolean } from 'graphql';
 import { demoUser } from '../../config';
@@ -114,6 +115,21 @@ const singleClip = {
   },
 };
 
+const similarClips = {
+  type: new GraphQLList(ClipType),
+  args: {
+    id: { type: GraphQLID },
+  },
+  resolve: (root, args) => {
+    try {
+      return Clip.getSimilar(args.id);
+    } catch (err) {
+      console.log('Could not retrieve similar clips.', err);
+      return {};
+    }
+  },
+};
+
 async function insertClips(clipFile, userId) {
   const clips = parseMyClippingsTxt(clipFile, userId);
   try {
@@ -138,4 +154,4 @@ async function removeClips(userId) {
 }
 
 export default userClips;
-export { userClips, singleClip, insertClips, removeClips };
+export { userClips, singleClip, similarClips, insertClips, removeClips };

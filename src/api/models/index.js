@@ -31,30 +31,27 @@ User.hasOne(UserProfile, {
 
 User.hasMany(Topic, {
   foreignKey: 'userId',
-  as: 'topics',
   onUpdate: 'cascade',
   onDelete: 'cascade',
 });
 
 User.hasMany(Clip, {
   foreignKey: 'userId',
-  as: 'clips',
   onUpdate: 'cascade',
   onDelete: 'cascade',
 });
 
 Clip.hasMany(TopicProb, {
   foreignKey: 'clipId',
-  as: 'clips',
   onUpdate: 'cascade',
   onDelete: 'cascade',
 });
 
-Clip.hasMany(ClipDist, {
-  foreignKey: ['clipId', 'simClipId'],
-  as: 'distances',
-  onUpdate: 'cascade',
-  onDelete: 'cascade',
+Clip.belongsToMany(Clip, {
+  as: 'SimilarClips',
+  through: ClipDist,
+  foreignKey: 'clipId',
+  otherkey: 'simClipId',
 });
 
 async function syncDatabase(...args) {
