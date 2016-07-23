@@ -23,13 +23,11 @@ passport.use(new FacebookStrategy({
         where: { name: loginName, key: profile.id },
       });
       if (userLogin) {
-        console.log('Already logged in with Facebook');
         done(null, {
           id: req.user.id,
           email: profile._json.email,
         });
       } else {
-        console.log('Associating this Facebook account with your existing account');
         const user = await User.create({
           id: req.user.id,
           email: profile._json.email,
@@ -72,7 +70,6 @@ passport.use(new FacebookStrategy({
       });
       if (users.length) {
         // LOGIN
-        console.log('Logging in');
         done(null, {
           id: users[0].dataValues.id,
           email: users[0].dataValues.email,
@@ -109,9 +106,6 @@ passport.use(new FacebookStrategy({
               { model: UserProfile, as: 'profile' },
             ],
           });
-          console.log('Signing up');
-          console.log('Profile ID: ', profile.id);
-          console.log('User ID: ', user.id);
           done(null, {
             id: user.id,
             email: user.email,
@@ -142,13 +136,11 @@ passport.use(new GoogleStrategy({
         where: { name: loginName, key: profile.id },
       });
       if (userLogin) {
-        console.log('Already logged in with Google');
         done(null, {
           id: req.user.id,
           email: profile._json.email,
         });
       } else {
-        console.log('Associating this Google account with your existing account');
         const user = await User.create({
           id: req.user.id,
           email: profile.emails[0].value,
@@ -191,7 +183,6 @@ passport.use(new GoogleStrategy({
       });
       if (users.length) {
         // LOGIN
-        console.log('Logging in');
         done(null, {
           id: users[0].dataValues.id,
           email: users[0].dataValues.email,
@@ -229,9 +220,6 @@ passport.use(new GoogleStrategy({
               { model: UserProfile, as: 'profile' },
             ],
           });
-          console.log('Signing up');
-          console.log('Profile ID: ', profile.id);
-          console.log('User ID: ', user.id);
           done(null, {
             id: user.id,
             email: user.email,
