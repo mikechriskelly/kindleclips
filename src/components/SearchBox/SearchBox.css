@@ -4,22 +4,17 @@
   background-color: var(--accent-dark);
   border-radius: 3px;
   float: left;
+  margin: 0 10px;
   max-height: 37px;
   padding-left: 0px;
   position: relative;
   vertical-align: middle;
-  width: 100%;
+  width: 50%;
 }
 
-@media (min-width: 400px) {
-  .root {
-    margin: 0 10px;
-    max-width: 180px;
-  }
-}
-@media (min-width:550px) {
-  .root {
-    max-width: 65%;
+@media screen and (min-width : 750px) {
+  .root{
+    width: 65%;
   }
 }
 

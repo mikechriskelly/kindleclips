@@ -57,36 +57,32 @@ class Home extends Component {
     // Matching Clips
     if (this.props.matchingClips.length > 0) {
       matchingMarkup = (
-        <div className={s.primary}>
+        <div>
           <h2 className={s.title}>Search Results</h2>
           <ClipList clipList={this.props.matchingClips} />
         </div>
       );
     } else if (!this.props.loading && !this.props.primaryClip) {
       matchingMarkup = (
-        <div className={s.primary}>
-          <h2 className={s.title}>No Results Found</h2>
-        </div>
+        <h2 className={s.title}>No Results Found</h2>
       );
     }
 
     // Primary Clip
     if (this.props.primaryClip) {
       primaryMarkup = (
-        <div className={s.primary}>
-          <Clip
-            title={this.props.primaryClip.title}
-            author={this.props.primaryClip.author}
-            text={this.props.primaryClip.text}
-          />
-        </div>
+        <Clip
+          title={this.props.primaryClip.title}
+          author={this.props.primaryClip.author}
+          text={this.props.primaryClip.text}
+        />
       );
     }
 
     // Similar Clips
     if (this.props.similarClips.length > 0) {
       similarMarkup = (
-        <div className={s.primary}>
+        <div>
           <h2 className={s.title}>Similar Clips</h2>
           <ClipList clipList={this.props.similarClips} />
         </div>
@@ -98,9 +94,19 @@ class Home extends Component {
         <Header isLoggedIn={this.props.isLoggedIn} wipeSearchTerm={this.props.wipeSearchTerm} />
         {this.props.loading ? <LoadSpinner clear /> : null}
         <div className={s.container}>
-          {matchingMarkup}
-          {primaryMarkup}
-          {similarMarkup}
+          <div className={s.primary}>
+            {matchingMarkup}
+            {primaryMarkup}
+            {similarMarkup}
+          </div>
+          <div className={s.secondary}>
+            <h2><span className={s.brand}>Kindle Clips</span>. Your text, remixed.</h2>
+            <p>A free service for Kindle owners to easily view the text clips they've highlighted.</p>
+            <p>You can upload, search, and explore all your favorite quotes and excerpts stored on your Kindle device.</p>
+            <p>Text analysis and topic modeling bring similar clips together, revealing serendipidous connections between passages.</p>
+            <p>Explore demo highlights, or sign in to upload and browse highlights from your own Kindle.</p>
+            <p className={s.author}>By Chris Castle and Mike Kelly</p>
+          </div>
         </div>
       </div>
     );

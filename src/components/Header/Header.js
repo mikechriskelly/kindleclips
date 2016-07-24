@@ -8,8 +8,8 @@ function Header({ isLoggedIn, wipeSearchTerm }) {
   return (
     <div className={s.container}>
       <header>
-        <SearchBox wipeSearchTerm={wipeSearchTerm} />
-        <Navigation className={s.nav} isLoggedIn={isLoggedIn} />
+        <SearchBox className={s.primary} wipeSearchTerm={wipeSearchTerm} />
+        <Navigation className={s.secondary} isLoggedIn={isLoggedIn} />
       </header>
     </div>
   );

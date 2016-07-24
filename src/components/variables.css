@@ -9,7 +9,7 @@
    * Colors
    * ========================================================================== */
 
-  --brand-color: #8CB5BF;
+  --brand-color: hsla(13, 59%, 46%, 1);
   --link-color: #6184DB;
   --link-color-light: color(#6184DB lightness(+5%));
 

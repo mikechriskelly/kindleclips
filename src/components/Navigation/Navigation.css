@@ -1,7 +1,6 @@
 @import '../../components/variables.css';
 
 .root {
-  float: right;
   margin: 0;
   max-height: 40px;
 }
