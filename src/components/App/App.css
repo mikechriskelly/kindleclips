@@ -5,12 +5,27 @@
  * Base styles
  * ========================================================================== */
 
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  margin-top: 0;
+}
+ 
+html,
+body,
+div{
+  margin: 0;
+  padding: 0;
+}
+
 html {
+  background-color: #FCFCFC;
   color: #222;
   font-weight: 100;
   font-size: 1em; /* ~16px; */
   font-family: var(--font-family-base);
-  line-height: 1.375; /* ~22px */
+  line-height: 1.6; /* ~22px */
 }
 
 a {
@@ -23,12 +38,12 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0 0 10px 0;
 }
 
-h1 { font-size: 2em; }
-h2 { font-size: 1.6em; }
-h3 { font-size: 1.4em; }
-h4 { font-size: 1.2em; }
-h5 { font-size: 1.2em; }
-h6 { font-size: 1.2em; }
+h1 { font-size: 1.6em; }
+h2 { font-size: 1.4em; }
+h3 { font-size: 1.2em; }
+h4 { font-size: 1.1em; }
+h5 { font-size: 1.0em; }
+h6 { font-size: 1.0em; }
 
 strong {
   font-weight: 600;

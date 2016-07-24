@@ -4,7 +4,7 @@ import s from './Clip.css';
 
 function Clip({ title, author, text, inList }) {
   const clipMarkup = (
-    <div className={inList ? null : s.primary}>
+    <div className={inList ? s.regular : s.primary}>
       <p
         className={s.text}
         dangerouslySetInnerHTML={{ __html: text }}

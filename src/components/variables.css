@@ -3,7 +3,7 @@
    * Typography
    * ======================================================================== */
 
-  --font-family-base: 'Segoe UI', 'HelveticaNeue-Light', sans-serif;
+  --font-family-base: 'Merriweather', 'HelveticaNeue-Light', sans-serif;
 
   /*
    * Colors
@@ -33,7 +33,7 @@
    * Layout
    * ======================================================================== */
 
-  --max-content-width: 1000px;
+  --max-content-width: 1280px;
   --max-text-width: 750px;
 
   /*

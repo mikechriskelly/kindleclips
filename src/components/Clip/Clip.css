@@ -2,34 +2,45 @@
 
 .listItem {
   list-style-type: none;
-  margin-bottom: 5em;
 }
 
 .title,
 .author {
-  color: var(--primary);
+  color: var(--gray-light);
   display: block;
-  clear: both;
-  float: left;
-  font-size: 0.75em;
+  font-size: 0.7em;
   padding: 0;
 }
 
-.author {
-  color: var(--gray-light);
+.title {
+  font-weight: 600;
 }
 
 .text {
-  color: var(--gray-dark);
+  color: var(--gray-darker);
   display: block;
   margin: 5px 0;
-  padding: 0;
+  padding: 0 0 5px 0;
+}
+
+.primary,
+.regular {
+  padding: 10px;
+  border: 1px solid transparent;
+  margin: 1em 0;
+  padding: 1em;
 }
 
 .primary {
-  margin: 4em 0 1em 0;
+  background-color: white;
+  border: 1px solid var(--gray-lighter);
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,0.05);
 }
 
-.primary p {
-  font-size: 28px;
+.regular:hover {
+  cursor: hand;
+  cursor: pointer;
+  background-color: white;
+  border: 1px solid var(--gray-lighter);
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,0.05);
 }

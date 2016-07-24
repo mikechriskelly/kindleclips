@@ -55,7 +55,7 @@ class Home extends Component {
 
     if (this.props.primaryClip) {
       mainMarkup = (
-        <div className={s.container}>
+        <div className={s.primary}>
           <Clip
             title={this.props.primaryClip.title}
             author={this.props.primaryClip.author}
@@ -65,8 +65,8 @@ class Home extends Component {
       );
     } else if (!this.props.loading) {
       title = 'No Results Found';
-      listMarkup = (
-        <div className={s.container}>
+      mainMarkup = (
+        <div className={s.primary}>
           <h2 className={s.title}>{title}</h2>
         </div>
       );
@@ -74,8 +74,8 @@ class Home extends Component {
 
     if (this.props.matchingClips.length > 0) {
       title = 'Search Results';
-      listMarkup = (
-        <div className={s.container}>
+      mainMarkup = (
+        <div className={s.primary}>
           <h2 className={s.title}>{title}</h2>
           <ClipList clipList={this.props.matchingClips} />
         </div>
@@ -85,7 +85,7 @@ class Home extends Component {
     if (this.props.similarClips.length > 0) {
       title = 'Similar Clips';
       listMarkup = (
-        <div className={s.container}>
+        <div className={s.primary}>
           <h2 className={s.title}>{title}</h2>
           <ClipList clipList={this.props.similarClips} />
         </div>
@@ -96,8 +96,10 @@ class Home extends Component {
       <div className={s.root}>
         <Header isLoggedIn={this.props.isLoggedIn} />
         {this.props.loading ? <LoadSpinner clear /> : null}
-        {mainMarkup}
-        {listMarkup}
+        <div className={s.container}>
+          {mainMarkup}
+          {listMarkup}
+        </div>
       </div>
     );
   }

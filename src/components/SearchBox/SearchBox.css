@@ -3,8 +3,8 @@
 .root {
   background-color: var(--accent-dark);
   border-radius: 3px;
+  float: left;
   max-height: 37px;
-  margin: auto;
   padding-left: 0px;
   position: relative;
   vertical-align: middle;
@@ -17,28 +17,9 @@
     max-width: 200px;
   }
 }
-@media (min-width: 550px) {
-  .root { 
-    margin: 0 10px;
-    max-width: 350px;
-  }
-}
-@media (min-width: 750px) {
+@media (min-width:550px) {
   .root {
-    margin: 0 10px;
-    max-width: 550px;
-  }
-}
-@media (min-width: 1000px) {
-  .root {
-    margin: 0 10px;
-    max-width: 800px;
-  }
-}
-@media (min-width: 1200px) {
-  .root {
-    margin: auto;
-    max-width: var(--max-text-width);
+    max-width: 65%;
   }
 }
 

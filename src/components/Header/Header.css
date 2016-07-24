@@ -2,7 +2,6 @@
 
 .container {
   background: var(--accent);
-  box-shadow: 0 2px 5px 0 rgba(0,0,0,0.12);
   height: auto;
   padding: 10px 0;
   width: 100%;
@@ -13,7 +12,7 @@ header {
   margin: 0 auto;
   min-height: 37px;
   padding: 0;
-  width: 100%;
+  max-width: var(--max-content-width);
 }
 
 .brand {
