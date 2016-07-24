@@ -6,19 +6,7 @@ import UserStore from '../stores/UserStore';
 class ClipActions {
 
   async fetchAll() {
-    this.fetchMatching(null, true);
-  }
-
-  async fetchMatching(searchTerm, updateAll = false) {
-    if (!searchTerm && !updateAll) {
-      this.changePrimary();
-      return searchTerm;
-    }
-
-    const query = searchTerm ?
-      `{userClips(search:"${searchTerm}"){id,title,author,text}}` :
-      '{userClips{id,title,author,text}}';
-
+    const query = '{userClips{id,title,author,text}}';
     const token = UserStore.getToken();
     const resp = await fetch('/graphql', {
       method: 'post',
@@ -36,14 +24,36 @@ class ClipActions {
       this.catchError('There was an error loading your clips. Please try again.');
     } else {
       result = data.userClips;
-      if (updateAll) this.updateAll(result);
-      if (searchTerm) {
-        this.updateMatching(result);
-      } else {
-        this.changePrimary();
-      }
+      this.updateAll(result);
+      this.changePrimary();
     }
-    return searchTerm;
+  }
+
+  async fetchMatching(searchTerm) {
+    if (!searchTerm) {
+      this.updateMatching([]);
+      return;
+    }
+
+    const query = `{userClips(search:"${searchTerm}"){id,title,author,text}}`;
+    const token = UserStore.getToken();
+    const resp = await fetch('/graphql', {
+      method: 'post',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: token ? `Bearer ${token}` : null,
+      },
+      body: JSON.stringify({ query }),
+      credentials: 'include',
+    });
+    const { data } = await resp.json();
+    let result;
+    if (data && data.userClips) {
+      result = data.userClips;
+      this.updateMatching(result);
+    }
+    return;
   }
 
   async fetchSimilar(clipId) {

@@ -5,7 +5,8 @@ class ClipStore {
 
   constructor() {
     this.bindListeners({
-      handleFetching: ClipActions.FETCH_MATCHING,
+      handleFetchingAll: ClipActions.FETCH_ALL,
+      handleFetchingMatches: ClipActions.FETCH_MATCHING,
       handleUpdateAll: ClipActions.UPDATE_ALL,
       handleUpdateMatching: ClipActions.UPDATE_MATCHING,
       handleUpdateSimilar: ClipActions.UPDATE_SIMILAR,
@@ -21,7 +22,6 @@ class ClipStore {
       primaryClip: null,
       errorMessage: null,
       loading: true,
-      searchTerm: '',
       wipeSearchTerm: false,
     };
   }
@@ -40,9 +40,6 @@ class ClipStore {
   }
 
   reloading() {
-    // Only use loading indicator for initial fetch
-    this.state.loading = this.state.allClips.length === 0;
-
     this.state.matchingClips = [];
     this.state.similarClips = [];
     this.state.errorMessage = null;
@@ -52,40 +49,42 @@ class ClipStore {
     this.state.loading = false;
   }
 
-  handleFetching(searchTerm) {
-    this.loading();
+  handleFetchingAll() {
+    this.state.loading = true;
+    this.reloading();
+  }
+
+  handleFetchingMatches() {
+    this.reloading();
     this.state.wipeSearchTerm = false;
-    this.state.searchTerm = searchTerm;
   }
 
   handleUpdateAll(clips) {
+    this.state.loading = false;
     this.state.allClips = clips;
-    this.loaded();
   }
 
   handleUpdateMatching(clips) {
     this.state.primaryClip = null; // TODO: Move this when primary and similar update together
     this.reloading();
     this.state.matchingClips = clips;
-    this.loaded();
   }
 
   handleUpdateSimilar(clips) {
     this.reloading();
     this.state.wipeSearchTerm = false;
     this.state.similarClips = clips;
-    this.loaded();
   }
 
   handleChangePrimary(clipId = null) {
     this.reloading();
-    this.state.wipeSearchTerm = true;
 
     const all = this.state.allClips;
     const newPrimary = clipId ? all[this.findIndex(all, 'id', clipId)] :
                                 all[Math.floor(Math.random() * all.length)];
 
     this.state.primaryClip = newPrimary;
+    this.state.wipeSearchTerm = true;
     ClipActions.fetchSimilar(newPrimary.id);
   }
 

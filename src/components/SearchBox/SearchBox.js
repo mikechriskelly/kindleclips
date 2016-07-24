@@ -36,7 +36,6 @@ class SearchBox extends Component {
           width="40"
           height="40"
           viewBox="0 0 100 125"
-          xmlns="http://www.w3.org/2000/svg"
         >
           <path
             d={'M83.535,76.464L64.438,57.368C67.935,52.462,70,46.469,70,40c0-16.542-13.458-' +
@@ -52,7 +51,6 @@ class SearchBox extends Component {
           debounceTimeout={300}
           onChange={this.onChange}
           placeholder="Search..."
-          autofocus="autofocus"
           value={this.state.value}
         />
       </div>
