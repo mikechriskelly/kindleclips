@@ -131,45 +131,50 @@ topic_names_table <- data.frame(
                         "topic_names" = topic.names, 
                         stringsAsFactors = FALSE)
 
-# insert addtional rows into table
+# insert user topics into topic table
+txt <- NULL
 for (i in 1:NROW(topic_names_table)) {
-      txt <- paste("insert into topic (id, user_id, topic_id, name, created_at, updated_at) values",
-                   "('", UUIDgenerate(), "', ",
-                   "'", topic_names_table$user_id[i], "', ",
-                   topic_names_table$topic_id[i], ", ",
-                   "'", topic_names_table$topic_names[i], "',",
-                   "'", Sys.time(), "', ",
-                   "'", Sys.time(), "')",
-                   sep = "")
-      dbGetQuery(con, txt)
+      txt[i] <- paste("('", UUIDgenerate(), "', ",
+                      "'", topic_names_table$user_id[i], "', ",
+                      topic_names_table$topic_id[i], ", ",
+                      "'", topic_names_table$topic_names[i], "',",
+                      "'", Sys.time(), "', ",
+                      "'", Sys.time(), "')",
+                      sep = "")
 }
+txt <- paste(txt, collapse = ", ")
+txt <- paste("insert into topic (id, user_id, topic_id, name, created_at, updated_at) values", txt)
+dbGetQuery(con, txt)
 
-# insert addtional rows into table
+# insert into topic_prob table
+txt <- NULL
 for (i in 1:NROW(topic_prob_table)) {
-      txt <- paste("insert into topic_prob (id, clip_id, topic_id, prob, created_at, updated_at) values",
-                   "('", UUIDgenerate(), "', ",
-                   "'", topic_prob_table$clip_id[i], "',",
-                   topic_prob_table$topic_id[i], ",",
-                   topic_prob_table$topic_prob[i], ",",
-                   "'", Sys.time(), "', ",
-                   "'", Sys.time(), "')",
-                   sep = "")
-      dbGetQuery(con, txt)
+      txt[i] <- paste("('", UUIDgenerate(), "', ",
+                      "'", topic_prob_table$clip_id[i], "',",
+                      topic_prob_table$topic_id[i], ",",
+                      topic_prob_table$topic_prob[i], ",",
+                      "'", Sys.time(), "', ",
+                      "'", Sys.time(), "')",
+                      sep = "")
 }
+txt <- paste(txt, collapse = ", ")
+txt <- paste("insert into topic_prob (id, clip_id, topic_id, prob, created_at, updated_at) values", txt, sep = "")
+dbGetQuery(con, txt)
 
-# initialize clip_dist table
 clip_dist_table <- top_10 # don't want to write 400K rows
-# insert addtional rows into table
+# insert into clip distance table
+txt <- NULL
 for (i in 1:NROW(clip_dist_table)) {
-      txt <- paste("insert into clip_dist (id, clip_id, sim_clip_id, distance, created_at, updated_at) values",
-                   "('",  UUIDgenerate(), "', ",
-                   "'", clip_dist_table$clip_id[i], "',",
-                   "'", clip_dist_table$clip_dist_id[i], "',",
-                   clip_dist_table$distance[i], ",",
-                   "'", Sys.time(), "', ",
-                   "'", Sys.time(), "')",
-                   sep = "")
-      dbGetQuery(con, txt)
+      txt[i] <- paste("('",  UUIDgenerate(), "', ",
+                      "'", clip_dist_table$clip_id[i], "',",
+                      "'", clip_dist_table$clip_dist_id[i], "',",
+                      clip_dist_table$distance[i], ",",
+                      "'", Sys.time(), "', ",
+                      "'", Sys.time(), "')",
+                      sep = "")
 }
+txt <- paste(txt, collapse = ", ")
+txt <- paste("insert into clip_dist (id, clip_id, sim_clip_id, distance, created_at, updated_at) values", txt, sep = "")
+dbGetQuery(con, txt)
 
 # dbListTables(con)
