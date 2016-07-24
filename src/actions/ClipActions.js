@@ -5,13 +5,13 @@ import UserStore from '../stores/UserStore';
 
 class ClipActions {
 
-  async fetch() {
-    this.search(null, true);
+  async fetchAll() {
+    this.fetchMatching(null, true);
   }
 
-  async search(searchTerm, updateAll = false) {
+  async fetchMatching(searchTerm, updateAll = false) {
     if (!searchTerm && !updateAll) {
-      this.random();
+      this.changePrimary();
       return searchTerm;
     }
 
@@ -33,20 +33,20 @@ class ClipActions {
     const { data } = await resp.json();
     let result;
     if (!data || !data.userClips) {
-      this.updateFail('There was an error loading your clips. Please try again.');
+      this.catchError('There was an error loading your clips. Please try again.');
     } else {
       result = data.userClips;
       if (updateAll) this.updateAll(result);
       if (searchTerm) {
         this.updateMatching(result);
       } else {
-        this.random();
+        this.changePrimary();
       }
     }
     return searchTerm;
   }
 
-  async similar(clipId) {
+  async fetchSimilar(clipId) {
     const query = `{similarClips(id:"${clipId}"){id,title,author,text}}`;
     const token = UserStore.getToken();
     const resp = await fetch('/graphql', {
@@ -62,7 +62,7 @@ class ClipActions {
     const { data } = await resp.json();
     let result;
     if (!data || !data.similarClips) {
-      this.updateFail('There was an error loading your clips. Please try again.');
+      this.catchError('There was an error loading your clips. Please try again.');
     } else {
       result = data.similarClips;
       this.updateSimilar(result);
@@ -81,19 +81,15 @@ class ClipActions {
     return clips;
   }
 
-  updateSingle(clipId) {
+  changePrimary(clipId = null) {
     return clipId;
   }
 
-  updateFail(message) {
+  catchError(message) {
     return message;
   }
 
-  random() {
-    return true;
-  }
-
-  clearSearch(confirmed) { 
+  wipeSearchTerm(confirmed = false) {
     return confirmed;
   }
 
@@ -117,7 +113,7 @@ class ClipActions {
       // Delayed redirect to ensure DB returns new results
       setTimeout(() => history.push('/'), 2200);
     } else {
-      console.log('Error uploading clips');
+      this.catchError('Error uploading clips');
     }
   }
 }

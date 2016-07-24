@@ -17,7 +17,7 @@ class Home extends Component {
 
   static propTypes = {
     isLoggedIn: PropTypes.bool,
-    clearSearch: PropTypes.bool,
+    wipeSearchTerm: PropTypes.bool,
     loading: PropTypes.bool,
     primaryClip: PropTypes.object,
     matchingClips: PropTypes.arrayOf(PropTypes.shape({
@@ -50,12 +50,29 @@ class Home extends Component {
   }
 
   render() {
-    let title = null;
-    let mainMarkup = null;
-    let listMarkup = null;
+    let matchingMarkup = null;
+    let primaryMarkup = null;
+    let similarMarkup = null;
 
+    // Matching Clips
+    if (this.props.matchingClips.length > 0) {
+      matchingMarkup = (
+        <div className={s.primary}>
+          <h2 className={s.title}>Search Results</h2>
+          <ClipList clipList={this.props.matchingClips} />
+        </div>
+      );
+    } else if (!this.props.loading && !this.props.primaryClip) {
+      matchingMarkup = (
+        <div className={s.primary}>
+          <h2 className={s.title}>No Results Found</h2>
+        </div>
+      );
+    }
+
+    // Primary Clip
     if (this.props.primaryClip) {
-      mainMarkup = (
+      primaryMarkup = (
         <div className={s.primary}>
           <Clip
             title={this.props.primaryClip.title}
@@ -64,30 +81,13 @@ class Home extends Component {
           />
         </div>
       );
-    } else if (!this.props.loading) {
-      title = 'No Results Found';
-      mainMarkup = (
-        <div className={s.primary}>
-          <h2 className={s.title}>{title}</h2>
-        </div>
-      );
     }
 
-    if (this.props.matchingClips.length > 0) {
-      title = 'Search Results';
-      mainMarkup = (
-        <div className={s.primary}>
-          <h2 className={s.title}>{title}</h2>
-          <ClipList clipList={this.props.matchingClips} />
-        </div>
-      );
-    }
-
+    // Similar Clips
     if (this.props.similarClips.length > 0) {
-      title = 'Similar Clips';
-      listMarkup = (
+      similarMarkup = (
         <div className={s.primary}>
-          <h2 className={s.title}>{title}</h2>
+          <h2 className={s.title}>Similar Clips</h2>
           <ClipList clipList={this.props.similarClips} />
         </div>
       );
@@ -95,11 +95,12 @@ class Home extends Component {
 
     return (
       <div className={s.root}>
-        <Header isLoggedIn={this.props.isLoggedIn} clearSearch={this.props.clearSearch} />
+        <Header isLoggedIn={this.props.isLoggedIn} wipeSearchTerm={this.props.wipeSearchTerm} />
         {this.props.loading ? <LoadSpinner clear /> : null}
         <div className={s.container}>
-          {mainMarkup}
-          {listMarkup}
+          {matchingMarkup}
+          {primaryMarkup}
+          {similarMarkup}
         </div>
       </div>
     );

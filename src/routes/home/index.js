@@ -7,7 +7,7 @@ export default {
   path: ['/', '/random'],
 
   async action() {
-    const clips = await ClipActions.fetch();
+    const clips = await ClipActions.fetchAll();
     return <Home clips={clips} />;
   },
 

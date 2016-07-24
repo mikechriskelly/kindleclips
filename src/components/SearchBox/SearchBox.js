@@ -7,7 +7,7 @@ import s from './SearchBox.css';
 class SearchBox extends Component {
 
   static propTypes = {
-    clearSearch: PropTypes.bool,
+    wipeSearchTerm: PropTypes.bool,
   }
 
   constructor() {
@@ -15,17 +15,16 @@ class SearchBox extends Component {
     this.state = { value: '' };
   }
 
-  componentWillMount() {
-    if (this.props.clearSearch) {
+  componentWillReceiveProps() {
+    if (this.props.wipeSearchTerm) {
       this.setState({ value: '' });
-      ClipActions.clearSearch(false);
     }
   }
 
   onChange = (event) => {
     const searchTerm = event.target.value;
     this.setState({ value: searchTerm });
-    ClipActions.search(searchTerm);
+    ClipActions.fetchMatching(searchTerm);
   }
 
 

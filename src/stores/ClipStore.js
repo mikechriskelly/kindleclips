@@ -5,26 +5,29 @@ class ClipStore {
 
   constructor() {
     this.bindListeners({
-      handleSearch: ClipActions.SEARCH,
+      handleFetching: ClipActions.FETCH_MATCHING,
       handleUpdateAll: ClipActions.UPDATE_ALL,
       handleUpdateMatching: ClipActions.UPDATE_MATCHING,
       handleUpdateSimilar: ClipActions.UPDATE_SIMILAR,
-      handleUpdateSingle: ClipActions.UPDATE_SINGLE,
-      handleFail: ClipActions.UPDATE_FAIL,
-      handleRandom: ClipActions.RANDOM,
-      handleClearSearch: ClipActions.CLEAR_SEARCH,
+      handleChangePrimary: ClipActions.CHANGE_PRIMARY,
+      handleCatchError: ClipActions.CATCH_ERROR,
+      handleWipeSearchTerm: ClipActions.WIPE_SEARCH_TERM,
     });
 
     this.state = {
-      searchTerm: '',
       allClips: [],
       matchingClips: [],
       similarClips: [],
       primaryClip: null,
       errorMessage: null,
       loading: true,
-      clearSearch: false,
+      searchTerm: '',
+      wipeSearchTerm: false,
     };
+  }
+
+  static getPrimaryClipID() {
+    return this.state.primaryClip.id;
   }
 
   findIndex(array, attr, value) {
@@ -36,62 +39,61 @@ class ClipStore {
     return -1;
   }
 
-  handleSearch(searchTerm) {
-    this.state.clearSearch = false;
-    this.state.searchTerm = searchTerm;
+  reloading() {
+    // Only use loading indicator for initial fetch
+    this.state.loading = this.state.allClips.length === 0;
+
     this.state.matchingClips = [];
-    this.state.primaryClip = null;
-    this.state.similarClips = null;
+    this.state.similarClips = [];
     this.state.errorMessage = null;
-    this.state.loading = true;
   }
 
-  handleComplete() {
+  loaded() {
     this.state.loading = false;
+  }
+
+  handleFetching(searchTerm) {
+    this.loading();
+    this.state.wipeSearchTerm = false;
+    this.state.searchTerm = searchTerm;
   }
 
   handleUpdateAll(clips) {
     this.state.allClips = clips;
-    this.handleComplete();
+    this.loaded();
   }
 
   handleUpdateMatching(clips) {
-    this.state.primaryClip = null;
-    this.state.similarClips = [];
+    this.state.primaryClip = null; // TODO Remove. Primary/Similar should update together
+    this.reloading();
     this.state.matchingClips = clips;
-    this.handleComplete();
+    this.loaded();
   }
 
   handleUpdateSimilar(clips) {
+    this.reloading();
     this.state.similarClips = clips;
+    this.loaded();
   }
 
-  handleUpdateSingle(clipId) {
-    this.state.clearSearch = true;
+  handleChangePrimary(clipId = null) {
+    this.reloading();
+    this.state.wipeSearchTerm = true;
+
     const all = this.state.allClips;
-    this.state.primaryClip = all[this.findIndex(all, 'id', clipId)] || this.state.primaryClip;
-    this.state.matchingClips = [];
-    this.state.similarClips = [];
-  
-    ClipActions.similar(this.state.primaryClip.id);
+    const newPrimary = clipId ? all[this.findIndex(all, 'id', clipId)] :
+                                all[Math.floor(Math.random() * all.length)];
+
+    this.state.primaryClip = newPrimary;
+    ClipActions.fetchSimilar(newPrimary.id);
   }
 
-  handleFail(errorMessage) {
+  handleCatchError(errorMessage) {
     this.state.errorMessage = errorMessage;
   }
 
-  handleRandom() {
-    this.state.matchingClips = [];
-    this.state.similarClips = [];
-    const all = this.state.allClips;
-    this.state.primaryClip = all[Math.floor(Math.random() * all.length)];
-    this.handleComplete();
-
-    ClipActions.similar(this.state.primaryClip.id);
-  }
-
-  handleClearSearch(confirmed) {
-    this.state.clearSearch = confirmed;
+  handleWipeSearchTerm(confirmed) {
+    this.state.wipeSearchTerm = confirmed;
   }
 
 }

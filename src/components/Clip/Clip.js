@@ -3,20 +3,20 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Clip.css';
 import FaRandom from 'react-icons/lib/fa/random';
 import FaLevelUp from 'react-icons/lib/fa/level-up';
-import Link from '../Link';
 import ClipActions from '../../actions/ClipActions';
 
 function Clip({ title, author, text, id, inList }) {
+  const handleSetPrimary = () => ClipActions.changePrimary(id);
+  const handleRandom = () => ClipActions.changePrimary();
+
   const buttonRandom = (
-    <Link to="/random" className={s.action}>
+    <div onClick={handleRandom} className={s.action}>
       <FaRandom size={22} />
-    </Link>
+    </div>
   );
 
-  const handleClick = () => ClipActions.updateSingle(id);
-
-  const buttonLink = (
-    <div className={s.action} onClick={handleClick}>
+  const buttonSetPrimary = (
+    <div className={s.action} onClick={handleSetPrimary}>
       <FaLevelUp size={22} />
     </div>
   );
@@ -29,7 +29,7 @@ function Clip({ title, author, text, id, inList }) {
       />
       <span className={s.title}>{title}</span>
       <span className={s.author}>{author}</span>
-      {inList ? buttonLink : buttonRandom}
+      {inList ? buttonSetPrimary : buttonRandom}
     </div>
   );
   const listWrapper = inList && (<li className={s.listItem}>{clipMarkup}</li>);
