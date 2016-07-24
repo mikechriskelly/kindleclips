@@ -19,13 +19,18 @@ class ClipActions {
       credentials: 'include',
     });
     const { data } = await resp.json();
-    let result;
     if (!data || !data.userClips) {
       this.catchError('There was an error loading your clips. Please try again.');
     } else {
-      result = data.userClips;
-      this.updateAll(result);
-      this.changePrimary();
+      const clips = data.userClips;
+
+      // Pick random clip based on time of day (server and client will make same choice)
+      const now = new Date();
+      const seed = (now.getUTCDate() * now.getUTCHours()) / (31 * 24);
+      const clipId = clips[Math.floor(seed * clips.length)].id;
+      this.updateAll(clips);
+      this.changePrimary(clipId);
+      await this.fetchSimilar(clipId);
     }
   }
 

@@ -85,7 +85,6 @@ const userClips = {
         Clip.findAll({
           attributes: ['id', 'title', 'author', 'text'],
           where: { userId },
-          order: [Model.fn('RANDOM')],
           limit: resultLimit,
         });
     } catch (err) {
