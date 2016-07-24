@@ -25,22 +25,32 @@
 
 .primary,
 .regular {
-  padding: 10px;
-  border: 1px solid transparent;
+  background-color: white;
+  border: 1px solid var(--gray-lighter);
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,0.02);
   margin: 1em 0;
   padding: 1em;
+  position: relative;
 }
 
-.primary {
-  background-color: white;
-  border: 1px solid var(--gray-lighter);
-  box-shadow: 0 2px 5px 0 rgba(0,0,0,0.05);
+.action {
+  border-radius: 5px;
+  color: var(--gray);
+  display: inline-block;
+  padding: 6px;
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
 }
 
-.regular:hover {
-  cursor: hand;
-  cursor: pointer;
-  background-color: white;
-  border: 1px solid var(--gray-lighter);
-  box-shadow: 0 2px 5px 0 rgba(0,0,0,0.05);
+@media screen and (min-width : 750px) {
+  .action {
+    right: -50px;
+    top: 0px;
+    bottom: initial;
+  }
+}
+
+.action:hover {
+  background-color: var(--gray-lighter-mid);
 }

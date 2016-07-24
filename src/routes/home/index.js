@@ -4,7 +4,7 @@ import ClipActions from '../../actions/ClipActions';
 
 export default {
 
-  path: '/',
+  path: ['/', '/random'],
 
   async action() {
     const clips = await ClipActions.fetch();

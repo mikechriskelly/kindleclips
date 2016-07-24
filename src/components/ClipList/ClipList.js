@@ -8,6 +8,7 @@ function ClipList({ clipList }) {
     <ul className={s.clipList}>
       {clipList.map((clip) => (
         <Clip
+          id={clip.id}
           key={clip.id}
           title={clip.title}
           author={clip.author}

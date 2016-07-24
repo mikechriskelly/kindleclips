@@ -1,6 +1,5 @@
 import ClipType from '../types/ClipType';
 import Clip from '../models/Clip';
-import ClipDist from '../models/ClipDist';
 import Model from '../sequelize';
 import { GraphQLList, GraphQLString, GraphQLID, GraphQLBoolean } from 'graphql';
 import { demoUser } from '../../config';
@@ -98,7 +97,7 @@ const userClips = {
 
 // Clip Query: Any single clip by ID
 const singleClip = {
-  type: new GraphQLList(ClipType),
+  type: ClipType,
   args: {
     id: { type: GraphQLID },
   },

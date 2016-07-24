@@ -17,6 +17,7 @@ class Home extends Component {
 
   static propTypes = {
     isLoggedIn: PropTypes.bool,
+    clearSearch: PropTypes.bool,
     loading: PropTypes.bool,
     primaryClip: PropTypes.object,
     matchingClips: PropTypes.arrayOf(PropTypes.shape({
@@ -94,7 +95,7 @@ class Home extends Component {
 
     return (
       <div className={s.root}>
-        <Header isLoggedIn={this.props.isLoggedIn} />
+        <Header isLoggedIn={this.props.isLoggedIn} clearSearch={this.props.clearSearch} />
         {this.props.loading ? <LoadSpinner clear /> : null}
         <div className={s.container}>
           {mainMarkup}

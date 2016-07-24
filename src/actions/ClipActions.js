@@ -12,7 +12,7 @@ class ClipActions {
   async search(searchTerm, updateAll = false) {
     if (!searchTerm && !updateAll) {
       this.random();
-      return;
+      return searchTerm;
     }
 
     const query = searchTerm ?
@@ -43,7 +43,7 @@ class ClipActions {
         this.random();
       }
     }
-    return;
+    return searchTerm;
   }
 
   async similar(clipId) {
@@ -81,12 +81,20 @@ class ClipActions {
     return clips;
   }
 
+  updateSingle(clipId) {
+    return clipId;
+  }
+
   updateFail(message) {
     return message;
   }
 
   random() {
     return true;
+  }
+
+  clearSearch(confirmed) { 
+    return confirmed;
   }
 
   async upload(files) {

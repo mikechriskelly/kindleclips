@@ -17,8 +17,9 @@
   --gray-darker: color(black lightness(+13.5%));  /* #222 */
   --gray-dark: color(black lightness(+25%));      /* #404040 */
   --gray: color(black lightness(+33.5%));         /* #555 */
-  --gray-light: color(black lightness(+46.7%));   /* #777 */
+  --gray-light: color(black lightness(+65%));   /* #777 */
   --gray-lighter: color(black lightness(+93.5%)); /* #eee */
+  --gray-lighter-mid: color(black lightness(+88%));
 
   --primary:       hsla(20, 56%, 57%, 1);
   --primary-dark:  hsla(20, 56%, 57%, 1);

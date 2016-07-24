@@ -11,7 +11,7 @@ const userLinks =
   </div>);
 
 const guestLinks =
-  (<Button href="/login" text="Sign up" type="primary" />);
+  (<Button href="/login" text="Sign in / Sign up" type="primary" />);
 
 function Navigation({ className, isLoggedIn }) {
   return (

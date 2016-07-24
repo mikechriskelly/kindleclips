@@ -1,14 +1,33 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import ClipActions from '../../actions/ClipActions';
 import DebounceInput from 'react-debounce-input';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './SearchBox.css';
 
 class SearchBox extends Component {
+
+  static propTypes = {
+    clearSearch: PropTypes.bool,
+  }
+
+  constructor() {
+    super();
+    this.state = { value: '' };
+  }
+
+  componentWillMount() {
+    if (this.props.clearSearch) {
+      this.setState({ value: '' });
+      ClipActions.clearSearch(false);
+    }
+  }
+
   onChange = (event) => {
     const searchTerm = event.target.value;
+    this.setState({ value: searchTerm });
     ClipActions.search(searchTerm);
   }
+
 
   render() {
     return (
@@ -35,6 +54,7 @@ class SearchBox extends Component {
           onChange={this.onChange}
           placeholder="Search..."
           autofocus="autofocus"
+          value={this.state.value}
         />
       </div>
     );
