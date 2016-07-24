@@ -64,7 +64,7 @@ class ClipStore {
   }
 
   handleUpdateMatching(clips) {
-    this.state.primaryClip = null; // TODO Remove. Primary/Similar should update together
+    this.state.primaryClip = null; // TODO: Move this when primary and similar update together
     this.reloading();
     this.state.matchingClips = clips;
     this.loaded();
@@ -72,6 +72,7 @@ class ClipStore {
 
   handleUpdateSimilar(clips) {
     this.reloading();
+    this.state.wipeSearchTerm = false;
     this.state.similarClips = clips;
     this.loaded();
   }
