@@ -77,13 +77,12 @@ class ClipStore {
   }
 
   handleChangePrimary(clipId = null) {
-    this.reloading();
-
     const all = this.state.allClips;
     const newPrimary = clipId ? all[this.findIndex(all, 'id', clipId)] :
                                 all[Math.floor(Math.random() * all.length)];
-
     this.state.primaryClip = newPrimary;
+    
+    this.reloading();
     this.state.wipeSearchTerm = true;
     ClipActions.fetchSimilar(newPrimary.id);
   }

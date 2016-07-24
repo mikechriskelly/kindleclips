@@ -31,7 +31,6 @@ class ClipActions {
 
   async fetchMatching(searchTerm) {
     if (!searchTerm) {
-      this.updateMatching([]);
       return;
     }
 

@@ -23,8 +23,10 @@ class SearchBox extends Component {
 
   onChange = (event) => {
     const searchTerm = event.target.value;
-    this.setState({ value: searchTerm });
-    ClipActions.fetchMatching(searchTerm);
+    if (searchTerm !== this.state.value) {
+      this.setState({ value: searchTerm });
+      ClipActions.fetchMatching(searchTerm);
+    }
   }
 
 
