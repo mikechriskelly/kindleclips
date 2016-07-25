@@ -77,7 +77,7 @@ const userClips = {
   },
   resolve: (root, args) => {
     const userId = getUserId(root);
-    const resultLimit = args.search ? 50 : 500;
+    const resultLimit = args.search ? 50 : 2000;
     try {
       return args.search ?
         Clip.search(userId, args.search, resultLimit) :
