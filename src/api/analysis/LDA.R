@@ -81,14 +81,11 @@ rem <- which(clip_dist_table$distance == 0)
 clip_dist_table <- clip_dist_table[-rem, ]
 
 make_smaller_table <- function(table, n) {
+      thresh <- which(table$distance < quantile(table$distance, 0.1))
+      table <- table[thresh, ]
       clip_array <- split(table, table$clip_id)
-      clip_array <- lapply(clip_array, function(x) x[order(x$distance),])
-      df <- data.frame()
-      for (i in 1:NROW(clip_array)) {
-            df <- rbind(df, clip_array[[i]][1:n,])
-      }
-      z <- which(df$distance > quantile(clip_dist_table$distance, 0.1)) # set threshold at closest 10%
-      if (length(z) != 0) {df <- df[-z,] } # remove rows which don't meet threshold
+      clip_array <- lapply(clip_array, function(x) x[order(x$distance)[1:n],])
+      df <- do.call(rbind, lapply(clip_array, data.frame, stringsAsFactors = FALSE))
       df
 }
 
@@ -161,7 +158,7 @@ txt <- paste(txt, collapse = ", ")
 txt <- paste("insert into topic_prob (id, clip_id, topic_id, prob, created_at, updated_at) values", txt, sep = "")
 dbGetQuery(con, txt)
 
-clip_dist_table <- top_10 # don't want to write 400K rows
+clip_dist_table <- top_10 # reduce to the most relevant clips
 # insert into clip distance table
 txt <- NULL
 for (i in 1:NROW(clip_dist_table)) {
