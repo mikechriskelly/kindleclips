@@ -1,6 +1,5 @@
 import ClipType from '../types/ClipType';
 import Clip from '../models/Clip';
-import Model from '../sequelize';
 import { GraphQLList, GraphQLString, GraphQLID, GraphQLBoolean } from 'graphql';
 import { demoUser } from '../../config';
 import { getID } from '../auth';

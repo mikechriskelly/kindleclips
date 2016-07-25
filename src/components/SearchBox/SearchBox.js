@@ -29,7 +29,6 @@ class SearchBox extends Component {
     }
   }
 
-
   render() {
     return (
       <div className={s.root}>

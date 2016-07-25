@@ -21,6 +21,9 @@ class ClipActions {
     const { data } = await resp.json();
     if (!data || !data.userClips) {
       this.catchError('There was an error loading your clips. Please try again.');
+    } else if (data.userClips.length === 0) {
+      this.catchError('Looks like you don\'t have any clips yet.');
+      this.updateAll();
     } else {
       const clips = data.userClips;
 
@@ -35,7 +38,10 @@ class ClipActions {
   }
 
   async fetchMatching(searchTerm) {
+    console.log('FETCHING')
     if (!searchTerm) {
+      console.log('BLANK: setting random primary')
+      this.changePrimary();
       return;
     }
 
@@ -52,10 +58,10 @@ class ClipActions {
       credentials: 'include',
     });
     const { data } = await resp.json();
-    let result;
+    let clips;
     if (data && data.userClips) {
-      result = data.userClips;
-      this.updateMatching(result);
+      clips = data.userClips;
+      this.updateMatching(clips);
     }
     return;
   }
@@ -83,15 +89,15 @@ class ClipActions {
     }
   }
 
-  updateAll(clips) {
+  updateAll(clips = []) {
     return clips;
   }
 
-  updateMatching(clips) {
+  updateMatching(clips = []) {
     return clips;
   }
 
-  updateSimilar(clips) {
+  updateSimilar(clips = []) {
     return clips;
   }
 
@@ -99,7 +105,7 @@ class ClipActions {
     return clipId;
   }
 
-  catchError(message) {
+  catchError(message = null) {
     return message;
   }
 

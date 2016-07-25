@@ -19,19 +19,11 @@ class Home extends Component {
     isLoggedIn: PropTypes.bool,
     wipeSearchTerm: PropTypes.bool,
     loading: PropTypes.bool,
+    allClips: PropTypes.array,
     primaryClip: PropTypes.object,
-    matchingClips: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.string,
-      title: PropTypes.string,
-      author: PropTypes.string,
-      text: PropTypes.string,
-    })),
-    similarClips: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.string,
-      title: PropTypes.string,
-      author: PropTypes.string,
-      text: PropTypes.string,
-    })),
+    matchingClips: PropTypes.array,
+    similarClips: PropTypes.array,
+    errorMessage: PropTypes.string,
   };
 
   static getStores() {
@@ -50,9 +42,18 @@ class Home extends Component {
   }
 
   render() {
+    let errorMarkup = null;
     let matchingMarkup = null;
     let primaryMarkup = null;
     let similarMarkup = null;
+    let messageMarkup = null;
+
+    // Error Message
+    if (this.props.errorMessage) {
+      errorMarkup = (
+        <h4 className={s.title}>{this.props.errorMessage}</h4>
+      );
+    }
 
     // Matching Clips
     if (this.props.matchingClips.length > 0) {
@@ -62,7 +63,7 @@ class Home extends Component {
           <ClipList clipList={this.props.matchingClips} />
         </div>
       );
-    } else if (!this.props.loading && !this.props.primaryClip) {
+    } else if (!this.props.loading && (this.props.allClips.length > 0) && !this.props.primaryClip) {
       matchingMarkup = (
         <h2 className={s.title}>No Results Found</h2>
       );
@@ -89,24 +90,41 @@ class Home extends Component {
       );
     }
 
+    // Message Text
+    if (!this.props.isLoggedIn) {
+      messageMarkup = (
+        <div className={s.secondary}>
+          <h2><span className={s.brand}>Kindle Clips</span>. Your text, remixed.</h2>
+          <p>A free service for Kindle owners to easily view all their highlighted text.</p>
+          <p>You can upload, search, and explore your favorite quotes and excerpts stored on your Kindle device.</p>
+          <p>Text analysis and topic modeling bring similar clips together, revealing serendipidous connections between passages.</p>
+          <p>Explore demo highlights, or sign in to upload and browse highlights from your own Kindle.</p>
+          <p className={s.author}>By Chris Castle and Mike Kelly</p>
+        </div>
+      ) 
+    } else if (this.props.allClips.length === 0) {
+      messageMarkup = (
+        <div className={s.secondary}>
+          <h2>Load your Kindle clips!</h2>
+          <p>To populate this place with your own clips, you need to upload them from your Kindle.</p>
+          <p>Connect your Kindle to your computer and hit the upload button when you're ready</p>
+          <p>Your clips stay stored here for easy access. You may want to periodically upload your clippings to stay in sync with the latest highlights from your Kindle.</p>
+        </div>
+      )         
+    }
+
     return (
       <div className={s.root}>
         <Header isLoggedIn={this.props.isLoggedIn} wipeSearchTerm={this.props.wipeSearchTerm} />
         {this.props.loading ? <LoadSpinner clear /> : null}
         <div className={s.container}>
           <div className={s.primary}>
+            {errorMarkup}
             {matchingMarkup}
             {primaryMarkup}
             {similarMarkup}
           </div>
-          <div className={s.secondary}>
-            <h2><span className={s.brand}>Kindle Clips</span>. Your text, remixed.</h2>
-            <p>A free service for Kindle owners to easily view the text clips they've highlighted.</p>
-            <p>You can upload, search, and explore all your favorite quotes and excerpts stored on your Kindle device.</p>
-            <p>Text analysis and topic modeling bring similar clips together, revealing serendipidous connections between passages.</p>
-            <p>Explore demo highlights, or sign in to upload and browse highlights from your own Kindle.</p>
-            <p className={s.author}>By Chris Castle and Mike Kelly</p>
-          </div>
+          {messageMarkup}
         </div>
       </div>
     );

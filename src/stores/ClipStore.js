@@ -62,21 +62,24 @@ class ClipStore {
   handleUpdateAll(clips) {
     this.state.loading = false;
     this.state.allClips = clips;
+    if (clips.length > 0) this.state.errorMessage = null;
   }
 
   handleUpdateMatching(clips) {
     this.state.primaryClip = null; // TODO: Move this when primary and similar update together
     this.reloading();
     this.state.matchingClips = clips;
+    this.state.errorMessage = null;
   }
 
   handleUpdateSimilar(clips) {
     this.reloading();
     this.state.wipeSearchTerm = false;
     this.state.similarClips = clips;
+    this.state.errorMessage = null;
   }
 
-  handleChangePrimary(clipId = null) {
+  handleChangePrimary(clipId) {
     const all = this.state.allClips;
     const newPrimary = clipId ? all[this.findIndex(all, 'id', clipId)] :
                                 all[Math.floor(Math.random() * all.length)];
@@ -85,6 +88,7 @@ class ClipStore {
     this.reloading();
     this.state.wipeSearchTerm = true;
     ClipActions.fetchSimilar(newPrimary.id);
+    this.state.errorMessage = null;
   }
 
   handleCatchError(errorMessage) {
