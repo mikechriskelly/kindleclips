@@ -38,9 +38,7 @@ class ClipActions {
   }
 
   async fetchMatching(searchTerm) {
-    console.log('FETCHING')
     if (!searchTerm) {
-      console.log('BLANK: setting random primary')
       this.changePrimary();
       return;
     }
