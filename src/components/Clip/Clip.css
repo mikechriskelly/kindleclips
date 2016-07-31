@@ -23,6 +23,14 @@
   padding: 0 0 5px 0;
 }
 
+.highlight {
+  background: rgba(255, 230, 0, 0.4);
+  padding: 2px 4px;
+  margin: -2px -4px;
+  border-radius: 3px;
+  display:inline-block;
+}
+
 .primary,
 .regular {
   background-color: white;

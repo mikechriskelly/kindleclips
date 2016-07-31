@@ -49,7 +49,7 @@ class SearchBox extends Component {
         <DebounceInput
           className="input"
           minLength={2}
-          debounceTimeout={300}
+          debounceTimeout={200}
           onChange={this.onChange}
           placeholder="Search..."
           value={this.state.value}

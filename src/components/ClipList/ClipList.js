@@ -3,7 +3,7 @@ import Clip from '../Clip';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './ClipList.css';
 
-function ClipList({ clipList }) {
+function ClipList({ clipList, searchTerm }) {
   return (
     <ul className={s.clipList}>
       {clipList.map((clip) => (
@@ -13,6 +13,7 @@ function ClipList({ clipList }) {
           title={clip.title}
           author={clip.author}
           text={clip.text}
+          searchTerm={searchTerm}
           inList
         />
       ))}
@@ -27,6 +28,7 @@ ClipList.propTypes = {
     author: PropTypes.string,
     text: PropTypes.string,
   })),
+  searchTerm: PropTypes.string,
 };
 
 export default withStyles(s)(ClipList);

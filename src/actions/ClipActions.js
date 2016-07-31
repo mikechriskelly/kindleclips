@@ -59,9 +59,8 @@ class ClipActions {
     let clips;
     if (data && data.userClips) {
       clips = data.userClips;
-      this.updateMatching(clips);
+      this.updateMatching(clips, searchTerm);
     }
-    return;
   }
 
   async fetchSimilar(clipId) {
@@ -87,12 +86,16 @@ class ClipActions {
     }
   }
 
+  fetching(searchTerm) {
+    return searchTerm;
+  }
+
   updateAll(clips = []) {
     return clips;
   }
 
-  updateMatching(clips = []) {
-    return clips;
+  updateMatching(clips = [], searchTerm = '') {
+    return { clips, searchTerm };
   }
 
   updateSimilar(clips = []) {
@@ -105,6 +108,10 @@ class ClipActions {
 
   catchError(message = null) {
     return message;
+  }
+
+  setSearchTerm(searchTerm) {
+    return searchTerm;
   }
 
   wipeSearchTerm(confirmed = false) {

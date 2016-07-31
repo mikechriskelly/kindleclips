@@ -21,7 +21,7 @@ class ClipStore {
       similarClips: [],
       primaryClip: null,
       errorMessage: null,
-      loading: true,
+      searchTerm: null,
       wipeSearchTerm: false,
     };
   }
@@ -40,17 +40,13 @@ class ClipStore {
   }
 
   reloading() {
+    this.state.searchTerm = null;
     this.state.matchingClips = [];
     this.state.similarClips = [];
     this.state.errorMessage = null;
   }
 
-  loaded() {
-    this.state.loading = false;
-  }
-
   handleFetchingAll() {
-    this.state.loading = true;
     this.reloading();
   }
 
@@ -60,15 +56,15 @@ class ClipStore {
   }
 
   handleUpdateAll(clips) {
-    this.state.loading = false;
     this.state.allClips = clips;
     if (clips.length > 0) this.state.errorMessage = null;
   }
 
-  handleUpdateMatching(clips) {
+  handleUpdateMatching({ clips, searchTerm }) {
     this.state.primaryClip = null; // TODO: Move this when primary and similar update together
     this.reloading();
     this.state.matchingClips = clips;
+    this.state.searchTerm = searchTerm;
     this.state.errorMessage = null;
   }
 

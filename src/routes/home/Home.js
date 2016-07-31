@@ -7,7 +7,6 @@ import ClipList from '../../components/ClipList';
 import Clip from '../../components/Clip';
 import UserStore from '../../stores/UserStore';
 import ClipStore from '../../stores/ClipStore';
-import LoadSpinner from '../../components/LoadSpinner';
 
 class Home extends Component {
 
@@ -17,8 +16,8 @@ class Home extends Component {
 
   static propTypes = {
     isLoggedIn: PropTypes.bool,
+    searchTerm: PropTypes.string,
     wipeSearchTerm: PropTypes.bool,
-    loading: PropTypes.bool,
     allClips: PropTypes.array,
     primaryClip: PropTypes.object,
     matchingClips: PropTypes.array,
@@ -56,14 +55,15 @@ class Home extends Component {
     }
 
     // Matching Clips
+    console.log('SEARCH is ', this.props.searchTerm);
     if (this.props.matchingClips.length > 0) {
       matchingMarkup = (
         <div>
           <h2 className={s.title}>Search Results</h2>
-          <ClipList clipList={this.props.matchingClips} />
+          <ClipList clipList={this.props.matchingClips} searchTerm={this.props.searchTerm} />
         </div>
       );
-    } else if (!this.props.loading && (this.props.allClips.length > 0) && !this.props.primaryClip) {
+    } else if (this.props.allClips.length > 0 && !this.props.primaryClip) {
       matchingMarkup = (
         <h2 className={s.title}>No Results Found</h2>
       );
@@ -116,7 +116,6 @@ class Home extends Component {
     return (
       <div className={s.root}>
         <Header isLoggedIn={this.props.isLoggedIn} wipeSearchTerm={this.props.wipeSearchTerm} />
-        {this.props.loading ? <LoadSpinner clear /> : null}
         <div className={s.container}>
           <div className={s.primary}>
             {errorMarkup}
