@@ -85,10 +85,19 @@ const Clip = Model.define('clip', {
     async getSimilar(clipId) {
       return Model.query(`SELECT id, title, author, text FROM "${this.tableName}"
                           WHERE id IN (
-                            SELECT sim_clip_id 
+                            SELECT sim_clip_id
                             FROM clip_dist
                             WHERE clip_id = '${clipId}'
-                          )`,
+                            ORDER BY distance)`,
+                          { type: Model.QueryTypes.SELECT })
+                  .then(results => results);
+    },
+    async getRandom(userId, seed = Math.random()) {
+      return Model.query(`SELECT id, title, author, text FROM "${this.tableName}"
+                          WHERE user_id = '${userId}'
+                          OFFSET ${seed} *
+                          (SELECT count(*) FROM "${this.tableName}" WHERE user_id = '${userId}')
+                          LIMIT 1`,
                           { type: Model.QueryTypes.SELECT })
                   .then(results => results);
     },

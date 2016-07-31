@@ -1,6 +1,6 @@
 import ClipType from '../types/ClipType';
 import Clip from '../models/Clip';
-import { GraphQLList, GraphQLString, GraphQLID, GraphQLBoolean } from 'graphql';
+import { GraphQLList, GraphQLString, GraphQLID, GraphQLBoolean, GraphQLFloat } from 'graphql';
 import { demoUser } from '../../config';
 import { getID } from '../auth';
 
@@ -69,68 +69,37 @@ function getUserId(root) {
 }
 
 // Clip Query: All Clips for Current User
-const userClips = {
+const clips = {
   type: new GraphQLList(ClipType),
   args: {
+    id: { type: GraphQLID },
     search: { type: GraphQLString },
     random: { type: GraphQLBoolean },
+    seed: { type: GraphQLFloat },
   },
   resolve: (root, args) => {
     const userId = getUserId(root);
-    const resultLimit = args.search ? 50 : 5000;
-    try {
-      return args.search ?
-        Clip.search(userId, args.search, resultLimit) :
-        Clip.findAll({
-          attributes: ['id', 'title', 'author', 'text'],
-          where: { userId },
-          limit: resultLimit,
-        });
-    } catch (err) {
-      console.log('Could not retrieve clips.', err);
-      return [];
-    }
-  },
-};
+    const limit = 50;
+    const attributes = ['id', 'title', 'author', 'text'];
 
-// Clip Query: Any single clip by ID
-const singleClip = {
-  type: ClipType,
-  args: {
-    id: { type: GraphQLID },
-  },
-  resolve: (root, args) => {
-    try {
-      return Clip.findOne({
-        attributes: ['id', 'title', 'author', 'text'],
-        where: { id: args.id },
+    if (args.id) {
+      return Clip.findAll({
+        attributes,
+        where: { userId, id: args.id },
+        limit: 1,
       });
-    } catch (err) {
-      console.log('Could not retrieve clip.', err);
-      return {};
     }
-  },
-};
 
-const similarClips = {
-  type: new GraphQLList(ClipType),
-  args: {
-    id: { type: GraphQLID },
-  },
-  resolve: (root, args) => {
-    try {
-      return Clip.getSimilar(args.id);
-    } catch (err) {
-      console.log('Could not retrieve similar clips.', err);
-      return {};
-    }
+    if (args.search) return Clip.search(userId, args.search, limit);
+    if (args.random) return Clip.getRandom(userId, args.seed);
+    return [];
   },
 };
 
 async function insertClips(clipFile, userId) {
-  const clips = parseMyClippingsTxt(clipFile, userId);
+  const newClips = parseMyClippingsTxt(clipFile, userId);
   try {
-    await Clip.bulkCreate(clips, { validate: false });
+    await Clip.bulkCreate(newClips, { validate: false });
     console.log('Clips inserted.');
     return true;
   } catch (err) {
@@ -150,5 +119,5 @@ async function removeClips(userId) {
   }
 }
 
-export default userClips;
-export { userClips, singleClip, similarClips, insertClips, removeClips };
+export default clips;
+export { clips, insertClips, removeClips };

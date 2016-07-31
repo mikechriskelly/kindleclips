@@ -7,7 +7,7 @@ export default {
   path: ['/', '/random'],
 
   async action() {
-    await ClipActions.fetchAll();
+    await ClipActions.fetchPrimary(null, true);
     return <Home />;
   },
 

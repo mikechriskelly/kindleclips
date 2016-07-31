@@ -18,11 +18,11 @@ class Home extends Component {
     isLoggedIn: PropTypes.bool,
     searchTerm: PropTypes.string,
     searchKey: PropTypes.string,
-    allClips: PropTypes.array,
     primaryClip: PropTypes.object,
     matchingClips: PropTypes.array,
     similarClips: PropTypes.array,
     errorMessage: PropTypes.string,
+    noClips: PropTypes.bool,
   };
 
   static getStores() {
@@ -42,29 +42,15 @@ class Home extends Component {
 
   render() {
     let errorMarkup = null;
-    let matchingMarkup = null;
     let primaryMarkup = null;
     let similarMarkup = null;
+    let matchingMarkup = null;
     let messageMarkup = null;
 
     // Error Message
     if (this.props.errorMessage) {
       errorMarkup = (
         <h4 className={s.title}>{this.props.errorMessage}</h4>
-      );
-    }
-
-    // Matching Clips
-    if (this.props.matchingClips.length > 0) {
-      matchingMarkup = (
-        <div>
-          <h2 className={s.title}>Search Results</h2>
-          <ClipList clipList={this.props.matchingClips} searchTerm={this.props.searchTerm} />
-        </div>
-      );
-    } else if (this.props.allClips.length > 0 && !this.props.primaryClip) {
-      matchingMarkup = (
-        <h2 className={s.title}>No Results Found</h2>
       );
     }
 
@@ -77,15 +63,26 @@ class Home extends Component {
           text={this.props.primaryClip.text}
         />
       );
-    }
-
-    // Similar Clips
-    if (this.props.similarClips.length > 0) {
-      similarMarkup = (
+      // with similar Clips
+      if (this.props.similarClips.length > 0) {
+        similarMarkup = (
+          <div>
+            <h2 className={s.title}>Similar Clips</h2>
+            <ClipList clipList={this.props.similarClips} />
+          </div>
+        );
+      }
+    // Matching Clips
+    } else if (this.props.matchingClips.length > 0) {
+      matchingMarkup = (
         <div>
-          <h2 className={s.title}>Similar Clips</h2>
-          <ClipList clipList={this.props.similarClips} />
+          <h2 className={s.title}>Search Results</h2>
+          <ClipList clipList={this.props.matchingClips} searchTerm={this.props.searchTerm} />
         </div>
+      );
+    } else {
+      matchingMarkup = (
+        <h2 className={s.title}>No Results Found</h2>
       );
     }
 
@@ -101,7 +98,7 @@ class Home extends Component {
           <p className={s.author}>By Chris Castle and Mike Kelly</p>
         </div>
       ) 
-    } else if (this.props.allClips.length === 0) {
+    } else if (this.props.noClips) {
       messageMarkup = (
         <div className={s.secondary}>
           <h2>Load your Kindle clips!</h2>
@@ -118,9 +115,9 @@ class Home extends Component {
         <div className={s.container}>
           <div className={s.primary}>
             {errorMarkup}
-            {matchingMarkup}
             {primaryMarkup}
             {similarMarkup}
+            {matchingMarkup}
           </div>
           {messageMarkup}
         </div>

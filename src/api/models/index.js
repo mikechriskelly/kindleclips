@@ -48,7 +48,7 @@ Clip.hasMany(TopicProb, {
 });
 
 Clip.belongsToMany(Clip, {
-  as: 'SimilarClips',
+  as: 'sim_clip',
   through: ClipDist,
   foreignKey: 'clipId',
   otherkey: 'simClipId',

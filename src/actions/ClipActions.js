@@ -5,8 +5,26 @@ import UserStore from '../stores/UserStore';
 
 class ClipActions {
 
-  async fetchAll() {
-    const query = '{userClips{id,title,author,text}}';
+  async fetchPrimary(id, isInitial) {
+    this.fetching('primary');
+    let query;
+    // Lookup by ID
+    if (id) {
+      query = `{clips(id: "${id}")
+                {id, title, author, text, similarClips { id, title, author, text}}}`;
+    // Get an initial random clip
+    } else if (isInitial) {
+      // Pick initial clip based on time of day (server and client will make same choice)
+      const now = new Date();
+      const seed = (now.getUTCDate() * now.getUTCHours()) / (31 * 24);
+      query = `{clips(random: true, seed: ${seed})
+                {id, title, author, text, similarClips {id, title, author, text}}}`;
+    } else {
+      // Get random clip
+      query = `{clips(random: true)
+                {id, title, author, text, similarClips {id, title, author, text}}}`;
+    }
+
     const token = UserStore.getToken();
     const resp = await fetch('/graphql', {
       method: 'post',
@@ -18,32 +36,28 @@ class ClipActions {
       body: JSON.stringify({ query }),
       credentials: 'include',
     });
-    const { data } = await resp.json();
-    if (!data || !data.userClips) {
-      this.catchError('There was an error loading your clips. Please try again.');
-    } else if (data.userClips.length === 0) {
-      this.catchError('Looks like you don\'t have any clips yet.');
-      this.updateAll();
-    } else {
-      const clips = data.userClips;
 
-      // Pick random clip based on time of day (server and client will make same choice)
-      const now = new Date();
-      const seed = (now.getUTCDate() * now.getUTCHours()) / (31 * 24);
-      const clipId = clips[Math.floor(seed * clips.length)].id;
-      this.updateAll(clips);
-      this.changePrimary(clipId);
-      await this.fetchSimilar(clipId);
+    const { data } = await resp.json();
+    if (!data || !data.clips) {
+      this.catchError('There was an error loading your clips. Please try again.');
+    } else if (data.clips.length === 0) {
+      this.catchError('Looks like you don\'t have any clips yet.');
+      this.noClips();
+    } else {
+      const clip = data.clips[0];
+      this.updatePrimary(clip);
     }
   }
 
   async fetchMatching(searchTerm) {
+    this.fetching('matching');
     if (!searchTerm) {
-      this.changePrimary();
+      this.fetchPrimary();
       return;
     }
 
-    const query = `{userClips(search:"${searchTerm}"){id,title,author,text}}`;
+    const query = `{clips(search:"${searchTerm}")
+                    {id, title, author, text}}`;
     const token = UserStore.getToken();
     const resp = await fetch('/graphql', {
       method: 'post',
@@ -56,62 +70,30 @@ class ClipActions {
       credentials: 'include',
     });
     const { data } = await resp.json();
-    let clips;
-    if (data && data.userClips) {
-      clips = data.userClips;
+    if (data && data.clips) {
+      const clips = data.clips;
       this.updateMatching(clips, searchTerm);
     }
   }
 
-  async fetchSimilar(clipId) {
-    const query = `{similarClips(id:"${clipId}"){id,title,author,text}}`;
-    const token = UserStore.getToken();
-    const resp = await fetch('/graphql', {
-      method: 'post',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: token ? `Bearer ${token}` : null,
-      },
-      body: JSON.stringify({ query }),
-      credentials: 'include',
-    });
-    const { data } = await resp.json();
-    let result;
-    if (!data || !data.similarClips) {
-      this.catchError('There was an error loading your clips. Please try again.');
-    } else {
-      result = data.similarClips;
-      this.updateSimilar(result);
-    }
+  fetching() {
+    return true;
   }
 
-  fetching(searchTerm) {
-    return searchTerm;
-  }
-
-  updateAll(clips = []) {
-    return clips;
+  updatePrimary(clip) {
+    return clip;
   }
 
   updateMatching(clips = [], searchTerm = '') {
     return { clips, searchTerm };
   }
 
-  updateSimilar(clips = []) {
-    return clips;
-  }
-
-  changePrimary(clipId = null) {
-    return clipId;
+  noClips() {
+    return true;
   }
 
   catchError(message = null) {
     return message;
-  }
-
-  setSearchTerm(searchTerm) {
-    return searchTerm;
   }
 
   async upload(files) {

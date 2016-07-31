@@ -6,8 +6,8 @@ import FaLevelUp from 'react-icons/lib/fa/level-up';
 import ClipActions from '../../actions/ClipActions';
 
 function Clip({ title, author, text, id, inList, searchTerm }) {
-  const handleSetPrimary = () => ClipActions.changePrimary(id);
-  const handleRandom = () => ClipActions.changePrimary();
+  const handleSetPrimary = () => ClipActions.fetchPrimary(id);
+  const handleRandom = () => ClipActions.fetchPrimary();
 
   const buttonRandom = (
     <div onClick={handleRandom} className={s.action}>
