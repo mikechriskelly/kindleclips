@@ -12,7 +12,6 @@ class ClipStore {
       handleUpdateSimilar: ClipActions.UPDATE_SIMILAR,
       handleChangePrimary: ClipActions.CHANGE_PRIMARY,
       handleCatchError: ClipActions.CATCH_ERROR,
-      handleWipeSearchTerm: ClipActions.WIPE_SEARCH_TERM,
     });
 
     this.state = {
@@ -22,12 +21,16 @@ class ClipStore {
       primaryClip: null,
       errorMessage: null,
       searchTerm: null,
-      wipeSearchTerm: false,
+      wipeSearch: 'Pristine',
     };
   }
 
   static getPrimaryClipID() {
     return this.state.primaryClip.id;
+  }
+
+  randomKey() {
+    return Math.random().toString(36).substr(2, 9);
   }
 
   findIndex(array, attr, value) {
@@ -52,7 +55,6 @@ class ClipStore {
 
   handleFetchingMatches() {
     this.reloading();
-    this.state.wipeSearchTerm = false;
   }
 
   handleUpdateAll(clips) {
@@ -70,7 +72,6 @@ class ClipStore {
 
   handleUpdateSimilar(clips) {
     this.reloading();
-    this.state.wipeSearchTerm = false;
     this.state.similarClips = clips;
     this.state.errorMessage = null;
   }
@@ -82,7 +83,7 @@ class ClipStore {
     this.state.primaryClip = newPrimary;
 
     this.reloading();
-    this.state.wipeSearchTerm = true;
+    this.state.wipeSearchTerm = this.randomKey();
     ClipActions.fetchSimilar(newPrimary.id);
     this.state.errorMessage = null;
   }
@@ -90,11 +91,6 @@ class ClipStore {
   handleCatchError(errorMessage) {
     this.state.errorMessage = errorMessage;
   }
-
-  handleWipeSearchTerm(confirmed) {
-    this.state.wipeSearchTerm = confirmed;
-  }
-
 }
 
 export default alt.createStore(ClipStore, 'ClipStore');

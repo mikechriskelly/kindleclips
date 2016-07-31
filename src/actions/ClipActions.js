@@ -114,10 +114,6 @@ class ClipActions {
     return searchTerm;
   }
 
-  wipeSearchTerm(confirmed = false) {
-    return confirmed;
-  }
-
   async upload(files) {
     // Put UI in loading state while processing file
     history.push('/uploading');

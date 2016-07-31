@@ -17,7 +17,7 @@ class Home extends Component {
   static propTypes = {
     isLoggedIn: PropTypes.bool,
     searchTerm: PropTypes.string,
-    wipeSearchTerm: PropTypes.bool,
+    wipeSearch: PropTypes.string,
     allClips: PropTypes.array,
     primaryClip: PropTypes.object,
     matchingClips: PropTypes.array,
@@ -55,7 +55,6 @@ class Home extends Component {
     }
 
     // Matching Clips
-    console.log('SEARCH is ', this.props.searchTerm);
     if (this.props.matchingClips.length > 0) {
       matchingMarkup = (
         <div>
@@ -115,7 +114,7 @@ class Home extends Component {
 
     return (
       <div className={s.root}>
-        <Header isLoggedIn={this.props.isLoggedIn} wipeSearchTerm={this.props.wipeSearchTerm} />
+        <Header isLoggedIn={this.props.isLoggedIn} wipeSearch={this.props.wipeSearch} />
         <div className={s.container}>
           <div className={s.primary}>
             {errorMarkup}

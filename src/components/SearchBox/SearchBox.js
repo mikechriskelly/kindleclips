@@ -7,26 +7,12 @@ import s from './SearchBox.css';
 class SearchBox extends Component {
 
   static propTypes = {
-    wipeSearchTerm: PropTypes.bool,
-  }
-
-  constructor() {
-    super();
-    this.state = { value: '' };
-  }
-
-  componentWillReceiveProps() {
-    if (this.props.wipeSearchTerm) {
-      this.setState({ value: '' });
-    }
+    wipeSearch: PropTypes.string,
   }
 
   onChange = (event) => {
     const searchTerm = event.target.value;
-    if (searchTerm !== this.state.value) {
-      this.setState({ value: searchTerm });
-      ClipActions.fetchMatching(searchTerm);
-    }
+    ClipActions.fetchMatching(searchTerm);
   }
 
   render() {
@@ -52,7 +38,7 @@ class SearchBox extends Component {
           debounceTimeout={200}
           onChange={this.onChange}
           placeholder="Search..."
-          value={this.state.value}
+          key={this.props.wipeSearch}
         />
       </div>
     );

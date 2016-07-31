@@ -4,11 +4,11 @@ import s from './Header.css';
 import Navigation from '../Navigation';
 import SearchBox from '../SearchBox';
 
-function Header({ isLoggedIn, wipeSearchTerm }) {
+function Header({ isLoggedIn, wipeSearch }) {
   return (
     <div className={s.container}>
       <header>
-        <SearchBox className={s.primary} wipeSearchTerm={wipeSearchTerm} />
+        <SearchBox className={s.primary} wipeSearch={wipeSearch} />
         <Navigation className={s.secondary} isLoggedIn={isLoggedIn} />
       </header>
     </div>
@@ -17,7 +17,7 @@ function Header({ isLoggedIn, wipeSearchTerm }) {
 
 Header.propTypes = {
   isLoggedIn: PropTypes.bool,
-  wipeSearchTerm: PropTypes.bool,
+  wipeSearch: PropTypes.string,
 };
 
 export default withStyles(s)(Header);
