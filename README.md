@@ -1,23 +1,18 @@
 # kindleclips
 A simple app to view and search highlighted passages from your Kindle. Parses and displays highlighted passes from the My Clippings.txt file found on Kindle.
 
-Built on React Starter Kit
-
 ### Directory Layout
 
 ```
 .
 ├── /build/                     # The folder for compiled output
-├── /docs/                      # Documentation files for the project
 ├── /node_modules/              # 3rd-party libraries and utilities
 ├── /src/                       # The source code of the application
 │   ├── /actions/               # Action creators that allow to trigger a dispatch to stores
+│   ├── /api/                   # Server-side data schema, queries, and endpoints
 │   ├── /components/            # React components
-│   ├── /constants/             # Constants (action types etc.)
-│   ├── /content/               # Static content (plain HTML or Markdown, Jade, you name it)
+│   ├── /content/               # Static text content
 │   ├── /core/                  # Core framework and utility functions
-│   ├── /data/                  # GraphQL server schema
-│   ├── /decorators/            # Higher-order React components
 │   ├── /public/                # Static files which are copied into the /build/public folder
 │   ├── /routes/                # Page/screen components along with the routing information
 │   ├── /stores/                # Stores contain the application state and logic
