@@ -17,7 +17,7 @@ class Home extends Component {
   static propTypes = {
     isLoggedIn: PropTypes.bool,
     searchTerm: PropTypes.string,
-    wipeSearch: PropTypes.string,
+    searchKey: PropTypes.string,
     allClips: PropTypes.array,
     primaryClip: PropTypes.object,
     matchingClips: PropTypes.array,
@@ -114,7 +114,7 @@ class Home extends Component {
 
     return (
       <div className={s.root}>
-        <Header isLoggedIn={this.props.isLoggedIn} wipeSearch={this.props.wipeSearch} />
+        <Header isLoggedIn={this.props.isLoggedIn} searchKey={this.props.searchKey} />
         <div className={s.container}>
           <div className={s.primary}>
             {errorMarkup}

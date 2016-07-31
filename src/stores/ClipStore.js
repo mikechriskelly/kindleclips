@@ -21,7 +21,7 @@ class ClipStore {
       primaryClip: null,
       errorMessage: null,
       searchTerm: null,
-      wipeSearch: 'Pristine',
+      searchKey: this.randomKey(),
     };
   }
 
@@ -83,7 +83,7 @@ class ClipStore {
     this.state.primaryClip = newPrimary;
 
     this.reloading();
-    this.state.wipeSearchTerm = this.randomKey();
+    this.state.searchKey = this.randomKey();
     ClipActions.fetchSimilar(newPrimary.id);
     this.state.errorMessage = null;
   }

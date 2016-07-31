@@ -19,12 +19,8 @@
 }
 
 .icon {
-  display: inline-block;
-  fill: var(--white-base);
-  height: 30px;
-  margin: 7px 0 0 5px;
-  vertical-align: middle;
-  width: 30px;
+  color: var(--white-base);
+  margin: -5px 4px 0 8px;
 }
 
 input {
@@ -33,7 +29,7 @@ input {
   border: none;
   border-radius: 0;
   font-size: 18px;
-  line-height: 32px;
+  margin-top: 5px;
   outline: none;
   padding: 2px;
   width: calc(100% - 40px);
