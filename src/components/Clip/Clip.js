@@ -25,8 +25,8 @@ function Clip({ title, author, text, id, inList, searchTerm }) {
 
   if (searchTerm) {
     const searchTermArray = searchTerm.match(/\S+/g) || [];
-    const reSplit = new RegExp(`\\b(${searchTermArray.join('|')})\\b`, 'ig');
-    const reMatch = new RegExp(`^(${searchTermArray.join('|')})$`, 'i');
+    const reSplit = new RegExp(`\\b(${searchTermArray.join('|')})`, 'ig');
+    const reMatch = new RegExp(`^(${searchTermArray.join('|')})`, 'ig');
 
     Object.keys(markup).forEach(key => {
       markup[key] = markup[key]
