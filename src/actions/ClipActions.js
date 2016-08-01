@@ -6,7 +6,7 @@ import UserStore from '../stores/UserStore';
 class ClipActions {
 
   async fetchPrimary(id, isInitial) {
-    this.fetching('primary');
+    this.fetching();
     let query;
     // Lookup by ID
     if (id) {
@@ -50,7 +50,7 @@ class ClipActions {
   }
 
   async fetchMatching(searchTerm) {
-    this.fetching('matching');
+    this.fetching();
     if (!searchTerm) {
       this.fetchPrimary();
       return;
