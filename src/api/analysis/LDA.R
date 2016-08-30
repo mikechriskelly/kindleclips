@@ -143,3 +143,6 @@ dist_txt <- make_batch_insert(clip_dist_table, "clip_id", "sim_clip_id", "distan
 dbGetQuery(con, name_txt)
 dbGetQuery(con, prob_txt)
 dbGetQuery(con, dist_txt)
+
+# shut db connection
+dbDisconnect(con)
