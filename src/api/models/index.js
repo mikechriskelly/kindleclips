@@ -54,10 +54,25 @@ Clip.belongsToMany(Clip, {
   otherkey: 'simClipId',
 });
 
+async function addMissingSlugs() {
+  try {
+    const clips = await Clip.findAll();
+    for (const clip of clips) {
+      await Clip.update(
+        { slug: Clip.generateSlug() },
+        { where: { id: clip.dataValues.id } },
+      );
+    }
+  } catch (err) {
+    console.log('Failed to add slugs to clips: ', err);
+  }
+}
+
 async function syncDatabase(...args) {
   await sequelize.sync(...args);
   Clip.addFullTextIndex();
   Clip.addIgnoreDuplicateRule();
+  //addMissingSlugs();
   return sequelize;
 }
 

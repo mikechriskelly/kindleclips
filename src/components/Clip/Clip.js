@@ -4,8 +4,9 @@ import s from './Clip.css';
 import FaRandom from 'react-icons/lib/fa/random';
 import FaLevelUp from 'react-icons/lib/fa/level-up';
 import ClipActions from '../../actions/ClipActions';
+import Link from '../Link';
 
-function Clip({ title, author, text, id, inList, searchTerm }) {
+function Clip({ title, author, text, id, inList, searchTerm, slug }) {
   const handleSetPrimary = () => ClipActions.fetchPrimary(id);
   const handleRandom = () => ClipActions.fetchPrimary();
 
@@ -16,9 +17,9 @@ function Clip({ title, author, text, id, inList, searchTerm }) {
   );
 
   const buttonSetPrimary = (
-    <div className={s.action} onClick={handleSetPrimary}>
+    <Link className={s.action} to={`/clip/${slug}`}>
       <FaLevelUp size={22} />
-    </div>
+    </Link>
   );
 
   const markup = { text, title, author };
@@ -51,6 +52,7 @@ function Clip({ title, author, text, id, inList, searchTerm }) {
 
 Clip.propTypes = {
   id: PropTypes.string,
+  slug: PropTypes.string,
   title: PropTypes.string,
   author: PropTypes.string,
   text: PropTypes.string,

@@ -5,24 +5,24 @@ import UserStore from '../stores/UserStore';
 
 class ClipActions {
 
-  async fetchPrimary(id, isInitial) {
+  async fetchPrimary(slug, isInitial) {
     this.fetching();
     let query;
     // Lookup by ID
-    if (id) {
-      query = `{clips(id: "${id}")
-                {id, title, author, text, similarClips { id, title, author, text}}}`;
+    if (slug) {
+      query = `{clips(slug: "${slug}")
+                {id, title, author, text, slug, similarClips { id, title, author, text, slug}}}`;
     // Get an initial random clip
     } else if (isInitial) {
       // Pick initial clip based on time of day (server and client will make same choice)
       const now = new Date();
       const seed = (now.getUTCDate() * now.getUTCHours()) / (31 * 24);
       query = `{clips(random: true, seed: ${seed})
-                {id, title, author, text, similarClips {id, title, author, text}}}`;
+                {id, title, author, text, slug, similarClips {id, title, author, text, slug}}}`;
     } else {
       // Get random clip
       query = `{clips(random: true)
-                {id, title, author, text, similarClips {id, title, author, text}}}`;
+                {id, title, author, text, slug, similarClips {id, title, author, text, slug}}}`;
     }
 
     const token = UserStore.getToken();
@@ -57,7 +57,7 @@ class ClipActions {
     }
 
     const query = `{clips(search:"${searchTerm}")
-                    {id, title, author, text}}`;
+                    {id, title, author, text, slug}}`;
     const token = UserStore.getToken();
     const resp = await fetch('/graphql', {
       method: 'post',

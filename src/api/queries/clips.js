@@ -3,6 +3,7 @@ import Clip from '../models/Clip';
 import { GraphQLList, GraphQLString, GraphQLID, GraphQLBoolean, GraphQLFloat } from 'graphql';
 import { demoUser } from '../../config';
 import { getID } from '../auth';
+import shortid from 'shortid';
 
 /* eslint-disable no-console */
 
@@ -42,6 +43,7 @@ function parseMyClippingsTxt(clipFile, userId) {
     clip.text = lines.slice(2).join('\n').trim();
     clip.author = (lines[0].match(/(.+?)\((.*?)\)$/) || defaultValue)[2].trim().substring(0, 120);
     clip.userId = userId;
+    clip.slug = shortid.generate();
     return clip.text.length ? clip : null;
   });
   return clips.filter(n => n !== null);
@@ -73,6 +75,7 @@ const clips = {
   type: new GraphQLList(ClipType),
   args: {
     id: { type: GraphQLID },
+    slug: { type: GraphQLString },
     search: { type: GraphQLString },
     random: { type: GraphQLBoolean },
     seed: { type: GraphQLFloat },
@@ -80,12 +83,20 @@ const clips = {
   resolve: (root, args) => {
     const userId = getUserId(root);
     const limit = 50;
-    const attributes = ['id', 'title', 'author', 'text'];
+    const attributes = ['id', 'title', 'author', 'text', 'slug'];
 
     if (args.id) {
       return Clip.findAll({
         attributes,
         where: { userId, id: args.id },
+        limit: 1,
+      });
+    }
+
+    if (args.slug) {
+      return Clip.findAll({
+        attributes,
+        where: { userId, slug: args.slug },
         limit: 1,
       });
     }

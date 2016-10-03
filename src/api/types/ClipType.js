@@ -16,7 +16,8 @@ const ClipType = new ObjectType({
     title: { type: StringType },
     author: { type: StringType },
     text: { type: new NonNull(StringType) },
-    similarClips: { 
+    slug: { type: StringType },
+    similarClips: {
       type: new ListType(ClipType),
       resolve: (clip) => Clip.getSimilar(clip.id), // .then(post => post.toJSON().comments);
     },

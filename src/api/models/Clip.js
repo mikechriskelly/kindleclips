@@ -1,5 +1,6 @@
 import DataType from 'sequelize';
 import Model from '../sequelize';
+import shortid from 'shortid';
 
 const Clip = Model.define('clip', {
 
@@ -39,8 +40,14 @@ const Clip = Model.define('clip', {
     allowNull: false,
   },
 
+  slug: {
+    type: DataType.STRING(20),
+    allowNull: true,
+  },
+
 }, {
   classMethods: {
+    generateSlug: () => shortid.generate(),
     getVectorName: () => 'search',
     async addFullTextIndex() {
       const searchFields = ['title', 'author', 'text'];
@@ -75,7 +82,7 @@ const Clip = Model.define('clip', {
     async search(userId, searchPhrase, resultLimit) {
       const query = Model.getQueryInterface().escape(searchPhrase);
       const vectorName = this.getVectorName();
-      return Model.query(`SELECT id, title, author, text FROM "${this.tableName}"
+      return Model.query(`SELECT id, title, author, slug text FROM "${this.tableName}"
                           WHERE user_id = '${userId}'
                           AND ${vectorName} @@ plainto_tsquery(\'english\', ${query})
                           LIMIT ${resultLimit}`,
@@ -83,7 +90,7 @@ const Clip = Model.define('clip', {
                   .then(results => results);
     },
     async getSimilar(clipId) {
-      return Model.query(`SELECT id, title, author, text FROM "${this.tableName}"
+      return Model.query(`SELECT id, title, author, text, slug FROM "${this.tableName}"
                           WHERE id IN (
                             SELECT sim_clip_id
                             FROM clip_dist
@@ -93,7 +100,7 @@ const Clip = Model.define('clip', {
                   .then(results => results);
     },
     async getRandom(userId, seed = Math.random()) {
-      return Model.query(`SELECT id, title, author, text FROM "${this.tableName}"
+      return Model.query(`SELECT id, title, author, text, slug FROM "${this.tableName}"
                           WHERE user_id = '${userId}'
                           OFFSET ${seed} *
                           (SELECT count(*) FROM "${this.tableName}" WHERE user_id = '${userId}')

@@ -9,6 +9,7 @@ function ClipList({ clipList, searchTerm }) {
       {clipList.map((clip) => (
         <Clip
           id={clip.id}
+          slug={clip.slug}
           key={clip.id}
           title={clip.title}
           author={clip.author}
@@ -24,6 +25,7 @@ function ClipList({ clipList, searchTerm }) {
 ClipList.propTypes = {
   clipList: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string,
+    slug: PropTypes.string,
     title: PropTypes.string,
     author: PropTypes.string,
     text: PropTypes.string,

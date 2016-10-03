@@ -56,6 +56,7 @@ class ClipStore {
       title: clip.title,
       author: clip.author,
       text: clip.text,
+      slug: clip.slug,
     };
     this.state.similarClips = clip.similarClips;
   }

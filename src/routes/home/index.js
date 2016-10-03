@@ -4,10 +4,11 @@ import ClipActions from '../../actions/ClipActions';
 
 export default {
 
-  path: ['/', '/random'],
+  path: ['/', '/clip', '/clip/:slug'],
 
-  async action() {
-    await ClipActions.fetchPrimary(null, true);
+  async action(context) {
+    const clip = context.params.slug || null;
+    await ClipActions.fetchPrimary(clip, true);
     return <Home />;
   },
 
