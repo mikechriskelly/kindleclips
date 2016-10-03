@@ -44,6 +44,7 @@
 .action {
   border-radius: 5px;
   color: var(--gray);
+  cursor: pointer;
   display: inline-block;
   padding: 6px;
   position: absolute;

@@ -5,10 +5,13 @@ import FaRandom from 'react-icons/lib/fa/random';
 import FaLevelUp from 'react-icons/lib/fa/level-up';
 import ClipActions from '../../actions/ClipActions';
 import Link from '../Link';
+import history from '../../core/history';
 
-function Clip({ title, author, text, id, inList, searchTerm, slug }) {
-  const handleSetPrimary = () => ClipActions.fetchPrimary(id);
-  const handleRandom = () => ClipActions.fetchPrimary();
+function Clip({ title, author, text, inList, searchTerm, slug }) {
+  const handleRandom = async () => {
+    const randSlug = await ClipActions.getRandomSlug();
+    history.push(`/clip/${randSlug}`);
+  };
 
   const buttonRandom = (
     <div onClick={handleRandom} className={s.action}>

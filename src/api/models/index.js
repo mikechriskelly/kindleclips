@@ -54,7 +54,13 @@ Clip.belongsToMany(Clip, {
   otherkey: 'simClipId',
 });
 
-async function addMissingSlugs() {
+/**
+ * Generate new slugs for every clip in the database
+ * Only used for adding slugs to existing database
+ * WARNING: Will overwrite existing slugs and bring user bookmarks
+ */
+async function generateNewSlugs() {
+  // This function only needs to be called to
   try {
     const clips = await Clip.findAll();
     for (const clip of clips) {
@@ -72,7 +78,6 @@ async function syncDatabase(...args) {
   await sequelize.sync(...args);
   Clip.addFullTextIndex();
   Clip.addIgnoreDuplicateRule();
-  //addMissingSlugs();
   return sequelize;
 }
 

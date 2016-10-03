@@ -7,8 +7,9 @@ export default {
   path: ['/', '/clip', '/clip/:slug'],
 
   async action(context) {
-    const clip = context.params.slug || null;
-    await ClipActions.fetchPrimary(clip, true);
+    const clip = context.params.slug || await ClipActions.getRandomSlug(true);
+
+    await ClipActions.fetchPrimary(clip);
     return <Home />;
   },
 
