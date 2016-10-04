@@ -76,8 +76,11 @@ async function generateNewSlugs() {
 
 async function syncDatabase(...args) {
   await sequelize.sync(...args);
-  Clip.addFullTextIndex();
-  Clip.addIgnoreDuplicateRule();
+  
+  // Only need to run these functions against fresh database
+  // Clip.addFullTextIndex();
+  // Clip.addIgnoreDuplicateRule();
+
   return sequelize;
 }
 
