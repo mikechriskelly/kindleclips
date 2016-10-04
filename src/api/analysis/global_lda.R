@@ -63,6 +63,7 @@ dist_vec <- as.vector(dist_mat)
 id_dist_vec <- rep(tmp$id, times = 1, each = NROW(tmp))
 sim_id_vec <- rep(tmp$id, times = NROW(tmp))
 clip_dist_table <- data.frame(
+      "user_id" = 'global_user',
       "clip_dist_key" = paste(id_dist_vec, sim_id_vec, sep = "-"),
       "clip_id" = id_dist_vec,
       "sim_clip_id" = sim_id_vec, 
@@ -84,6 +85,7 @@ clip_dist_table <- make_smaller_table(clip_dist_table, 10)
 
 # create normalized topic probability table
 topic_prob_table <- data.frame(
+      "user_id" = 'global_user',
       "prob" = as.vector(t(gamma_df)), # topic probability vector
       "topic_id" = rep(topic_len, NROW(tmp)), # repeating topic id vector
       "clip_id" = rep(tmp$id, times = 1, each = k_tops), # repeating clip id vector
@@ -108,32 +110,50 @@ topic_names <- apply(name_topic(term_length = 35, n_char = 6, top_n_terms = 5),
 
 # create normalized table with topic names
 topic_names_table <- data.frame(
-      "user_id" = 'global_user', 
+      "user_id" = 'global_user',
       "topic_id" = topic_len,
       "name" = topic_names, 
       stringsAsFactors = FALSE)
 
-make_batch_insert <- function(df, col_1, col_2, col_3, table_name) {
-      txt <- sapply(1:nrow(df), function(x)
-            paste("('", UUIDgenerate(), "',",
-                  "'", df[[col_1]][x], "',",
-                  "'", df[[col_2]][x], "',",
-                  "'", df[[col_3]][x], "',",
-                  "'", Sys.time(), "',",
-                  "'", Sys.time(), "')",
-                  sep = ""))
-      if (class(txt) != 'character') {
-            stop("Output class must be character", call. = FALSE)
+make_batch_insert <- function(df, col_1, col_2, col_3, col_4, table_name) {
+      if (missing(col_4)) {
+            txt <- sapply(1:nrow(df), function(x)
+                  paste("('", UUIDgenerate(), "',",
+                        "'", df[[col_1]][x], "',",
+                        "'", df[[col_2]][x], "',",
+                        "'", df[[col_3]][x], "',",
+                        "'", Sys.time(), "',",
+                        "'", Sys.time(), "')",
+                        sep = ""))
+            if (class(txt) != 'character') {
+                  stop("Output class must be character", call. = FALSE)
+            }
+            txt <- paste(txt, collapse = ", ")
+            txt <- paste("insert into", table_name,  "(id, ", col_1, ",", col_2, ",", col_3, ",", "created_at, updated_at) values", txt)
+            txt
+      } else {
+            txt <- sapply(1:nrow(df), function(x)
+                  paste("('", UUIDgenerate(), "',",
+                        "'", df[[col_1]][x], "',",
+                        "'", df[[col_2]][x], "',",
+                        "'", df[[col_3]][x], "',",
+                        "'", df[[col_4]][x], "',",
+                        "'", Sys.time(), "',",
+                        "'", Sys.time(), "')",
+                        sep = ""))
+            if (class(txt) != 'character') {
+                  stop("Output class must be character", call. = FALSE)
+            }
+            txt <- paste(txt, collapse = ", ")
+            txt <- paste("insert into", table_name,  "(id, ", col_1, ",", col_2, ",", col_3, ",", col_4, ",", "created_at, updated_at) values", txt)
+            txt
       }
-      txt <- paste(txt, collapse = ", ")
-      txt <- paste("insert into", table_name,  "(id, ", col_1, ",", col_2, ",", col_3, ",", "created_at, updated_at) values", txt)
-      txt
 }
 
 # create the insert into queries
-name_txt <- make_batch_insert(topic_names_table, "user_id", "topic_id", "name", "topic")
-prob_txt <- make_batch_insert(topic_prob_table, "clip_id", "topic_id", "prob", "topic_prob")
-dist_txt <- make_batch_insert(clip_dist_table, "clip_id", "sim_clip_id", "distance", "clip_dist")
+name_txt <- make_batch_insert(topic_names_table, col_1 = "user_id", col_2 = "topic_id", col_3 = "name", table_name = "topic")
+prob_txt <- make_batch_insert(topic_prob_table, "clip_id", "topic_id", "prob", "user_id", "topic_prob")
+dist_txt <- make_batch_insert(clip_dist_table, "clip_id", "sim_clip_id", "distance", "user_id", "clip_dist")
 
 # write everything into Postgres
 # dbGetQuery(con, name_txt)
