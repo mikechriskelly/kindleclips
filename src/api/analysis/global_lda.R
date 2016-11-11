@@ -18,7 +18,18 @@ con <- dbConnect(RPostgres::Postgres(), dbname = dbname,
                  host = host, port = port,
                  user = user)
 
-tmp <- dbReadTable(con, 'clip')
+# pull in the users' global settings and read tables accordingly
+# assumes we'll store global setting in "user" table
+user_global <- dbGetQuery(con, paste("select global_setting from user where user_id =", paste("'", userid, "'", "::uuid", sep = "")))
+if (user_global == 0) {
+      qry <- paste("select id, user_id, hash, title, author, text from clip where user_id =", paste("'", userid, "'", "::uuid", sep = ""))
+      tmp <- dbGetQuery(con, qry)
+}
+if (user_global == 1) {
+      qry <- paste("SELECT id, user_id, hash, title, author, text FROM clip WHERE user_id IN 
+      (SELECT user_id FROM users WHERE global_setting = 1)")
+      tmp <- dbGetQuery(con, qry)
+}
 
 # create collapsed author, title, text vector
 clips <- paste(tmp$title, gsub(" ", "", tmp$author), tmp$text)
