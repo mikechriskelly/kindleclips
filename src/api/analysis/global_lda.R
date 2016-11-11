@@ -31,6 +31,113 @@ if (user_global == 1) {
       tmp <- dbGetQuery(con, qry)
 }
 
+###############################
+### LDA run by author
+############################
+
+if (args[7] == TRUE) {
+      # create collapsed author, title, text vector
+      agg_by_author <- aggregate(tmp, by = list(as.factor(tmp$author)), FUN = paste, sep = " ")
+      clips <- sapply(agg_by_author$text, paste, collapse = " ")
+      titles <- sapply(agg_by_author$title, unique)
+      titles <- sapply(titles, paste, collapse = " ")
+      clips <- paste(titles, clips, sep = " ")
+             
+      dfm <- dfm(clips, toLower = TRUE, removeNumbers = TRUE, removePunct = TRUE,
+                 stem = FALSE, ignoredFeatures = stopwords("english"))
+      dict <- dfm@Dimnames$features #for de-stemming words
+      
+      dfm <- dfm(clips, toLower = TRUE, removeNumbers = TRUE, removePunct = TRUE,
+                 stem = TRUE, ignoredFeatures = stopwords("english"))
+      
+      # simple, nonlinear function to keep x within an interpretable range
+      make_k <- function(tmp) {
+            ua <- length(unique(tmp$author))
+            ut <- length(unique(tmp$title))
+            x <- (ua ^ 2 + ut ^ 2) ^ (1/4)
+            x <- ifelse(x > 25, 25, x)
+            x <- ifelse(x < 5, 5, x)
+            round(x, 0)
+      }
+      k_tops <- make_k(tmp) # number of topic clusters
+      topic_len <- 1:k_tops
+      
+      # make the LDA model using VEM method, Gibbs provides more even topic distribution
+      set.seed(10)
+      lda <- LDA(x = dfm, k = k_tops, control = list(alpha = 50/k_tops, seed = 10))
+      
+      # pull topic probs for each clip and put them into gamma df
+      gamma_df <- as.data.frame(lda@gamma)
+      
+      # use Hellinger distance for similarity measure of vectors
+      dist_mat <- distHellinger(as.matrix(gamma_df))
+      dist_mat <- dist_mat * 1000
+      gamma_df <- round(gamma_df, 6)
+      
+      # generate uuid for each author
+      agg_by_author$id <- sapply(1:nrow(agg_by_author), UUIDgenerate)
+      
+      # create normalized clip similarity table
+      dist_vec <- as.vector(dist_mat)
+      id_dist_vec <- rep(agg_by_author$id, times = 1, each = NROW(agg_by_author))
+      sim_id_vec <- rep(agg_by_author$id, times = NROW(agg_by_author))
+      clip_dist_table <- data.frame(
+            "user_id" = 'global_user',
+            "clip_dist_key" = paste(id_dist_vec, sim_id_vec, sep = "-"),
+            "clip_id" = id_dist_vec,
+            "sim_clip_id" = sim_id_vec, 
+            "distance" = dist_vec, stringsAsFactors = FALSE)
+      rem <- which(clip_dist_table$distance == 0)
+      clip_dist_table <- clip_dist_table[-rem, ]
+      
+      # apply a threshold (90th percentile) to clip_dist and reduce to n top relationships
+      make_smaller_table <- function(table, n) {
+            thresh <- which(table$distance < quantile(table$distance, 0.1))
+            table <- table[thresh, ]
+            clip_array <- split(table, table$clip_id)
+            clip_array <- lapply(clip_array, function(x) x[order(x$distance)[1:n],])
+            df <- do.call(rbind, lapply(clip_array, data.frame, stringsAsFactors = FALSE))
+            df
+      }
+      
+      clip_dist_table <- make_smaller_table(clip_dist_table, 10)
+      
+      # create normalized topic probability table
+      topic_prob_table <- data.frame(
+            "user_id" = 'global_user',
+            "prob" = as.vector(t(gamma_df)), # topic probability vector
+            "topic_id" = rep(topic_len, NROW(agg_by_author)), # repeating topic id vector
+            "clip_id" = rep(agg_by_author$id, times = 1, each = k_tops), # repeating clip id vector
+            stringsAsFactors = FALSE )
+      
+      # topic naming
+      # list of collapsed author names
+      author_collapse <- tolower(unique(gsub(" ", "", tmp$author)))
+      
+      name_topic <- function(term_length, n_char, top_n_terms) {
+            term <- terms(lda, term_length) # pull top lda terms
+            # using stem completion really slows this function down
+            term <- matrix(stemCompletion(as.character(term), dict), nrow = term_length)
+            indx <- apply(term, 2, nchar) > n_char 
+            term[!indx] <- NA # remove short terms
+            term[term %in% author_collapse] <- NA # remove author names
+            topic_names <- apply(term, 2, FUN = function(x) x[!is.na(x)][1:top_n_terms])
+            topic_names }
+      
+      topic_names <- apply(name_topic(term_length = 35, n_char = 6, top_n_terms = 5),
+                           2, paste, collapse = '_') # there must be a faster way to do this
+      
+      # create normalized table with topic names
+      topic_names_table <- data.frame(
+            "user_id" = 'global_user',
+            "topic_id" = topic_len,
+            "name" = topic_names, 
+            stringsAsFactors = FALSE)
+}
+
+##########################################
+#### LDA run by individual clips
+#######################################
 # create collapsed author, title, text vector
 clips <- paste(tmp$title, gsub(" ", "", tmp$author), tmp$text)
 
