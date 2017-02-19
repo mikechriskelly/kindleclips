@@ -33,3 +33,6 @@ A simple app to view and search highlighted passages from your Kindle. Parses an
 │   ├── /start.js               # Launches the development web server with "live reload"
 │   └── /webpack.config.js      # Configurations for client-side and server-side bundles
 └── package.json                # The list of 3rd party libraries and utilities
+
+### Local Database
+postgres -D /usr/local/var/postgres
