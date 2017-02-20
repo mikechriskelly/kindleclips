@@ -7,6 +7,7 @@ import login from './login';
 import error from './error';
 import content from './content';
 import upload from './upload';
+import c from './c';
 
 export default {
 
@@ -16,6 +17,7 @@ export default {
     home,
     login,
     upload,
+    c,       // route for individual clip
     content,
     error,
   ],

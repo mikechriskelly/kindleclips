@@ -31,6 +31,10 @@ class UserStore {
     return this.state.token || cookie.load('token');
   }
 
+  static isLoggedIn() {
+    return this.state.isLoggedIn;
+  }
+
 }
 
 export default alt.createStore(UserStore, 'UserStore');

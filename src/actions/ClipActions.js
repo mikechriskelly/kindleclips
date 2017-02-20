@@ -40,7 +40,8 @@ class ClipActions {
   async fetchPrimary(slug) {
     this.fetching();
     const query = `{clips(slug: "${slug}")
-                   {id, title, author, text, slug, similarClips { id, title, author, text, slug}}}`; 
+                   {id, title, author, text, slug,
+                   similarClips { id, title, author, text, slug}}}`;
 
     const token = UserStore.getToken();
     const resp = await fetch('/graphql', {
