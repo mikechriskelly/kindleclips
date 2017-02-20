@@ -10,7 +10,7 @@ import history from '../../core/history';
 function Clip({ title, author, text, inList, searchTerm, slug }) {
   const handleRandom = async () => {
     const randSlug = await ClipActions.getRandomSlug();
-    history.push(`/clip/${randSlug}`);
+    history.push(`/c/${randSlug}`);
   };
 
   const buttonRandom = (
@@ -20,7 +20,7 @@ function Clip({ title, author, text, inList, searchTerm, slug }) {
   );
 
   const buttonSetPrimary = (
-    <Link className={s.action} to={`/clip/${slug}`}>
+    <Link className={s.action} to={`/c/${slug}`}>
       <FaLevelUp size={22} />
     </Link>
   );

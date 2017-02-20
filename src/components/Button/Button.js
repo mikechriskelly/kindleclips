@@ -31,7 +31,7 @@ function Button({ className, href, onClick, text, type }) {
     );
   } else if (href) {
     button = (
-      <Link className={cx(s.button, className)} to={href}>
+      <Link className={cx(s.button, className, s[type])} to={href}>
         {text}
       </Link>
     );
