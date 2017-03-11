@@ -8,6 +8,7 @@ import error from './error';
 import content from './content';
 import upload from './upload';
 import c from './c';
+import s from './s';
 
 export default {
 
@@ -17,7 +18,8 @@ export default {
     home,
     login,
     upload,
-    c,       // route for individual clip
+    c,       // clip route
+    s,       // search route
     content,
     error,
   ],

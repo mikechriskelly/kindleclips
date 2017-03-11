@@ -4,17 +4,25 @@ import history from '../core/history';
 import UserStore from '../stores/UserStore';
 
 class ClipActions {
-
-  async getRandomSlug(isInitial = false) {
+  async fetchPrimary(slug, random = false) {
     let query;
-    if (isInitial) {
+    this.fetching();
+
+    if (slug) {
+      query = `{clips(slug: "${slug}")
+                 {id, title, author, text, slug,
+                    similarClips {id, title, author, text, slug}}}`;
+    } else if (random) {
+      query = `{clips(random: true)
+                  {id, title, author, text, slug,
+                    similarClips {id, title, author, text, slug}}}`;
+    } else {
       // Pick initial clip based on time of day (server and client will make same choice)
       const now = new Date();
       const seed = (now.getUTCDate() * now.getUTCHours()) / (31 * 24);
-      query = `{clips(random: true, seed: ${seed}){slug}}`;
-    } else {
-      // Get random clip
-      query = '{clips(random: true){slug}}';
+      query = `{clips(random: true, seed: ${seed})
+                  {id, title, author, text, slug,
+                    similarClips {id, title, author, text, slug}}}`;
     }
 
     const token = UserStore.getToken();
@@ -30,44 +38,22 @@ class ClipActions {
     });
 
     const { data } = await resp.json();
-    if (data && data.clips) {
-      const slug = data.clips[0].slug;
-      return slug;
-    }
-    return null;
-  }
-
-  async fetchPrimary(slug) {
-    this.fetching();
-    const query = `{clips(slug: "${slug}")
-                   {id, title, author, text, slug,
-                   similarClips { id, title, author, text, slug}}}`;
-
-    const token = UserStore.getToken();
-    const resp = await fetch('/graphql', {
-      method: 'post',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: token ? `Bearer ${token}` : null,
-      },
-      body: JSON.stringify({ query }),
-      credentials: 'include',
-    });
-
-    const { data } = await resp.json();
+    let clip = {};
     if (!data || !data.clips) {
       this.catchError('There was an error loading your clips. Please try again.');
     } else if (data.clips.length === 0) {
       this.catchError('Looks like you don\'t have any clips yet.');
       this.noClips();
     } else {
-      const clip = data.clips[0];
+      clip = data.clips[0];
       this.updatePrimary(clip);
     }
+
+    return clip;
   }
 
   async fetchMatching(searchTerm) {
+    history.push(`/s/${searchTerm}`);
     this.fetching();
     if (!searchTerm) {
       this.fetchPrimary();
@@ -87,11 +73,15 @@ class ClipActions {
       body: JSON.stringify({ query }),
       credentials: 'include',
     });
+
+    let clips = [];
     const { data } = await resp.json();
     if (data && data.clips) {
-      const clips = data.clips;
+      clips = data.clips;
       this.updateMatching(clips, searchTerm);
     }
+
+    return clips;
   }
 
   fetching() {

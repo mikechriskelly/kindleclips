@@ -27,7 +27,7 @@ class Home extends Component {
           on your Kindle device.</p>
           <p>Explore demo highlights, or sign in to upload and browse highlights from your own
           Kindle.</p>
-          <Button type="primary" href={`c/${this.props.randClipSlug}`} text="Try Demo" />
+          <Button type="primary" href={`/c/${this.props.randClipSlug}`} text="Try Demo" />
           <Button type="primary" href="/login" text="Sign Up" />
         </div>
       </div>

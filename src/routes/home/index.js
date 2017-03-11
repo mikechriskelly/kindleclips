@@ -6,15 +6,15 @@ import UserStore from '../../stores/UserStore';
 
 export default {
 
-  path: ['/'],
+  path: '/',
 
   async action() {
     const randClipSlug = await ClipActions.getRandomSlug(true);
 
     // If user already logged in, then forward to a specific clip
     if (await UserStore.isLoggedIn()) {
-      await ClipActions.fetchPrimary(randClipSlug);
-      return <Clipping id={randClipSlug} />;
+      const clip = await ClipActions.fetchPrimary(null, true);
+      return <Clipping {...clip} />;
     }
 
     return <Home randClipSlug={randClipSlug} />;

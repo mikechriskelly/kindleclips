@@ -4,12 +4,12 @@ import ClipActions from '../../actions/ClipActions';
 
 export default {
 
-  path: ['/c/:slug'],
+  path: '/c/:slug',
 
   async action(context) {
     const id = context.params.slug;
-    await ClipActions.fetchPrimary(id);
-    return <Clipping id={id} />;
+    const clip = await ClipActions.fetchPrimary(id);
+    return <Clipping {...clip} />;
   },
 
 };
