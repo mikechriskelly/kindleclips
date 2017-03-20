@@ -24,12 +24,10 @@ export default {
     error,
   ],
 
-  async action({ next, render, context }) {
+  async action({ render, next, context }) {
     const component = await next();
     if (component === undefined) return component;
-    return render(
-      <App context={context}>{component}</App>
-    );
+    return render(<App context={context}>{component}</App>);
   },
 
 };

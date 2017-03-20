@@ -6,10 +6,11 @@ import ClipList from '../../components/ClipList';
 import Clip from '../../components/Clip';
 
 const Clipping = (props, context) => {
+  console.log(props);
   context.setTitle(`${props.author} - ${props.title}`);
 
   return (<div className={s.root}>
-    <Header isLoggedIn />
+    <Header />
     <div className={s.container}>
       <div className={s.primary}>
         <Clip

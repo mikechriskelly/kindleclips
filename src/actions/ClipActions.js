@@ -53,12 +53,7 @@ class ClipActions {
   }
 
   async fetchMatching(searchTerm) {
-    history.push(`/s/${searchTerm}`);
     this.fetching();
-    if (!searchTerm) {
-      this.fetchPrimary();
-      return;
-    }
 
     const query = `{clips(search:"${searchTerm}")
                     {id, title, author, text, slug}}`;

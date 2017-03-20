@@ -3,10 +3,10 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Login.css';
 import Button from '../../components/Button';
 
-const title = 'Log in to Kindle Clips';
-
-function Login(props, context) {
+const Login = (props, context) => {
+  const title = 'Log in to Kindle Clips';
   context.setTitle(title);
+
   return (
     <div className={s.root}>
       <div className={s.container}>
@@ -17,7 +17,7 @@ function Login(props, context) {
       </div>
     </div>
   );
-}
+};
 
 Login.contextTypes = { setTitle: PropTypes.func.isRequired };
 

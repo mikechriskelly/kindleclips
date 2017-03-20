@@ -8,7 +8,7 @@ const Search = ({ results }, context) => {
   context.setTitle('Search results');
 
   return (<div className={s.root}>
-    <Header isLoggedIn />
+    <Header />
     <div className={s.container}>
       {results.length > 0 ? <div>
         <h2 className={s.title}>Search Results</h2>
