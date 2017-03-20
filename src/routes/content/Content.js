@@ -1,34 +1,31 @@
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Content.css';
+import Button from '../../components/Button';
 
-class Content extends Component {
+const Home = ({ id }, context) => {
+  const title = 'Kindle Clips';
+  context.setTitle(title);
 
-  static contextTypes = {
-    setTitle: PropTypes.func.isRequired,
-  };
-
-  static propTypes = {
-    path: PropTypes.string.isRequired,
-    content: PropTypes.string.isRequired,
-    title: PropTypes.string,
-  };
-
-  componentWillMount() {
-    this.context.setTitle(this.props.title);
-  }
-
-  render() {
-    return (
-      <div className={s.root}>
-        <div className={s.container}>
-          {this.props.path === '/' ? null : <h1>{this.props.title}</h1>}
-          <div dangerouslySetInnerHTML={{ __html: this.props.content || '' }} />
-        </div>
+  return (
+    <div className={s.root}>
+      <div className={s.container}>
+        <h2 className={s.brand}>Kindle Clips. Your text, remixed.</h2>
+        <p>A free service for Kindle owners to easily view all their highlighted text.</p>
+        <p>You can upload, search, and explore your favorite quotes and excerpts stored
+        on your Kindle device.</p>
+        <p>Explore demo highlights, or sign in to upload and browse highlights from your own
+        Kindle.</p>
+        <Button type="primary" href={`/c/${id}`} text="Try Demo" />
+        <Button type="primary" href="/login" text="Sign Up" />
       </div>
-    );
-  }
+    </div>
+  );
+};
 
-}
+Home.contextTypes = { setTitle: PropTypes.func.isRequired };
+Home.propTypes = {
+  id: PropTypes.string,
+};
 
-export default withStyles(s)(Content);
+export default withStyles(s)(Home);

@@ -2,25 +2,21 @@ import React from 'react';
 import App from '../components/App';
 
 // Child routes
-import home from './home';
-import login from './login';
-import error from './error';
 import content from './content';
+import clipping from './clipping';
+import login from './login';
 import upload from './upload';
-import c from './c';
-import s from './s';
+import error from './error';
 
 export default {
 
   path: '/',
 
   children: [
-    home,
+    content,   // root and search routes
+    clipping,  // single clipping route
     login,
     upload,
-    c,       // clip route
-    s,       // search route
-    content,
     error,
   ],
 

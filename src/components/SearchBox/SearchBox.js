@@ -25,7 +25,7 @@ class SearchBox extends Component {
     if (searchTerm !== this.state.lastValue) {
       this.setState({ lastValue: searchTerm });
       history.push(`/s/${searchTerm}`);
-    } 
+    }
   }
 
   render() {
