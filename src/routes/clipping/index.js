@@ -7,9 +7,10 @@ export default {
   path: '/c/:slug',
 
   async action(context) {
-    const id = context.params.slug;
-    const clip = await ClipActions.fetchPrimary(id);
-    return <Clipping {...clip} />;
+    const slug = context.params.slug;
+    const clip = await ClipActions.fetchPrimary(slug);
+    if (clip.id) {
+      return <Clipping {...clip} />;
+    }
   },
-
 };

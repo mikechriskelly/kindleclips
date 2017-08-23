@@ -6,7 +6,7 @@ import ClipActions from '../../actions/ClipActions';
 import UserStore from '../../stores/UserStore';
 export default {
 
-  path: ['/', '/s/:slug'],
+  path: ['/', '/s', '/s/:slug'],
 
   async action(context) {
     const searchTerm = context.params.slug;

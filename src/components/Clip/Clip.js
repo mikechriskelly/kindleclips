@@ -10,7 +10,7 @@ import history from '../../core/history';
 function Clip({ title, author, text, inList, searchTerm, slug }) {
   const handleRandom = async () => {
     const clip = await ClipActions.fetchPrimary(null, true);
-    history.push(`/c/${clip.id}`);
+    history.push(`/c/${clip.slug}`);
   };
 
   const buttonRandom = (
