@@ -107,11 +107,11 @@ server.get('*', async (req, res, next) => {
     const template = require('./views/index.jade'); // eslint-disable-line global-require
     const data = { title: '', description: '', css: '', body: '', entry: assets.main.js };
 
-    cookie.plugToRequest(req, res);
-
     if (process.env.NODE_ENV === 'production') {
       data.trackingId = analytics.google.trackingId;
     }
+
+    cookie.plugToRequest(req, res);
 
     await match(routes, {
       path: req.path,

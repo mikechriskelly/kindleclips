@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import ClipActions from '../../actions/ClipActions';
+import history from '../../core/history';
 import DebounceInput from 'react-debounce-input';
 import FaSearch from 'react-icons/lib/fa/search';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
@@ -13,14 +13,24 @@ class SearchBox extends Component {
 
   constructor() {
     super();
-    this.state = { lastValue: '' };
+    this.state = { prevSearchTerm: '' };
+  }
+
+  shouldComponentUpdate() {
+    return false;
   }
 
   onChange = (event) => {
-    const searchTerm = event.target.value;
-    if (searchTerm !== this.state.lastValue) {
-      this.setState({ lastValue: searchTerm });
-      ClipActions.fetchMatching(searchTerm);
+    const currSearchTerm = event.target.value;
+    const prevSearchTerm = this.state.lastValue;
+
+    if (currSearchTerm && currSearchTerm !== prevSearchTerm) {
+      this.setState({ prevSearchTerm: currSearchTerm });
+      if (currSearchTerm.includes(prevSearchTerm)) {
+        history.replace(`/s/${currSearchTerm}`);
+      } else {
+        history.push(`/s/${currSearchTerm}`);
+      }
     }
   }
 
@@ -31,8 +41,9 @@ class SearchBox extends Component {
         <DebounceInput
           className="input"
           minLength={2}
-          debounceTimeout={200}
+          debounceTimeout={400}
           key={this.props.searchKey}
+          value={this.props.searchKey}
           onChange={this.onChange}
           placeholder="Search..."
         />

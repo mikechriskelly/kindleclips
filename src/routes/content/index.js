@@ -1,27 +1,28 @@
 import React from 'react';
 import Content from './Content';
-import fetch from '../../core/fetch';
-
+import Clipping from '../clipping/Clipping';
+import Search from '../search/Search';
+import ClipActions from '../../actions/ClipActions';
+import UserStore from '../../stores/UserStore';
 export default {
 
-  path: '*',
+  path: ['/', '/s', '/s/:slug'],
 
-  async action({ path }) { // eslint-disable-line react/prop-types
-    const resp = await fetch('/graphql', {
-      method: 'post',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        query: `{content(path:"${path}"){path,title,content,component}}`,
-      }),
-      credentials: 'include',
-    });
-    if (resp.status !== 200) throw new Error(resp.statusText);
-    const { data } = await resp.json();
-    if (!data || !data.content) return undefined;
-    return <Content {...data.content} />;
+  async action(context) {
+    const searchTerm = context.params.slug;
+
+    if (await UserStore.isLoggedIn()) {
+      if (searchTerm) {
+        const clips = await ClipActions.fetchMatching(searchTerm);
+        return <Search searchTerm={searchTerm} results={clips} />;
+      }
+
+      const clip = await ClipActions.fetchPrimary();
+      return <Clipping {...clip} />;
+    }
+
+    const clip = await ClipActions.fetchPrimary();
+    return <Content id={clip.id} />;
   },
 
 };

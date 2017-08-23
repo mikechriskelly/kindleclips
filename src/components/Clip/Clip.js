@@ -9,8 +9,13 @@ import history from '../../core/history';
 
 function Clip({ title, author, text, inList, searchTerm, slug }) {
   const handleRandom = async () => {
+<<<<<<< HEAD
     const randSlug = await ClipActions.getRandomSlug();
     history.push(`/c/${randSlug}`);
+=======
+    const clip = await ClipActions.fetchPrimary(null, true);
+    history.push(`/c/${clip.slug}`);
+>>>>>>> full-routing
   };
 
   const buttonRandom = (
