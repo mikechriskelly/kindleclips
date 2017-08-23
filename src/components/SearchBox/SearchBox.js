@@ -13,18 +13,24 @@ class SearchBox extends Component {
 
   constructor() {
     super();
-    this.state = { lastValue: '' };
+    this.state = { prevSearchTerm: '' };
+  }
+
+  shouldComponentUpdate() {
+    return false;
   }
 
   onChange = (event) => {
-    const searchTerm = event.target.value;
-    if (searchTerm === '') {
-      history.push('/');
-    }
+    const currSearchTerm = event.target.value;
+    const prevSearchTerm = this.state.lastValue;
 
-    if (searchTerm !== this.state.lastValue) {
-      this.setState({ lastValue: searchTerm });
-      history.push(`/s/${searchTerm}`);
+    if (currSearchTerm && currSearchTerm !== prevSearchTerm) {
+      this.setState({ prevSearchTerm: currSearchTerm });
+      if (currSearchTerm.includes(prevSearchTerm)) {
+        history.replace(`/s/${currSearchTerm}`);
+      } else {
+        history.push(`/s/${currSearchTerm}`);
+      }
     }
   }
 
@@ -35,8 +41,9 @@ class SearchBox extends Component {
         <DebounceInput
           className="input"
           minLength={2}
-          debounceTimeout={200}
+          debounceTimeout={400}
           key={this.props.searchKey}
+          value={this.props.searchKey}
           onChange={this.onChange}
           placeholder="Search..."
         />

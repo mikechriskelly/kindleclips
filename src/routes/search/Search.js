@@ -4,11 +4,11 @@ import s from './Search.css';
 import Header from '../../components/Header';
 import ClipList from '../../components/ClipList';
 
-const Search = ({ results }, context) => {
+const Search = ({ searchTerm, results }, context) => {
   context.setTitle('Search results');
 
   return (<div className={s.root}>
-    <Header />
+    <Header searchKey={searchTerm} />
     <div className={s.container}>
       {results.length > 0 ? <div>
         <h2 className={s.title}>Search Results</h2>
@@ -21,6 +21,7 @@ const Search = ({ results }, context) => {
 Search.contextTypes = { setTitle: PropTypes.func.isRequired };
 
 Search.propTypes = {
+  searchTerm: PropTypes.string,
   results: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string,
     slug: PropTypes.string,
