@@ -6,11 +6,7 @@ import content from './content';
 import clipping from './clipping';
 import login from './login';
 import upload from './upload';
-<<<<<<< HEAD
-import c from './c';
-=======
 import error from './error';
->>>>>>> full-routing
 
 export default {
 
@@ -21,11 +17,6 @@ export default {
     clipping,  // single clipping route
     login,
     upload,
-<<<<<<< HEAD
-    c,       // route for individual clip
-    content,
-=======
->>>>>>> full-routing
     error,
   ],
 

@@ -38,36 +38,7 @@ class ClipActions {
     });
 
     const { data } = await resp.json();
-<<<<<<< HEAD
-    if (data && data.clips) {
-      const slug = data.clips[0].slug;
-      return slug;
-    }
-    return null;
-  }
-
-  async fetchPrimary(slug) {
-    this.fetching();
-    const query = `{clips(slug: "${slug}")
-                   {id, title, author, text, slug,
-                   similarClips { id, title, author, text, slug}}}`;
-
-    const token = UserStore.getToken();
-    const resp = await fetch('/graphql', {
-      method: 'post',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: token ? `Bearer ${token}` : null,
-      },
-      body: JSON.stringify({ query }),
-      credentials: 'include',
-    });
-
-    const { data } = await resp.json();
-=======
     let clip = {};
->>>>>>> full-routing
     if (!data || !data.clips) {
       this.catchError('There was an error loading your clips. Please try again.');
     } else if (data.clips.length === 0) {

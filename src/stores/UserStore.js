@@ -7,14 +7,8 @@ class UserStore {
   }
 
   static isLoggedIn() {
-<<<<<<< HEAD
-    return this.state.isLoggedIn;
-  }
-
-=======
     return !!cookie.load('token');
   }
->>>>>>> full-routing
 }
 
 export default alt.createStore(UserStore, 'UserStore');
