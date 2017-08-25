@@ -1,52 +1,31 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './ErrorPage.css';
 
-class ErrorPage extends React.Component {
-  static propTypes = {
-    error: PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      message: PropTypes.string.isRequired,
-      stack: PropTypes.string.isRequired,
-    }),
-  };
+function ErrorPage({ error }, context) {
+  let title = 'Error';
+  let content = 'Sorry, a critical error occurred on this page.';
+  let errorMessage = null;
 
-  static defaultProps = {
-    error: null,
-  };
-
-  render() {
-    if (__DEV__ && this.props.error) {
-      return (
-        <div>
-          <h1>
-            {this.props.error.name}
-          </h1>
-          <pre>
-            {this.props.error.stack}
-          </pre>
-        </div>
-      );
-    }
-
-    return (
-      <div>
-        <h1>Error</h1>
-        <p>Sorry, a critical error occurred on this page.</p>
-      </div>
-    );
+  if (error.status === 404) {
+    title = 'Page Not Found';
+    content = 'Sorry, the page you were trying to view does not exist.';
+  } else if (process.env.NODE_ENV !== 'production') {
+    errorMessage = <pre>{error.stack}</pre>;
   }
+
+  context.setTitle(title);
+
+  return (
+    <div>
+      <h1>{title}</h1>
+      <p>{content}</p>
+      {errorMessage}
+    </div>
+  );
 }
 
-export { ErrorPage as ErrorPageWithoutStyle };
+ErrorPage.propTypes = { error: PropTypes.object.isRequired };
+ErrorPage.contextTypes = { setTitle: PropTypes.func.isRequired };
+
 export default withStyles(s)(ErrorPage);

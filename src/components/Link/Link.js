@@ -1,15 +1,5 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
-import React from 'react';
-import PropTypes from 'prop-types';
-import history from '../../history';
+import React, { Component, PropTypes } from 'react';
+import history from '../../core/history';
 
 function isLeftClickEvent(event) {
   return event.button === 0;
@@ -19,18 +9,16 @@ function isModifiedEvent(event) {
   return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
 }
 
-class Link extends React.Component {
+class Link extends Component { // eslint-disable-line react/prefer-stateless-function
+
   static propTypes = {
-    to: PropTypes.string.isRequired,
-    children: PropTypes.node.isRequired,
+    to: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
     onClick: PropTypes.func,
   };
 
-  static defaultProps = {
-    onClick: null,
-  };
+  handleClick = (event) => {
+    let allowTransition = true;
 
-  handleClick = event => {
     if (this.props.onClick) {
       this.props.onClick(event);
     }
@@ -40,21 +28,28 @@ class Link extends React.Component {
     }
 
     if (event.defaultPrevented === true) {
-      return;
+      allowTransition = false;
     }
 
     event.preventDefault();
-    history.push(this.props.to);
+
+    if (allowTransition) {
+      if (this.props.to) {
+        history.push(this.props.to);
+      } else {
+        history.push({
+          pathname: event.currentTarget.pathname,
+          search: event.currentTarget.search,
+        });
+      }
+    }
   };
 
   render() {
-    const { to, children, ...props } = this.props;
-    return (
-      <a href={to} {...props} onClick={this.handleClick}>
-        {children}
-      </a>
-    );
+    const { to, ...props } = this.props; // eslint-disable-line no-use-before-define
+    return <a href={history.createHref(to)} {...props} onClick={this.handleClick} />;
   }
+
 }
 
 export default Link;

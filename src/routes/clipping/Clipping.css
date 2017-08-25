@@ -1,0 +1,35 @@
+@import '../../components/variables.css';
+
+html {
+  background-color: var(--accent);
+}
+
+h1, h2, h3 {
+  color: var(--accent);
+}
+
+.root {
+  position: absolute;
+  top: 2em;
+  width: 100%;
+}
+
+.author {
+  color: var(--gray-light);
+  display: block;
+  font-size: 0.7em;
+  padding: 0;
+}
+
+@media screen and (min-width: 750px) {
+  .primary {
+    float: left;
+    width: 65%;
+  }
+
+  .secondary {
+    float: right;
+    width: 30%;
+    padding: 1em;
+  }
+}

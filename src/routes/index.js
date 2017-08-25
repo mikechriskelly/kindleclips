@@ -1,74 +1,29 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
+import React from 'react';
+import App from '../components/App';
 
-/* eslint-disable global-require */
+// Child routes
+import content from './content';
+import clipping from './clipping';
+import login from './login';
+import upload from './upload';
+import error from './error';
 
-// The top-level (parent) route
-const routes = {
+export default {
+
   path: '/',
 
-  // Keep in mind, routes are evaluated in order
   children: [
-    {
-      path: '/',
-      load: () => import(/* webpackChunkName: 'home' */ './home'),
-    },
-    {
-      path: '/contact',
-      load: () => import(/* webpackChunkName: 'contact' */ './contact'),
-    },
-    {
-      path: '/login',
-      load: () => import(/* webpackChunkName: 'login' */ './login'),
-    },
-    {
-      path: '/register',
-      load: () => import(/* webpackChunkName: 'register' */ './register'),
-    },
-    {
-      path: '/about',
-      load: () => import(/* webpackChunkName: 'about' */ './about'),
-    },
-    {
-      path: '/privacy',
-      load: () => import(/* webpackChunkName: 'privacy' */ './privacy'),
-    },
-    {
-      path: '/admin',
-      load: () => import(/* webpackChunkName: 'admin' */ './admin'),
-    },
-
-    // Wildcard routes, e.g. { path: '*', ... } (must go last)
-    {
-      path: '*',
-      load: () => import(/* webpackChunkName: 'not-found' */ './not-found'),
-    },
+    content,   // root and search routes
+    clipping,  // single clipping route
+    login,
+    upload,
+    error,
   ],
 
-  async action({ next }) {
-    // Execute each child route until one of them return the result
-    const route = await next();
-
-    // Provide default values for title, description etc.
-    route.title = `${route.title || 'Untitled Page'} - www.reactstarterkit.com`;
-    route.description = route.description || '';
-
-    return route;
+  async action({ render, next, context }) {
+    const component = await next();
+    if (component === undefined) return component;
+    return render(<App context={context}>{component}</App>);
   },
+
 };
-
-// The error page is available by permanent url for development mode
-if (__DEV__) {
-  routes.children.unshift({
-    path: '/error',
-    action: require('./error').default,
-  });
-}
-
-export default routes;

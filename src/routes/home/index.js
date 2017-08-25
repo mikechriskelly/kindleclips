@@ -1,33 +1,23 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
 import React from 'react';
 import Home from './Home';
-import Layout from '../../components/Layout';
+import Clipping from '../c/Clipping';
+import ClipActions from '../../actions/ClipActions';
+import UserStore from '../../stores/UserStore';
 
-async function action({ fetch }) {
-  const resp = await fetch('/graphql', {
-    body: JSON.stringify({
-      query: '{news{title,link,content}}',
-    }),
-  });
-  const { data } = await resp.json();
-  if (!data || !data.news) throw new Error('Failed to load the news feed.');
-  return {
-    chunks: ['home'],
-    title: 'React Starter Kit',
-    component: (
-      <Layout>
-        <Home news={data.news} />
-      </Layout>
-    ),
-  };
-}
+export default {
 
-export default action;
+  path: ['/'],
+
+  async action() {
+    const randClipSlug = await ClipActions.getRandomSlug(true);
+
+    // If user already logged in, then forward to a specific clip
+    if (await UserStore.isLoggedIn()) {
+      await ClipActions.fetchPrimary(randClipSlug);
+      return <Clipping id={randClipSlug} />;
+    }
+
+    return <Home randClipSlug={randClipSlug} />;
+  },
+
+};

@@ -1,47 +1,34 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { Component, PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Home.css';
+import Button from '../../components/Button';
 
-class Home extends React.Component {
-  static propTypes = {
-    news: PropTypes.arrayOf(
-      PropTypes.shape({
-        title: PropTypes.string.isRequired,
-        link: PropTypes.string.isRequired,
-        content: PropTypes.string,
-      }),
-    ).isRequired,
+class Home extends Component {
+
+  static contextTypes = {
+    setTitle: PropTypes.func.isRequired,
   };
+
+  static propTypes = {
+    randClipSlug: PropTypes.string,
+  };
+
+  componentWillMount() {
+    this.context.setTitle('Kindle Clips');
+  }
 
   render() {
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <h1>React.js News</h1>
-          {this.props.news.map(item =>
-            <article key={item.link} className={s.newsItem}>
-              <h1 className={s.newsTitle}>
-                <a href={item.link}>
-                  {item.title}
-                </a>
-              </h1>
-              <div
-                className={s.newsDesc}
-                // eslint-disable-next-line react/no-danger
-                dangerouslySetInnerHTML={{ __html: item.content }}
-              />
-            </article>,
-          )}
+          <h2 className={s.brand}>Kindle Clips. Your text, remixed.</h2>
+          <p>A free service for Kindle owners to easily view all their highlighted text.</p>
+          <p>You can upload, search, and explore your favorite quotes and excerpts stored
+          on your Kindle device.</p>
+          <p>Explore demo highlights, or sign in to upload and browse highlights from your own
+          Kindle.</p>
+          <Button type="primary" href={`c/${this.props.randClipSlug}`} text="Try Demo" />
+          <Button type="primary" href="/login" text="Sign Up" />
         </div>
       </div>
     );
