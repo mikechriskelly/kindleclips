@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Login.css';
 import Button from '../../components/Button';
@@ -10,7 +11,9 @@ const Login = (props, context) => {
   return (
     <div className={s.root}>
       <div className={s.container}>
-        <h3>{title}</h3>
+        <h3>
+          {title}
+        </h3>
         <Button type="facebook" />
         <strong className={s.lineThrough}>OR</strong>
         <Button type="google" />

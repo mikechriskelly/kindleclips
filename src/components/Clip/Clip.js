@@ -4,13 +4,14 @@ import FaRandom from 'react-icons/lib/fa/random';
 import FaLevelUp from 'react-icons/lib/fa/level-up';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Clip.css';
-import ClipActions from '../../actions/ClipActions';
+// import ClipActions from '../../actions/ClipActions';
 import Link from '../Link';
 import history from '../../history';
 
 function Clip({ title, author, text, inList, searchTerm, slug }) {
   const handleRandom = async () => {
-    const clip = await ClipActions.fetchPrimary(null, true);
+    // const clip = await ClipActions.fetchPrimary(null, true);
+    const clip = {};
     history.push(`/c/${clip.slug}`);
   };
 

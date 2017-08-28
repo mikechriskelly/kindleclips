@@ -8,9 +8,9 @@ import fetch from 'node-fetch';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
 import PrettyError from 'pretty-error';
-import cookie from 'react-cookie';
+import { CookiesProvider } from 'react-cookie';
 import pg from 'pg';
-import alt from './alt';
+// import alt from './alt';
 import App from './components/App';
 import Html from './components/Html';
 import { ErrorPageWithoutStyle } from './routes/error/ErrorPage';
@@ -28,7 +28,8 @@ import apiRoutes from './api/routes';
 // Connect to PostgreSQL
 // Use SSL if DB is not local
 pg.defaults.ssl = !!process.env.DATABASE_URL;
-pg.connect(config.db.url, err => {
+const pgPool = new pg.Pool(config.db.url);
+pgPool.connect(err => {
   if (err) throw err;
   console.info('Connected to Postgres');
 });
@@ -185,8 +186,6 @@ app.get('*', async (req, res, next) => {
       }),
     };
 
-    cookie.plugToRequest(req, res);
-
     const route = await router.resolve({
       ...context,
       path: req.path,
@@ -200,9 +199,11 @@ app.get('*', async (req, res, next) => {
 
     const data = { ...route };
     data.children = ReactDOM.renderToString(
-      <App context={context}>
-        {route.component}
-      </App>,
+      <CookiesProvider cookies={req.universalCookies}>
+        <App context={context}>
+          {route.component}
+        </App>
+      </CookiesProvider>,
     );
     data.styles = [{ id: 'css', cssText: [...css].join('') }];
     data.scripts = [assets.vendor.js];
@@ -217,7 +218,7 @@ app.get('*', async (req, res, next) => {
     const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
     res.status(route.status || 200);
     res.send(`<!doctype html>${html}`);
-    alt.flush();
+    // alt.flush();
   } catch (err) {
     next(err);
   }
