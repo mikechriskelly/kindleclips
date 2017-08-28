@@ -1,11 +1,15 @@
+import {
+  GraphQLList,
+  GraphQLString,
+  GraphQLID,
+  GraphQLBoolean,
+  GraphQLFloat,
+} from 'graphql';
+import shortid from 'shortid';
 import ClipType from '../types/ClipType';
 import Clip from '../models/Clip';
-import { GraphQLList, GraphQLString, GraphQLID, GraphQLBoolean, GraphQLFloat } from 'graphql';
 import { demoUser } from '../../config';
 import { getID } from '../auth';
-import shortid from 'shortid';
-
-/* eslint-disable no-console */
 
 /**
  * Generate a hash number from a text string
@@ -16,13 +20,14 @@ function hashText(str) {
   let i = str.length;
   let hash = 5381;
   while (i) {
-    hash = (hash * 33) ^ str.charCodeAt(--i);
+    i -= 1;
+    hash = (hash * 33) ^ str.charCodeAt(i); // eslint-disable-line no-bitwise
   }
 
   /* JavaScript does bitwise operations (like XOR, above) on 32-bit signed
    * integers. Since we want the results to be always positive, convert the
    * signed int to an unsigned by doing an unsigned bitshift. */
-  return hash >>> 0;
+  return hash >>> 0; // eslint-disable-line no-bitwise
 }
 
 /**
@@ -39,9 +44,13 @@ function parseMyClippingsTxt(clipFile, userId) {
 
     const clip = {};
     clip.hash = hashText(section);
-    clip.title = (lines[0].match(/(.+?)\((.*?)\)$/) || defaultValue)[1].trim().substring(0, 400);
+    clip.title = (lines[0].match(/(.+?)\((.*?)\)$/) || defaultValue)[1]
+      .trim()
+      .substring(0, 400);
     clip.text = lines.slice(2).join('\n').trim();
-    clip.author = (lines[0].match(/(.+?)\((.*?)\)$/) || defaultValue)[2].trim().substring(0, 120);
+    clip.author = (lines[0].match(/(.+?)\((.*?)\)$/) || defaultValue)[2]
+      .trim()
+      .substring(0, 120);
     clip.userId = userId;
     clip.slug = shortid.generate();
     return clip.text.length ? clip : null;
@@ -57,13 +66,13 @@ function parseMyClippingsTxt(clipFile, userId) {
 function getUserId(root) {
   let userId = demoUser.id;
 
-  if (root.request &&
-      root.request.user &&
-      root.request.user.id) {
+  if (root.request && root.request.user && root.request.user.id) {
     userId = root.request.user.id;
-  } else if (root.request &&
-             root.request.headers.authorization &&
-             root.request.headers.authorization.split(' ')[0] === 'Bearer') {
+  } else if (
+    root.request &&
+    root.request.headers.authorization &&
+    root.request.headers.authorization.split(' ')[0] === 'Bearer'
+  ) {
     const token = root.request.headers.authorization.split(' ')[1];
     userId = getID(token);
   }
@@ -71,7 +80,7 @@ function getUserId(root) {
 }
 
 // Clip Query: All Clips for Current User
-const clips = {
+const readClips = {
   type: new GraphQLList(ClipType),
   args: {
     id: { type: GraphQLID },
@@ -111,10 +120,13 @@ async function insertClips(clipFile, userId) {
   const newClips = parseMyClippingsTxt(clipFile, userId);
   try {
     await Clip.bulkCreate(newClips, { validate: false });
-    console.log('Clips inserted.');
+    console.info('Clips inserted.');
     return true;
   } catch (err) {
-    console.log('Some write operations failed. Usually due to duplicates.', err);
+    console.error(
+      'Some write operations failed. Usually due to duplicates.',
+      err,
+    );
     return false;
   }
 }
@@ -122,13 +134,13 @@ async function insertClips(clipFile, userId) {
 async function removeClips(userId) {
   try {
     await Clip.destroy({ where: { userId } });
-    console.log('Clips removed.');
+    console.info('Clips removed.');
     return true;
   } catch (err) {
-    console.log('Could not remove clips.', err);
+    console.error('Could not remove clips.', err);
     return false;
   }
 }
 
-export default clips;
-export { clips, insertClips, removeClips };
+export default readClips;
+export { readClips, insertClips, removeClips };

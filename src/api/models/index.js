@@ -60,23 +60,23 @@ Clip.belongsToMany(Clip, {
  * WARNING: Will overwrite existing slugs and bring user bookmarks
  */
 async function generateNewSlugs() {
-  // This function only needs to be called to
   try {
     const clips = await Clip.findAll();
-    for (const clip of clips) {
-      await Clip.update(
+    clips.map(clip => {
+      Clip.update(
         { slug: Clip.generateSlug() },
         { where: { id: clip.dataValues.id } },
       );
-    }
+      return true;
+    });
   } catch (err) {
-    console.log('Failed to add slugs to clips: ', err);
+    console.error('Failed to add slugs to clips: ', err);
   }
 }
 
-async function syncDatabase(...args) {
+async function sync(...args) {
   await sequelize.sync(...args);
-  
+
   // Only need to run these functions against fresh database
   // Clip.addFullTextIndex();
   // Clip.addIgnoreDuplicateRule();
@@ -84,5 +84,16 @@ async function syncDatabase(...args) {
   return sequelize;
 }
 
-export default { syncDatabase };
-export { syncDatabase, User, UserLogin, UserClaim, UserProfile, Clip, ClipDist, Topic, TopicProb };
+export default { sync };
+export {
+  sync,
+  User,
+  UserLogin,
+  UserClaim,
+  UserProfile,
+  Clip,
+  ClipDist,
+  Topic,
+  TopicProb,
+  generateNewSlugs,
+};

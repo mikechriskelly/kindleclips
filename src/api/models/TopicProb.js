@@ -2,7 +2,6 @@ import DataType from 'sequelize';
 import Model from '../sequelize';
 
 const TopicProb = Model.define('topic_prob', {
-
   id: {
     type: DataType.UUID,
     defaultValue: DataType.UUIDV1,

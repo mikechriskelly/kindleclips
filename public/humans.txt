@@ -3,13 +3,14 @@
 
 # TEAM
 
-  <name> -- <role> -- <twitter>
+    Mike Kelly
+    Chris Castle
 
 # THANKS
 
-  <name>
+    Konstantin Tarkus - React Starter Kit
 
 # TECHNOLOGY COLOPHON
 
-  CSS3, HTML5, JavaScript
-  React Starter Kit -- https://reactstarter.com/
+    CSS3, HTML5, JavaScript
+    React, Flux, SuperAgent

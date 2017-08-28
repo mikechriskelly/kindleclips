@@ -1,8 +1,7 @@
-import alt from '../core/alt';
+import alt from '../alt';
 import ClipActions from '../actions/ClipActions';
 
 class ClipStore {
-
   constructor() {
     this.bindListeners({
       handleFetching: ClipActions.FETCHING,
@@ -27,13 +26,16 @@ class ClipStore {
     return this.state.primaryClip.id;
   }
 
-  randomKey() {
+  static randomKey() {
     return Math.random().toString(36).substr(2, 9);
   }
 
-  findIndex(array, attr, value) {
-    for (let i = 0; i < array.length; i++) {
-      if (array[i].hasOwnProperty(attr) && array[i][attr] === value) {
+  static findIndex(array, attr, value) {
+    for (let i = 0; i < array.length; i += 1) {
+      if (
+        Object.prototype.hasOwnProperty.call(array[i], attr) &&
+        array[i][attr] === value
+      ) {
         return i;
       }
     }

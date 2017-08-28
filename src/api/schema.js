@@ -3,16 +3,12 @@ import {
   GraphQLObjectType as ObjectType,
 } from 'graphql';
 
-import content from './queries/content';
-import clips from './queries/clips';
+import { readClips } from './queries/clips';
 
 const schema = new Schema({
   query: new ObjectType({
     name: 'Query',
-    fields: {
-      content,
-      clips,
-    },
+    fields: { readClips },
   }),
 });
 

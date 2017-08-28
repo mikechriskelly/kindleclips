@@ -4,8 +4,8 @@ import Clipping from '../clipping/Clipping';
 import Search from '../search/Search';
 import ClipActions from '../../actions/ClipActions';
 import UserStore from '../../stores/UserStore';
-export default {
 
+export default {
   path: ['/', '/s', '/s/:slug'],
 
   async action(context) {
@@ -24,5 +24,4 @@ export default {
     const clip = await ClipActions.fetchPrimary();
     return <Content id={clip.id} />;
   },
-
 };

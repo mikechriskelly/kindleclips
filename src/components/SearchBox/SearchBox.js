@@ -1,16 +1,12 @@
-import React, { Component, PropTypes } from 'react';
-import history from '../../core/history';
+import React from 'react';
+import PropTypes from 'prop-types';
 import DebounceInput from 'react-debounce-input';
 import FaSearch from 'react-icons/lib/fa/search';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './SearchBox.css';
+import history from '../../history';
 
-class SearchBox extends Component {
-
-  static propTypes = {
-    searchKey: PropTypes.string,
-  }
-
+class SearchBox extends React.Component {
   constructor() {
     super();
     this.state = { prevSearchTerm: '' };
@@ -20,7 +16,7 @@ class SearchBox extends Component {
     return false;
   }
 
-  onChange = (event) => {
+  onChange = event => {
     const currSearchTerm = event.target.value;
     const prevSearchTerm = this.state.lastValue;
 
@@ -32,7 +28,7 @@ class SearchBox extends Component {
         history.push(`/s/${currSearchTerm}`);
       }
     }
-  }
+  };
 
   render() {
     return (
@@ -51,5 +47,13 @@ class SearchBox extends Component {
     );
   }
 }
+
+SearchBox.propTypes = {
+  searchKey: PropTypes.string,
+};
+
+SearchBox.defaultProps = {
+  searchKey: '',
+};
 
 export default withStyles(s)(SearchBox);

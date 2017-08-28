@@ -1,31 +1,43 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './ErrorPage.css';
 
-function ErrorPage({ error }, context) {
-  let title = 'Error';
-  let content = 'Sorry, a critical error occurred on this page.';
-  let errorMessage = null;
+class ErrorPage extends React.Component {
+  static propTypes = {
+    error: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      message: PropTypes.string.isRequired,
+      stack: PropTypes.string.isRequired,
+    }),
+  };
 
-  if (error.status === 404) {
-    title = 'Page Not Found';
-    content = 'Sorry, the page you were trying to view does not exist.';
-  } else if (process.env.NODE_ENV !== 'production') {
-    errorMessage = <pre>{error.stack}</pre>;
+  static defaultProps = {
+    error: null,
+  };
+
+  render() {
+    if (__DEV__ && this.props.error) {
+      return (
+        <div>
+          <h1>
+            {this.props.error.name}
+          </h1>
+          <pre>
+            {this.props.error.stack}
+          </pre>
+        </div>
+      );
+    }
+
+    return (
+      <div>
+        <h1>Error</h1>
+        <p>Sorry, a critical error occurred on this page.</p>
+      </div>
+    );
   }
-
-  context.setTitle(title);
-
-  return (
-    <div>
-      <h1>{title}</h1>
-      <p>{content}</p>
-      {errorMessage}
-    </div>
-  );
 }
 
-ErrorPage.propTypes = { error: PropTypes.object.isRequired };
-ErrorPage.contextTypes = { setTitle: PropTypes.func.isRequired };
-
+export { ErrorPage as ErrorPageWithoutStyle };
 export default withStyles(s)(ErrorPage);

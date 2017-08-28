@@ -1,11 +1,12 @@
-import React, { PropTypes } from 'react';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import s from './Clip.css';
+import React from 'react';
+import PropTypes from 'prop-types';
 import FaRandom from 'react-icons/lib/fa/random';
 import FaLevelUp from 'react-icons/lib/fa/level-up';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import s from './Clip.css';
 import ClipActions from '../../actions/ClipActions';
 import Link from '../Link';
-import history from '../../core/history';
+import history from '../../history';
 
 function Clip({ title, author, text, inList, searchTerm, slug }) {
   const handleRandom = async () => {
@@ -14,9 +15,9 @@ function Clip({ title, author, text, inList, searchTerm, slug }) {
   };
 
   const buttonRandom = (
-    <div onClick={handleRandom} className={s.action}>
+    <button onClick={handleRandom} className={s.action}>
       <FaRandom size={22} />
-    </div>
+    </button>
   );
 
   const buttonSetPrimary = (
@@ -33,22 +34,36 @@ function Clip({ title, author, text, inList, searchTerm, slug }) {
     const reMatch = new RegExp(`^(${searchTermArray.join('|')})`, 'ig');
 
     Object.keys(markup).forEach(key => {
-      markup[key] = markup[key]
-        .split(reSplit)
-        .filter(Boolean)
-        .map(x => x.match(reMatch) ? <span className={s.highlight}>{x}</span> : x);
+      markup[key] = markup[key].split(reSplit).filter(Boolean).map(
+        x =>
+          x.match(reMatch)
+            ? <span className={s.highlight}>
+                {x}
+              </span>
+            : x,
+      );
     });
   }
 
   const clipMarkup = (
     <div className={inList ? s.regular : s.primary}>
-      <p className={s.text}>{markup.text}</p>
-      <span className={s.title}>{markup.title}</span>
-      <span className={s.author}>{markup.author}</span>
+      <p className={s.text}>
+        {markup.text}
+      </p>
+      <span className={s.title}>
+        {markup.title}
+      </span>
+      <span className={s.author}>
+        {markup.author}
+      </span>
       {inList ? buttonSetPrimary : buttonRandom}
     </div>
   );
-  const listWrapper = inList && (<li className={s.listItem}>{clipMarkup}</li>);
+  const listWrapper =
+    inList &&
+    <li className={s.listItem}>
+      {clipMarkup}
+    </li>;
 
   return inList ? listWrapper : clipMarkup;
 }

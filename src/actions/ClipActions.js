@@ -1,6 +1,6 @@
-import alt from '../core/alt';
-import fetch from '../core/fetch';
-import history from '../core/history';
+import fetch from 'isomorphic-fetch';
+import alt from '../alt';
+import history from '../history';
 import UserStore from '../stores/UserStore';
 
 class ClipActions {
@@ -19,7 +19,7 @@ class ClipActions {
     } else {
       // Pick initial clip based on time of day (server and client will make same choice)
       const now = new Date();
-      const seed = (now.getUTCDate() * now.getUTCHours()) / (31 * 24);
+      const seed = now.getUTCDate() * now.getUTCHours() / (31 * 24);
       query = `{clips(random: true, seed: ${seed})
                   {id, title, author, text, slug,
                     similarClips {id, title, author, text, slug}}}`;
@@ -40,9 +40,11 @@ class ClipActions {
     const { data } = await resp.json();
     let clip = {};
     if (!data || !data.clips) {
-      this.catchError('There was an error loading your clips. Please try again.');
+      this.catchError(
+        'There was an error loading your clips. Please try again.',
+      );
     } else if (data.clips.length === 0) {
-      this.catchError('Looks like you don\'t have any clips yet.');
+      this.catchError("Looks like you don't have any clips yet.");
       this.noClips();
     } else {
       clip = data.clips[0];
@@ -79,23 +81,23 @@ class ClipActions {
     return clips;
   }
 
-  fetching() {
+  static fetching() {
     return true;
   }
 
-  updatePrimary(clip) {
+  static updatePrimary(clip) {
     return clip;
   }
 
-  updateMatching(clips = [], searchTerm = '') {
+  static uupdateMatching(clips = [], searchTerm = '') {
     return { clips, searchTerm };
   }
 
-  noClips() {
+  static unoClips() {
     return true;
   }
 
-  catchError(message = null) {
+  static ucatchError(message = null) {
     return message;
   }
 

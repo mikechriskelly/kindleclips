@@ -1,162 +1,269 @@
-import 'babel-polyfill';
 import path from 'path';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
+import expressJwt, { UnauthorizedError as Jwt401Error } from 'express-jwt';
+import expressGraphQL from 'express-graphql';
+import fetch from 'node-fetch';
+import React from 'react';
 import ReactDOM from 'react-dom/server';
-import { match } from 'universal-router';
 import PrettyError from 'pretty-error';
-import passport from './core/passport';
-import { syncDatabase, User, UserLogin, UserProfile } from './api/models';
-import pg from 'pg';
-import routes from './routes';
-import assets from './assets'; // eslint-disable-line import/no-unresolved
-import { port, analytics, demoUser, databaseUrl } from './config';
-import { loginUser } from './api/auth';
-import apiRoutes from './api/routes.js';
 import cookie from 'react-cookie';
-import alt from './core/alt';
-
-/* eslint-disable no-console */
-
-const server = express();
-
-// Tell CSS tooling to use all vendor prefixes if user agent is not known
-global.navigator = global.navigator || {};
-global.navigator.userAgent = global.navigator.userAgent || 'all';
-
-// Register Node.js middleware
-server.use(express.static(path.join(__dirname, 'public')));
-server.use(cookieParser());
-server.use(bodyParser.urlencoded({ extended: true }));
-server.use(bodyParser.json());
+import pg from 'pg';
+import alt from './alt';
+import App from './components/App';
+import Html from './components/Html';
+import { ErrorPageWithoutStyle } from './routes/error/ErrorPage';
+import errorPageStyle from './routes/error/ErrorPage.css';
+import createFetch from './createFetch';
+import passport from './passport';
+import router from './router';
+import { User, UserLogin, UserProfile, sync } from './api/models';
+import schema from './api/schema';
+import assets from './assets.json'; // eslint-disable-line import/no-unresolved
+import config from './config';
+import { loginUser } from './api/auth';
+import apiRoutes from './api/routes';
 
 // Connect to PostgreSQL
 // Use SSL if DB is not local
 pg.defaults.ssl = !!process.env.DATABASE_URL;
-pg.connect(databaseUrl, (err) => {
+pg.connect(config.db.url, err => {
   if (err) throw err;
-  console.log('Connected to Postgres');
+  console.info('Connected to Postgres');
 });
 
 // Create demo user if it doesn't already exist
 async function setupDemoUser() {
   const existingUser = await User.findOne({
     attributes: ['id'],
-    where: { id: demoUser.id },
+    where: { id: config.demoUser.id },
   });
   if (!existingUser) {
-    User.create({
-      id: demoUser.id,
-      email: demoUser.email,
-      emailConfirmed: true,
-      logins: [
-        { name: 'none', key: demoUser.loginKey },
-      ],
-      profile: {
-        displayName: demoUser.displayName,
-        gender: null,
-        picture: null,
+    User.create(
+      {
+        id: config.demoUser.id,
+        email: config.demoUser.email,
+        emailConfirmed: true,
+        logins: [{ name: 'none', key: config.demoUser.loginKey }],
+        profile: {
+          displayName: config.demoUser.displayName,
+          gender: null,
+          picture: null,
+        },
       },
-    }, {
-      include: [
-        { model: UserLogin, as: 'logins' },
-        { model: UserProfile, as: 'profile' },
-      ],
-    });
+      {
+        include: [
+          { model: UserLogin, as: 'logins' },
+          { model: UserProfile, as: 'profile' },
+        ],
+      },
+    );
   }
 }
-if (process.env.NODE_ENV !== 'production') { setupDemoUser(); }
+if (process.env.NODE_ENV !== 'production') {
+  setupDemoUser();
+}
 
+const app = express();
 
-// Authentication Routes
-server.use(passport.initialize());
+//
+// Tell any CSS tooling (such as Material UI) to use all vendor prefixes if the
+// user agent is not known.
+// -----------------------------------------------------------------------------
+global.navigator = global.navigator || {};
+global.navigator.userAgent = global.navigator.userAgent || 'all';
 
-server.get('/login/facebook',
-  passport.authenticate('facebook', { scope: ['email'], session: false })
+//
+// Register Node.js middleware
+// -----------------------------------------------------------------------------
+app.use(express.static(path.resolve(__dirname, 'public')));
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+//
+// Authentication
+// -----------------------------------------------------------------------------
+app.use(
+  expressJwt({
+    secret: config.auth.jwt.secret,
+    credentialsRequired: false,
+    getToken: req => req.cookies.id_token,
+  }),
+);
+// Error handler for express-jwt
+app.use((err, req, res, next) => {
+  // eslint-disable-line no-unused-vars
+  if (err instanceof Jwt401Error) {
+    console.error('[express-jwt-error]', req.cookies.id_token);
+    // `clearCookie`, otherwise user can't use web-app until cookie expires
+    res.clearCookie('id_token');
+  }
+  next(err);
+});
+
+app.use(passport.initialize());
+
+if (__DEV__) {
+  app.enable('trust proxy');
+}
+app.get(
+  '/login/facebook',
+  passport.authenticate('facebook', {
+    scope: ['email'],
+    session: false,
+  }),
+);
+app.get(
+  '/login/facebook/return',
+  passport.authenticate('facebook', {
+    failureRedirect: '/',
+    session: false,
+  }),
+  loginUser,
 );
 
-server.get('/login/facebook/return',
-  passport.authenticate('facebook', { failureRedirect: '/', session: false }),
-  loginUser
+app.get(
+  '/login/google',
+  passport.authenticate('google', {
+    scope: ['email'],
+    session: false,
+  }),
+);
+app.get(
+  '/login/google/return',
+  passport.authenticate('google', {
+    failureRedirect: '/',
+    session: false,
+  }),
+  loginUser,
 );
 
-server.get('/login/google',
-  passport.authenticate('google', { scope: ['email'], session: false })
-);
-
-server.get('/login/google/return',
-  passport.authenticate('google', { failureRedirect: '/', session: false }),
-  loginUser
-);
-
-server.get('/logout', (req, res) => {
+app.get('/logout', (req, res) => {
   req.logout();
   res.clearCookie('token');
   res.redirect('/');
 });
 
 // API Routes
-server.use(apiRoutes);
+app.use(apiRoutes);
 
+//
+// Register API middleware
+// -----------------------------------------------------------------------------
+app.use(
+  '/graphql',
+  expressGraphQL(req => ({
+    schema,
+    graphiql: __DEV__,
+    rootValue: { request: req },
+    pretty: __DEV__,
+  })),
+);
+
+//
 // Register server-side rendering middleware
-server.get('*', async (req, res, next) => {
+// -----------------------------------------------------------------------------
+app.get('*', async (req, res, next) => {
   try {
-    let css = [];
-    let statusCode = 200;
-    const template = require('./views/index.jade'); // eslint-disable-line global-require
-    const data = { title: '', description: '', css: '', body: '', entry: assets.main.js };
+    const css = new Set();
 
-    if (process.env.NODE_ENV === 'production') {
-      data.trackingId = analytics.google.trackingId;
-    }
+    // Global (context) variables that can be easily accessed from any React component
+    // https://facebook.github.io/react/docs/context.html
+    const context = {
+      // Enables critical path CSS rendering
+      // https://github.com/kriasoft/isomorphic-style-loader
+      insertCss: (...styles) => {
+        // eslint-disable-next-line no-underscore-dangle
+        styles.forEach(style => css.add(style._getCss()));
+      },
+      // Universal HTTP client
+      fetch: createFetch(fetch, {
+        baseUrl: config.api.serverUrl,
+        cookie: req.headers.cookie,
+      }),
+    };
 
     cookie.plugToRequest(req, res);
 
-    await match(routes, {
+    const route = await router.resolve({
+      ...context,
       path: req.path,
       query: req.query,
-      context: {
-        insertCss: styles => css.push(styles._getCss()), // eslint-disable-line no-underscore-dangle
-        setTitle: value => (data.title = value),
-        setMeta: (key, value) => (data[key] = value),
-      },
-      render(component, status = 200) {
-        css = [];
-        statusCode = status;
-        data.body = ReactDOM.renderToString(component);
-        data.css = css.join('');
-        return true;
-      },
     });
 
-    res.status(statusCode);
-    res.send(template(data));
+    if (route.redirect) {
+      res.redirect(route.status || 302, route.redirect);
+      return;
+    }
+
+    const data = { ...route };
+    data.children = ReactDOM.renderToString(
+      <App context={context}>
+        {route.component}
+      </App>,
+    );
+    data.styles = [{ id: 'css', cssText: [...css].join('') }];
+    data.scripts = [assets.vendor.js];
+    if (route.chunks) {
+      data.scripts.push(...route.chunks.map(chunk => assets[chunk].js));
+    }
+    data.scripts.push(assets.client.js);
+    data.app = {
+      apiUrl: config.api.clientUrl,
+    };
+
+    const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
+    res.status(route.status || 200);
+    res.send(`<!doctype html>${html}`);
     alt.flush();
   } catch (err) {
     next(err);
   }
 });
 
+//
 // Error handling
+// -----------------------------------------------------------------------------
 const pe = new PrettyError();
 pe.skipNodeFiles();
 pe.skipPackage('express');
 
-server.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
-  console.log(pe.render(err)); // eslint-disable-line no-console
-  const template = require('./views/error.jade'); // eslint-disable-line global-require
-  const statusCode = err.status || 500;
-  res.status(statusCode);
-  res.send(template({
-    message: err.message,
-    stack: process.env.NODE_ENV === 'production' ? '' : err.stack,
-  }));
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  console.error(pe.render(err));
+  const html = ReactDOM.renderToStaticMarkup(
+    <Html
+      title="Internal Server Error"
+      description={err.message}
+      styles={[{ id: 'css', cssText: errorPageStyle._getCss() }]} // eslint-disable-line no-underscore-dangle
+    >
+      {ReactDOM.renderToString(<ErrorPageWithoutStyle error={err} />)}
+    </Html>,
+  );
+  res.status(err.status || 500);
+  res.send(`<!doctype html>${html}`);
 });
 
-// Sync models with DB and then launch server
-syncDatabase()
-  .catch(err => console.error(err.stack))
-  .then(() => {
-    server.listen(port, () => { console.log(`The server is running at http://localhost:${port}/`); });
+//
+// Launch the server
+// -----------------------------------------------------------------------------
+const promise = sync().catch(err => console.error(err.stack));
+if (!module.hot) {
+  promise.then(() => {
+    app.listen(config.port, () => {
+      console.info(`The server is running at http://localhost:${config.port}/`);
+    });
   });
+}
+
+//
+// Hot Module Replacement
+// -----------------------------------------------------------------------------
+if (module.hot) {
+  app.hot = module.hot;
+  module.hot.accept('./router');
+}
+
+export default app;

@@ -1,5 +1,5 @@
-import alt from '../core/alt';
 import cookie from 'react-cookie';
+import alt from '../alt';
 
 class UserStore {
   static getToken() {

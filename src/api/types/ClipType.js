@@ -1,4 +1,3 @@
-import Clip from '../models/Clip';
 import {
   GraphQLObjectType as ObjectType,
   GraphQLID as ID,
@@ -6,6 +5,7 @@ import {
   GraphQLNonNull as NonNull,
   GraphQLList as ListType,
 } from 'graphql';
+import Clip from '../models/Clip';
 
 const ClipType = new ObjectType({
   name: 'Clip',
@@ -19,7 +19,7 @@ const ClipType = new ObjectType({
     slug: { type: StringType },
     similarClips: {
       type: new ListType(ClipType),
-      resolve: (clip) => Clip.getSimilar(clip.id), // .then(post => post.toJSON().comments);
+      resolve: clip => Clip.getSimilar(clip.id), // .then(post => post.toJSON().comments);
     },
   }),
 });

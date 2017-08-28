@@ -9,12 +9,11 @@ import upload from './upload';
 import error from './error';
 
 export default {
-
   path: '/',
 
   children: [
-    content,   // root and search routes
-    clipping,  // single clipping route
+    content, // root and search routes
+    clipping, // single clipping route
     login,
     upload,
     error,
@@ -23,7 +22,10 @@ export default {
   async action({ render, next, context }) {
     const component = await next();
     if (component === undefined) return component;
-    return render(<App context={context}>{component}</App>);
+    return render(
+      <App context={context}>
+        {component}
+      </App>,
+    );
   },
-
 };

@@ -3,7 +3,11 @@ import { auth } from '../config';
 
 function getToken(req) {
   let token = null;
-  if (req && req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+  if (
+    req &&
+    req.headers.authorization &&
+    req.headers.authorization.split(' ')[0] === 'Bearer'
+  ) {
     token = req.headers.authorization.split(' ')[1];
   } else if (req && req.cookies.token) {
     token = req.cookies.token;
@@ -17,7 +21,7 @@ function getID(token) {
     const decrypted = jwt.verify(token, secret);
     return decrypted.id;
   } catch (err) {
-    console.log('Failed to get ID: ', err);
+    console.error('Failed to get ID: ', err);
     return null;
   }
 }
@@ -28,7 +32,11 @@ function loginUser(req, res) {
   const token = jwt.sign(req.user, auth.jwt.secret, { expiresIn });
 
   // Save token as cookie and in store
-  res.cookie('token', token, { maxAge: 1000 * expiresIn, httpOnly: false, path: '/' });
+  res.cookie('token', token, {
+    maxAge: 1000 * expiresIn,
+    httpOnly: false,
+    path: '/',
+  });
   return res.redirect('/');
 }
 

@@ -1,15 +1,13 @@
 import React from 'react';
-import Clipping from './Clipping';
+import Search from './Search';
 import ClipActions from '../../actions/ClipActions';
 
 export default {
-
-  path: ['/c/:slug'],
+  path: ['/s/:slug'],
 
   async action(context) {
     const clip = context.params.slug;
     await ClipActions.fetchPrimary(clip);
-    return <Clipping />;
+    return <Search />;
   },
-
 };

@@ -1,7 +1,7 @@
 import Sequelize from 'sequelize';
-import { databaseUrl } from '../config';
+import { db } from '../config';
 
-const sequelize = new Sequelize(databaseUrl, {
+const sequelize = new Sequelize(db.url, {
   dialect: 'postgres',
   define: {
     freezeTableName: true,

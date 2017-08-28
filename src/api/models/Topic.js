@@ -2,7 +2,6 @@ import DataType from 'sequelize';
 import Model from '../sequelize';
 
 const Topic = Model.define('topic', {
-
   id: {
     type: DataType.UUID,
     defaultValue: DataType.UUIDV1,
@@ -27,7 +26,6 @@ const Topic = Model.define('topic', {
     type: DataType.STRING(100),
     allowNull: false,
   },
-
 });
 
 export default Topic;

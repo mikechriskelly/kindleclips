@@ -2,7 +2,6 @@ import DataType from 'sequelize';
 import Model from '../sequelize';
 
 const ClipDist = Model.define('clip_dist', {
-
   id: {
     type: DataType.UUID,
     defaultValue: DataType.UUIDV1,
@@ -29,7 +28,6 @@ const ClipDist = Model.define('clip_dist', {
     comment: 'Similarity score',
     allowNull: false,
   },
-
 });
 
 export default ClipDist;
