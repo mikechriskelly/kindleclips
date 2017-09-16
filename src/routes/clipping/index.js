@@ -1,16 +1,15 @@
 import React from 'react';
 import Clipping from './Clipping';
-// import ClipActions from '../../actions/ClipActions';
 
-export default {
-  path: '/c/:slug',
+const clip = {}; // TODO: Data fetch e.g. await ClipActions.fetchPrimary(slug);
+const title = 'Kindle Clips'; // TODO: Insert data e.g. ${props.title} - ${props.author}
 
-  async action(context) {
-    const slug = context.params.slug;
-    // const clip = await ClipActions.fetchPrimary(slug);
-    const clip = {};
-    if (clip.id) {
-      return <Clipping {...clip} />;
-    }
-  },
-};
+function action() {
+  return {
+    chunks: ['clipping'],
+    title,
+    components: <Clipping {...clip} />,
+  };
+}
+
+export default action;

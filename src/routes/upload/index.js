@@ -1,12 +1,20 @@
 import React from 'react';
+import Layout from '../../components/Layout';
 import Upload from './Upload';
 
-export default {
-  path: ['/upload', '/uploading'],
+const title = 'Upload';
+const isLoading = false; // TODO: Tack loading state
 
-  // eslint-disable-next-line react/prop-types
-  action({ path }) {
-    const isLoading = path === '/uploading';
-    return <Upload isLoading={isLoading} />;
-  },
-};
+function action() {
+  return {
+    chunks: ['upload'],
+    title,
+    component: (
+      <Layout>
+        <Upload title={title} isLoading={isLoading} />
+      </Layout>
+    ),
+  };
+}
+
+export default action;

@@ -1,13 +1,16 @@
 import React from 'react';
 import Search from './Search';
-// import ClipActions from '../../actions/ClipActions';
 
-export default {
-  path: ['/s/:slug'],
+const searchTerm = ''; // TODO: Insert from URL
+const clips = {}; // TODO: Data Fetch e.g. await ClipActions.fetchMatching(searchTerm);
+const title = 'Kindle Clips';
 
-  async action(context) {
-    // const clip = context.params.slug;
-    // await ClipActions.fetchPrimary(clip);
-    return <Search />;
-  },
-};
+function action() {
+  return {
+    chunks: ['search'],
+    title,
+    components: <Search searchTerm={searchTerm} results={clips} />,
+  };
+}
+
+export default action;

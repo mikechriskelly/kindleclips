@@ -5,24 +5,17 @@ import Header from '../../components/Header';
 import ClipList from '../../components/ClipList';
 import Clip from '../../components/Clip';
 
-const Clipping = (props, context) => {
-  context.setTitle(`${props.title} - ${props.author}`);
-
-  return (<div className={s.root}>
+const Clipping = props =>
+  <div className={s.root}>
     <Header />
-    <div className={s.container}>
+    <div>
       <div className={s.primary}>
-        <Clip
-          title={props.title}
-          author={props.author}
-          text={props.text}
-        />
+        <Clip title={props.title} author={props.author} text={props.text} />
       </div>
-      <h2 className={s.title}>Similar Clips</h2>
+      <h2>Similar Clips</h2>
       <ClipList clipList={props.similarClips} />
     </div>
-  </div>);
-};
+  </div>;
 
 Clipping.contextTypes = { setTitle: PropTypes.func.isRequired };
 
@@ -32,13 +25,15 @@ Clipping.propTypes = {
   title: PropTypes.string,
   author: PropTypes.string,
   text: PropTypes.string,
-  similarClips: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string,
-    slug: PropTypes.string,
-    title: PropTypes.string,
-    author: PropTypes.string,
-    text: PropTypes.string,
-  })),
+  similarClips: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      slug: PropTypes.string,
+      title: PropTypes.string,
+      author: PropTypes.string,
+      text: PropTypes.string,
+    }),
+  ),
 };
 
 export default withStyles(s)(Clipping);

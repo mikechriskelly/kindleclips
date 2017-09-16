@@ -13,9 +13,9 @@ html {
 .container {
   background-color: var(--white-base);
   border-radius: 5px;
-  margin: auto auto;
+  margin: auto;
   max-width: 350px;
-  padding: 20px 25px 25px 25px;
+  padding: 20px 25px 25px;
   text-align: center;
 }
 

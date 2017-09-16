@@ -5,23 +5,18 @@ import s from './Search.css';
 import Header from '../../components/Header';
 import ClipList from '../../components/ClipList';
 
-const Search = ({ searchTerm, results }, context) => {
-  context.setTitle('Search results');
-
-  return (
+const Search = ({ searchTerm, results }) =>
+  <div>
+    <Header searchKey={searchTerm} />
     <div>
-      <Header searchKey={searchTerm} />
-      <div>
-        {results.length > 0
-          ? <div>
-              <h2>Search Results</h2>
-              <ClipList clipList={results} searchTerm={results.searchTerm} />
-            </div>
-          : <h2>No Results Found</h2>}
-      </div>
+      {results.length > 0
+        ? <div>
+            <h2>Search Results</h2>
+            <ClipList clipList={results} searchTerm={results.searchTerm} />
+          </div>
+        : <h2>No Results Found</h2>}
     </div>
-  );
-};
+  </div>;
 
 Search.contextTypes = { setTitle: PropTypes.func.isRequired };
 
