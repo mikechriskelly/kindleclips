@@ -8,6 +8,17 @@ import s from './Clip.css';
 import Link from '../Link';
 import history from '../../history';
 
+Clip.propTypes = {
+  id: PropTypes.string,
+  slug: PropTypes.string,
+  title: PropTypes.string,
+  author: PropTypes.string,
+  text: PropTypes.string,
+  inList: PropTypes.bool,
+  index: PropTypes.number,
+  searchTerm: PropTypes.string,
+};
+
 function Clip({ title, author, text, inList, searchTerm, slug }) {
   const handleRandom = async () => {
     // const clip = await ClipActions.fetchPrimary(null, true);
@@ -60,6 +71,7 @@ function Clip({ title, author, text, inList, searchTerm, slug }) {
       {inList ? buttonSetPrimary : buttonRandom}
     </div>
   );
+
   const listWrapper =
     inList &&
     <li className={s.listItem}>
@@ -68,16 +80,5 @@ function Clip({ title, author, text, inList, searchTerm, slug }) {
 
   return inList ? listWrapper : clipMarkup;
 }
-
-Clip.propTypes = {
-  id: PropTypes.string,
-  slug: PropTypes.string,
-  title: PropTypes.string,
-  author: PropTypes.string,
-  text: PropTypes.string,
-  inList: PropTypes.bool,
-  index: PropTypes.number,
-  searchTerm: PropTypes.string,
-};
 
 export default withStyles(s)(Clip);

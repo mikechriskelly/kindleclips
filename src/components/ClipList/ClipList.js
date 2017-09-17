@@ -4,6 +4,24 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './ClipList.css';
 import Clip from '../Clip';
 
+ClipList.propTypes = {
+  clipList: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      slug: PropTypes.string,
+      title: PropTypes.string,
+      author: PropTypes.string,
+      text: PropTypes.string,
+    }),
+  ),
+  searchTerm: PropTypes.string,
+};
+
+ClipList.defaultProps = {
+  clipList: [],
+  searchTerm: '',
+};
+
 function ClipList({ clipList, searchTerm }) {
   return (
     <ul className={s.clipList}>
@@ -22,23 +40,5 @@ function ClipList({ clipList, searchTerm }) {
     </ul>
   );
 }
-
-ClipList.propTypes = {
-  clipList: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string,
-      slug: PropTypes.string,
-      title: PropTypes.string,
-      author: PropTypes.string,
-      text: PropTypes.string,
-    }),
-  ),
-  searchTerm: PropTypes.string,
-};
-
-ClipList.defaultProps = {
-  clipList: [],
-  searchTerm: '',
-};
 
 export default withStyles(s)(ClipList);

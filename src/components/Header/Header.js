@@ -6,15 +6,6 @@ import s from './Header.css';
 import Navigation from '../Navigation';
 import SearchBox from '../SearchBox';
 
-const Header = ({ searchKey }) =>
-  <div className={s.container}>
-    <header>
-      <SearchBox className={s.primary} searchKey={searchKey} />
-      {/* <Navigation className={s.secondary} isLoggedIn={UserStore.isLoggedIn()} /> */}
-      <Navigation className={s.secondary} />
-    </header>
-  </div>;
-
 Header.propTypes = {
   searchKey: PropTypes.string,
 };
@@ -22,5 +13,17 @@ Header.propTypes = {
 Header.defaultProps = {
   searchKey: '',
 };
+
+function Header({ searchKey }) {
+  return (
+    <div className={s.container}>
+      <header>
+        <SearchBox className={s.primary} searchKey={searchKey} />
+        {/* <Navigation className={s.secondary} isLoggedIn={UserStore.isLoggedIn()} /> */}
+        <Navigation className={s.secondary} />
+      </header>
+    </div>
+  );
+}
 
 export default withStyles(s)(Header);

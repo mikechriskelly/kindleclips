@@ -4,23 +4,6 @@ import s from './Clipping.css';
 import ClipList from '../../components/ClipList';
 import Clip from '../../components/Clip';
 
-const Clipping = props =>
-  <div>
-    <div className={s.primary}>
-      <Clip
-        id={props.id}
-        slug={props.slug}
-        title={props.title}
-        author={props.author}
-        text={props.text}
-      />
-    </div>
-    <h2>Similar Clips</h2>
-    <ClipList clipList={props.similarClips} />
-  </div>;
-
-Clipping.contextTypes = { setTitle: PropTypes.func.isRequired };
-
 Clipping.propTypes = {
   id: PropTypes.string,
   slug: PropTypes.string,
@@ -46,5 +29,17 @@ Clipping.defaultProps = {
   text: '',
   similarClips: [],
 };
+
+function Clipping({ id, slug, title, author, text, similarClips }) {
+  return (
+    <div className={s.root}>
+      <div className={s.primary}>
+        <Clip id={id} slug={slug} title={title} author={author} text={text} />
+      </div>
+      <h2>Similar Clips</h2>
+      {similarClips && <ClipList clipList={similarClips} />}
+    </div>
+  );
+}
 
 export default withStyles(s)(Clipping);

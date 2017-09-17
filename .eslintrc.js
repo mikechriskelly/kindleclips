@@ -48,6 +48,9 @@ module.exports = {
       },
     ],
 
+    // Preference for showing proptype before function
+    "no-use-before-define": 0,
+
     // a11y removed rule, ignore them
     'jsx-a11y/href-no-hash': 'off',
 

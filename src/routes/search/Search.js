@@ -5,21 +5,6 @@ import s from './Search.css';
 import Header from '../../components/Header';
 import ClipList from '../../components/ClipList';
 
-const Search = ({ searchTerm, results }) =>
-  <div>
-    <Header searchKey={searchTerm} />
-    <div>
-      {results.length > 0
-        ? <div>
-            <h2>Search Results</h2>
-            <ClipList clipList={results} searchTerm={results.searchTerm} />
-          </div>
-        : <h2>No Results Found</h2>}
-    </div>
-  </div>;
-
-Search.contextTypes = { setTitle: PropTypes.func.isRequired };
-
 Search.propTypes = {
   searchTerm: PropTypes.string.isRequired,
   results: PropTypes.arrayOf(
@@ -32,5 +17,21 @@ Search.propTypes = {
     }),
   ).isRequired,
 };
+
+function Search({ searchTerm, results }) {
+  return (
+    <div>
+      <Header searchKey={searchTerm} />
+      <div>
+        {results.length > 0
+          ? <div>
+              <h2>Search Results</h2>
+              <ClipList clipList={results} searchTerm={results.searchTerm} />
+            </div>
+          : <h2>No Results Found</h2>}
+      </div>
+    </div>
+  );
+}
 
 export default withStyles(s)(Search);

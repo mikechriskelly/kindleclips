@@ -7,6 +7,14 @@ import s from './SearchBox.css';
 import history from '../../history';
 
 class SearchBox extends React.Component {
+  static propTypes = {
+    searchKey: PropTypes.string,
+  };
+
+  static defaultProps = {
+    searchKey: '',
+  };
+
   constructor() {
     super();
     this.state = { prevSearchTerm: '' };
@@ -47,13 +55,5 @@ class SearchBox extends React.Component {
     );
   }
 }
-
-SearchBox.propTypes = {
-  searchKey: PropTypes.string,
-};
-
-SearchBox.defaultProps = {
-  searchKey: '',
-};
 
 export default withStyles(s)(SearchBox);

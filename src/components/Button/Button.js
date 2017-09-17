@@ -7,20 +7,28 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Button.css'; // eslint-disable-line css-modules/no-unused-class
 import Link from '../Link';
 
-const types = {
-  facebook: {
-    href: '/login/facebook',
-    text: 'Continue with Facebook',
-    icon: <FaFacebook size={24} className={s.icon} />,
-  },
-  google: {
-    href: '/login/google',
-    text: 'Continue with Google',
-    icon: <FaGoogle size={24} className={s.icon} />,
-  },
+Button.propTypes = {
+  className: PropTypes.string,
+  href: PropTypes.string,
+  onClick: PropTypes.func,
+  text: PropTypes.string,
+  type: PropTypes.string,
 };
 
 function Button({ className, href, onClick, text, type }) {
+  const types = {
+    facebook: {
+      href: '/login/facebook',
+      text: 'Continue with Facebook',
+      icon: <FaFacebook size={24} className={s.icon} />,
+    },
+    google: {
+      href: '/login/google',
+      text: 'Continue with Google',
+      icon: <FaGoogle size={24} className={s.icon} />,
+    },
+  };
+
   // Button or link?
   let button;
   if (type === 'plain' || (types[type] && types[type].href)) {
@@ -46,16 +54,7 @@ function Button({ className, href, onClick, text, type }) {
       </button>
     );
   }
-
   return button;
 }
-
-Button.propTypes = {
-  className: PropTypes.string,
-  href: PropTypes.string,
-  onClick: PropTypes.func,
-  text: PropTypes.string,
-  type: PropTypes.string,
-};
 
 export default withStyles(s)(Button);
