@@ -9,7 +9,7 @@ function action() {
   return {
     chunks: ['search'],
     title,
-    components: <Search searchTerm={searchTerm} results={clips} />,
+    component: <Search searchTerm={searchTerm} results={clips} />,
   };
 }
 

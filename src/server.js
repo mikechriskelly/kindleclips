@@ -196,11 +196,14 @@ app.get('*', async (req, res, next) => {
       res.redirect(route.status || 302, route.redirect);
       return;
     }
+
     const data = { ...route };
     data.children = ReactDOM.renderToString(
-      <App context={context}>
-        {route.component}
-      </App>,
+      <CookiesProvider cookies={req.universalCookies}>
+        <App context={context}>
+          {route.component}
+        </App>
+      </CookiesProvider>,
     );
     data.styles = [{ id: 'css', cssText: [...css].join('') }];
     data.scripts = [assets.vendor.js];

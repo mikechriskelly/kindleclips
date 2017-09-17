@@ -3,15 +3,13 @@
 // The top-level (parent) route
 const routes = {
   path: '/',
-
-  // Keep in mind, routes are evaluated in order
   children: [
     {
-      path: '/c/:slug',
+      path: ['/', '/c/:slug'],
       load: () => import(/* webpackChunkName: 'clipping' */ './clipping'),
     },
     {
-      path: '/s',
+      path: ['/s', '/s/:searchterm'],
       load: () => import(/* webpackChunkName: 'search' */ './search'),
     },
     {
