@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Login.css';
-import Button from '../../components/Button';
+import LoginButton from '../../components/LoginButton';
 
 Login.propTypes = {
   title: PropTypes.string.isRequired,
@@ -15,9 +15,9 @@ function Login({ title }) {
         <h3>
           {title}
         </h3>
-        <Button type="facebook" />
+        <LoginButton type="facebook" />
         <strong className={s.lineThrough}>OR</strong>
-        <Button type="google" />
+        <LoginButton type="google" />
       </div>
     </div>
   );
