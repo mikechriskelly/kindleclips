@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import Link from './Link';
 import history from '../history';
 
-Clip.propTypes = {
+ClipItem.propTypes = {
   id: PropTypes.string,
   slug: PropTypes.string,
   title: PropTypes.string,
@@ -18,7 +18,7 @@ Clip.propTypes = {
   searchTerm: PropTypes.string,
 };
 
-function Clip({ title, author, text, inList, searchTerm, slug }) {
+function ClipItem({ title, author, text, inList, searchTerm, slug }) {
   const handleRandom = async () => {
     // const clip = await ClipActions.fetchPrimary(null, true);
     const clip = {};
@@ -88,4 +88,4 @@ const HighlightedSpan = styled.span`
   display: inline-block;
 `;
 
-export default Clip;
+export default ClipItem;

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import Layout from './Layout';
 
 Page.propTypes = {
   title: PropTypes.string.isRequired,
@@ -9,17 +10,19 @@ Page.propTypes = {
 
 function Page({ title, html }) {
   return (
-    <OuterContainer>
-      <InnerContainer>
-        <h1>
-          {title}
-        </h1>
-        <div
-          // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: html }}
-        />
-      </InnerContainer>
-    </OuterContainer>
+    <Layout>
+      <OuterContainer>
+        <InnerContainer>
+          <h1>
+            {title}
+          </h1>
+          <div
+            // eslint-disable-next-line react/no-danger
+            dangerouslySetInnerHTML={{ __html: html }}
+          />
+        </InnerContainer>
+      </OuterContainer>
+    </Layout>
   );
 }
 

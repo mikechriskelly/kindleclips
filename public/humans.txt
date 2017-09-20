@@ -12,5 +12,5 @@
 
 # TECHNOLOGY COLOPHON
 
+    React, Redux
     CSS3, HTML5, JavaScript
-    React, Flux, SuperAgent

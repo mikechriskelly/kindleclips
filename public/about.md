@@ -1,6 +1,5 @@
 ---
 title: About
-component: ContentPage
 ---
 Kindle Clips. Your text, remixed.
 

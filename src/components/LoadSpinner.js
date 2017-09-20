@@ -25,6 +25,15 @@ const Container = styled.div`
   left: 0;
 `;
 
+const rotate360 = keyframes`
+from {
+  transform: rotate(0deg);
+}
+to {
+  transform: rotate(360deg);
+}
+`;
+
 const Wheel = styled.div`
   animation: ${rotate360} 2s linear infinite;
   border-color: #ccc transparent;
@@ -38,15 +47,6 @@ const Wheel = styled.div`
   position: absolute;
   top: 50%;
   width: 20px;
-`;
-
-const rotate360 = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 `;
 
 export default LoadSpinner;

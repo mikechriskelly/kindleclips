@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Clip from './Clip';
+import Clip from './ClipItem';
 
 ClipList.propTypes = {
   clipList: PropTypes.arrayOf(

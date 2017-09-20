@@ -1,11 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import s from './Search.css';
-import Header from '../../components/Header';
-import ClipList from '../../components/ClipList';
+import Header from './Header';
+import ClipList from './ClipList';
 
-Search.propTypes = {
+SearchPage.propTypes = {
   searchTerm: PropTypes.string.isRequired,
   results: PropTypes.arrayOf(
     PropTypes.shape({
@@ -18,7 +16,7 @@ Search.propTypes = {
   ).isRequired,
 };
 
-function Search({ searchTerm, results }) {
+function SearchPage({ searchTerm, results }) {
   return (
     <div>
       <Header searchKey={searchTerm} />
@@ -34,4 +32,4 @@ function Search({ searchTerm, results }) {
   );
 }
 
-export default withStyles(s)(Search);
+export default SearchPage;
