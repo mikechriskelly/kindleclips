@@ -1,21 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import cx from 'classnames';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import s from './Navigation.css';
-import Link from '../Link';
+import styled from 'styled-components';
+import Link from './Link';
 
 Navigation.propTypes = {
-  className: PropTypes.string,
-  isLoggedIn: PropTypes.bool,
+  isLoggedIn: PropTypes.bool.isRequired,
 };
 
 Navigation.defaultProps = {
-  className: '',
   isLoggedIn: false,
 };
 
-function Navigation({ className, isLoggedIn }) {
+function Navigation({ isLoggedIn }) {
   const userLinks = (
     <div>
       <Link to="/upload">Upload</Link>
@@ -26,10 +22,15 @@ function Navigation({ className, isLoggedIn }) {
   const guestLinks = <Link to="/login">Sign in / Sign up</Link>;
 
   return (
-    <div className={cx(s.root, className)} role="navigation">
+    <Container role="navigation">
       {isLoggedIn ? userLinks : guestLinks}
-    </div>
+    </Container>
   );
 }
 
-export default withStyles(s)(Navigation);
+const Container = styled.div`
+  margin: 0;
+  max-height: 40px;
+`;
+
+export default Navigation;

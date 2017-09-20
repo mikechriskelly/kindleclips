@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import s from './Page.css';
+import styled from 'styled-components';
 
 Page.propTypes = {
   title: PropTypes.string.isRequired,
@@ -10,8 +9,8 @@ Page.propTypes = {
 
 function Page({ title, html }) {
   return (
-    <div className={s.root}>
-      <div className={s.container}>
+    <OuterContainer>
+      <InnerContainer>
         <h1>
           {title}
         </h1>
@@ -19,9 +18,20 @@ function Page({ title, html }) {
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: html }}
         />
-      </div>
-    </div>
+      </InnerContainer>
+    </OuterContainer>
   );
 }
 
-export default withStyles(s)(Page);
+const OuterContainer = styled.div`
+  padding-left: 20px;
+  padding-right: 20px;
+`;
+
+const InnerContainer = styled.div`
+  margin: 0 auto;
+  padding: 0 0 40px;
+  max-width: var(--max-content-width);
+`;
+
+export default Page;

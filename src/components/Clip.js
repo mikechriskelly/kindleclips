@@ -2,11 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import FaRandom from 'react-icons/lib/fa/random';
 import FaLevelUp from 'react-icons/lib/fa/level-up';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import s from './Clip.css';
+import styled from 'styled-components';
 // import ClipActions from '../../actions/ClipActions';
-import Link from '../Link';
-import history from '../../history';
+import Link from './Link';
+import history from '../history';
 
 Clip.propTypes = {
   id: PropTypes.string,
@@ -27,13 +26,13 @@ function Clip({ title, author, text, inList, searchTerm, slug }) {
   };
 
   const buttonRandom = (
-    <button onClick={handleRandom} className={s.action}>
+    <button onClick={handleRandom}>
       <FaRandom size={22} />
     </button>
   );
 
   const buttonSetPrimary = (
-    <Link className={s.action} to={`/c/${slug}`}>
+    <Link to={`/c/${slug}`}>
       <FaLevelUp size={22} />
     </Link>
   );
@@ -49,23 +48,23 @@ function Clip({ title, author, text, inList, searchTerm, slug }) {
       markup[key] = markup[key].split(reSplit).filter(Boolean).map(
         x =>
           x.match(reMatch)
-            ? <span className={s.highlight}>
+            ? <HighlightedSpan>
                 {x}
-              </span>
+              </HighlightedSpan>
             : x,
       );
     });
   }
 
   const clipMarkup = (
-    <div className={inList ? s.regular : s.primary}>
-      <p className={s.text}>
+    <div>
+      <p>
         {markup.text}
       </p>
-      <span className={s.title}>
+      <span>
         {markup.title}
       </span>
-      <span className={s.author}>
+      <span>
         {markup.author}
       </span>
       {inList ? buttonSetPrimary : buttonRandom}
@@ -74,11 +73,19 @@ function Clip({ title, author, text, inList, searchTerm, slug }) {
 
   const listWrapper =
     inList &&
-    <li className={s.listItem}>
+    <li>
       {clipMarkup}
     </li>;
 
   return inList ? listWrapper : clipMarkup;
 }
 
-export default withStyles(s)(Clip);
+const HighlightedSpan = styled.span`
+  background: rgba(255, 230, 0, 0.4);
+  padding: 2px 4px;
+  margin: -2px -4px;
+  border-radius: 3px;
+  display: inline-block;
+`;
+
+export default Clip;

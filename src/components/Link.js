@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import history from '../../history';
+import history from '../history';
 
 Link.propTypes = {
   to: PropTypes.string.isRequired,

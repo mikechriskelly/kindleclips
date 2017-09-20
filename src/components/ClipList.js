@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import s from './ClipList.css';
-import Clip from '../Clip';
+import Clip from './Clip';
 
 ClipList.propTypes = {
   clipList: PropTypes.arrayOf(
@@ -24,7 +22,7 @@ ClipList.defaultProps = {
 
 function ClipList({ clipList, searchTerm }) {
   return (
-    <ul className={s.clipList}>
+    <ul>
       {clipList.map(clip =>
         <Clip
           id={clip.id}
@@ -41,4 +39,4 @@ function ClipList({ clipList, searchTerm }) {
   );
 }
 
-export default withStyles(s)(ClipList);
+export default ClipList;
