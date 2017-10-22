@@ -1,11 +1,7 @@
-import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
+import rootReducer from '../modules';
 import createHelpers from './createHelpers';
-import clips from './../modules/clips';
-
-const reducer = combineReducers({
-  clips,
-});
 
 export default function configureStore(initialState, helpersConfig) {
   const helpers = createHelpers(helpersConfig);
@@ -22,5 +18,5 @@ export default function configureStore(initialState, helpersConfig) {
     enhancer = applyMiddleware(...middleware);
   }
 
-  return createStore(reducer, initialState, enhancer);
+  return createStore(rootReducer, initialState, enhancer);
 }
