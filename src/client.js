@@ -13,8 +13,12 @@ import router from './router';
 
 /* eslint-disable global-require */
 
+const fetch = createFetch(self.fetch, {
+  baseUrl: window.App.apiUrl,
+});
+
 // Global (context) variables that can be easily accessed from any React component
-// https://facebook.github.io/react/docs/context.html
+// https://facebook.github.io/react/docs/context.html]
 const context = {
   // Enables critical path CSS rendering
   // https://github.com/kriasoft/isomorphic-style-loader
@@ -26,11 +30,9 @@ const context = {
     };
   },
   // Universal HTTP client
-  fetch: createFetch(self.fetch, {
-    baseUrl: window.App.apiUrl,
-  }),
+  fetch,
   // Initialize a new Redux store
-  store: configureStore(window.App.state, { history }),
+  store: configureStore(window.App.state, { history, fetch }),
   storeSubscription: null,
 };
 

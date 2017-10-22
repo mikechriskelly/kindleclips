@@ -5,7 +5,7 @@ const FETCH_CLIP_REJECTED = 'FETCH_CLIP_REJECTED';
 
 // Actions
 export function fetchClip(slug) {
-  return (dispatch, getState, graphqlRequest) => {
+  return (dispatch, getState, { graphqlRequest }) => {
     dispatch(fetchClipPending());
     graphqlRequest(
       `{clips(slug: "${slug}") {id, title, author, text, slug, similarClips { id, title, author, text, slug }}}`,
@@ -16,7 +16,7 @@ export function fetchClip(slug) {
 }
 
 export function fetchRandomClip() {
-  return (dispatch, getState, graphqlRequest) => {
+  return (dispatch, getState, { graphqlRequest }) => {
     dispatch(fetchClipPending());
     graphqlRequest(
       `{clips(random: true) {id, title, author, text, slug, similarClips {id, title, author, text, slug}}}`,

@@ -7,6 +7,7 @@ import Page from './components/Page';
 import UploadPage from './components/UploadPage';
 import SearchPage from './components/SearchPage';
 import about from './../public/about.md';
+import { fetchRandomClip } from './modules/clips';
 
 const routes = {
   path: '/',
@@ -14,7 +15,8 @@ const routes = {
     {
       // CLIP
       path: ['/', '/c/:slug'],
-      action() {
+      async action({ store }) {
+        await store.dispatch(fetchRandomClip());
         const clip = {}; // TODO: Data fetch e.g. await ClipActions.fetchPrimary(slug);
         return {
           title: 'Clip',
