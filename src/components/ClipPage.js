@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import styled from 'styled-components';
+import { connect } from 'react-redux';
 import Layout from './Layout';
 import ClipList from './ClipList';
 import ClipItem from './ClipItem';
@@ -54,4 +55,4 @@ const Container = styled.div`
   width: 100%;
 `;
 
-export default ClipPage;
+export default connect(state => state.clips.primaryClip)(ClipPage);

@@ -10,7 +10,6 @@ import ReactDOM from 'react-dom/server';
 import PrettyError from 'pretty-error';
 import { CookiesProvider } from 'react-cookie';
 import pg from 'pg';
-// import alt from './alt';
 import App from './components/App';
 import Html from './components/Html';
 import ErrorPage from './components/ErrorPage';
@@ -212,7 +211,7 @@ app.get('*', async (req, res, next) => {
     const data = { ...route };
     data.children = ReactDOM.renderToString(
       <CookiesProvider cookies={req.universalCookies}>
-        <App context={context}>
+        <App context={context} store={store}>
           {route.component}
         </App>
       </CookiesProvider>,
@@ -225,6 +224,7 @@ app.get('*', async (req, res, next) => {
     data.scripts.push(assets.client.js);
     data.app = {
       apiUrl: config.api.clientUrl,
+      state: context.store.getState(),
     };
 
     const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);

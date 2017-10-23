@@ -17,10 +17,9 @@ const routes = {
       path: ['/', '/c/:slug'],
       async action({ store }) {
         await store.dispatch(fetchRandomClip());
-        const clip = {}; // TODO: Data fetch e.g. await ClipActions.fetchPrimary(slug);
         return {
           title: 'Clip',
-          component: <ClipPage {...clip} />,
+          component: <ClipPage />,
         };
       },
     },

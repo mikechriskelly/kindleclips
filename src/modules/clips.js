@@ -8,9 +8,10 @@ export function fetchClip(slug) {
   return (dispatch, getState, { graphqlRequest }) => {
     dispatch(fetchClipPending());
     graphqlRequest(
-      `{clips(slug: "${slug}") {id, title, author, text, slug, similarClips { id, title, author, text, slug }}}`,
+      `{readClips(slug: "${slug}") {id, title, author, text, slug, similarClips { id, title, author, text, slug }}}`,
     ).then(data => {
-      dispatch(fetchClipFulfilled(data));
+      const clip = data.data.readClips[0];
+      dispatch(fetchClipFulfilled(clip));
     });
   };
 }
@@ -19,9 +20,10 @@ export function fetchRandomClip() {
   return (dispatch, getState, { graphqlRequest }) => {
     dispatch(fetchClipPending());
     graphqlRequest(
-      `{clips(random: true) {id, title, author, text, slug, similarClips {id, title, author, text, slug}}}`,
+      `{readClips(random: true) {id, title, author, text, slug, similarClips {id, title, author, text, slug}}}`,
     ).then(data => {
-      dispatch(fetchClipFulfilled(data));
+      const clip = data.data.readClips[0];
+      dispatch(fetchClipFulfilled(clip));
     });
   };
 }
@@ -47,6 +49,7 @@ export function fetchClipRejected() {
 
 // Initial State
 const initialState = {
+  primaryClip: {},
   primaryClipID: null,
   similarClipIDs: [],
   matchingClipIDs: [],
