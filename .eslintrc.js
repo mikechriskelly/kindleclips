@@ -23,6 +23,9 @@ module.exports = {
   },
 
   rules: {
+    // Personal Overrides
+    'function-paren-newline': 0,
+
     // `js` and `jsx` are common extensions
     // `mjs` is for `universal-router` only, for now
     'import/extensions': [
