@@ -8,7 +8,6 @@ import nodeFetch from 'node-fetch';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
 import PrettyError from 'pretty-error';
-import { CookiesProvider } from 'react-cookie';
 import pg from 'pg';
 import App from './components/App';
 import Html from './components/Html';
@@ -210,11 +209,9 @@ app.get('*', async (req, res, next) => {
 
     const data = { ...route };
     data.children = ReactDOM.renderToString(
-      <CookiesProvider cookies={req.universalCookies}>
-        <App context={context} store={store}>
-          {route.component}
-        </App>
-      </CookiesProvider>,
+      <App context={context} store={store}>
+        {route.component}
+      </App>,
     );
     data.styles = [{ id: 'css', cssText: [...css].join('') }];
     data.scripts = [assets.vendor.js];

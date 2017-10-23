@@ -110,14 +110,6 @@ alphanum-sort@^1.0.1, alphanum-sort@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/alphanum-sort/-/alphanum-sort-1.0.2.tgz#97a1119649b211ad33691d9f9f486a8ec9fbe0a3"
 
-alt@^0.18.6:
-  version "0.18.6"
-  resolved "https://registry.yarnpkg.com/alt/-/alt-0.18.6.tgz#d84c6c85e0179cb6c2fc7b9f9acec8c1faabd606"
-  dependencies:
-    flux "2.1.1"
-    is-promise "2.1.0"
-    transmitter "3.0.1"
-
 alter@~0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/alter/-/alter-0.2.0.tgz#c7588808617572034aae62480af26b1d4d1cb3cd"
@@ -2062,7 +2054,7 @@ cookie-signature@1.0.6:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/cookie-signature/-/cookie-signature-1.0.6.tgz#e303a882b342cc3ee8ca513a79999734dab3ae2c"
 
-cookie@0.3.1, cookie@^0.3.1:
+cookie@0.3.1:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.3.1.tgz#e7e0a1f9ef43b4c8ba925c5c5a96e806d16873bb"
 
@@ -3297,23 +3289,9 @@ fb-watchman@^2.0.0:
   dependencies:
     bser "^2.0.0"
 
-fbemitter@^2.0.0:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/fbemitter/-/fbemitter-2.1.1.tgz#523e14fdaf5248805bb02f62efc33be703f51865"
-  dependencies:
-    fbjs "^0.8.4"
-
-fbjs@0.1.0-alpha.7:
-  version "0.1.0-alpha.7"
-  resolved "https://registry.yarnpkg.com/fbjs/-/fbjs-0.1.0-alpha.7.tgz#ad4308b8f232fb3c73603349ea725d1e9c39323c"
-  dependencies:
-    core-js "^1.0.0"
-    promise "^7.0.3"
-    whatwg-fetch "^0.9.0"
-
-fbjs@^0.8.4, fbjs@^0.8.9:
-  version "0.8.14"
-  resolved "https://registry.yarnpkg.com/fbjs/-/fbjs-0.8.14.tgz#d1dbe2be254c35a91e09f31f9cd50a40b2a0ed1c"
+fbjs@^0.8.5:
+  version "0.8.15"
+  resolved "https://registry.yarnpkg.com/fbjs/-/fbjs-0.8.15.tgz#4f0695fdfcc16c37c0b07facec8cb4c4091685b9"
   dependencies:
     core-js "^1.0.0"
     isomorphic-fetch "^2.1.1"
@@ -3323,9 +3301,9 @@ fbjs@^0.8.4, fbjs@^0.8.9:
     setimmediate "^1.0.5"
     ua-parser-js "^0.7.9"
 
-fbjs@^0.8.5:
-  version "0.8.15"
-  resolved "https://registry.yarnpkg.com/fbjs/-/fbjs-0.8.15.tgz#4f0695fdfcc16c37c0b07facec8cb4c4091685b9"
+fbjs@^0.8.9:
+  version "0.8.14"
+  resolved "https://registry.yarnpkg.com/fbjs/-/fbjs-0.8.14.tgz#d1dbe2be254c35a91e09f31f9cd50a40b2a0ed1c"
   dependencies:
     core-js "^1.0.0"
     isomorphic-fetch "^2.1.1"
@@ -3457,14 +3435,6 @@ flatten@^1.0.2:
 flow-parser@^0.*:
   version "0.53.1"
   resolved "https://registry.yarnpkg.com/flow-parser/-/flow-parser-0.53.1.tgz#6bc96b6d01a69571bea2e9ca53f4ff318d98b43f"
-
-flux@2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/flux/-/flux-2.1.1.tgz#2c6ac652d4337488968489c6586f3aff26a38ea4"
-  dependencies:
-    fbemitter "^2.0.0"
-    fbjs "0.1.0-alpha.7"
-    immutable "^3.7.4"
 
 for-in@^1.0.1:
   version "1.0.2"
@@ -4042,7 +4012,7 @@ ignore@^3.3.3:
   version "3.3.4"
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-3.3.4.tgz#85ab6d0a9ca8b27b31604c09efe1c14dc21ab872"
 
-immutable@3.8.1, immutable@^3.7.4, immutable@^3.7.6:
+immutable@3.8.1, immutable@^3.7.6:
   version "3.8.1"
   resolved "https://registry.yarnpkg.com/immutable/-/immutable-3.8.1.tgz#200807f11ab0f72710ea485542de088075f68cd2"
 
@@ -4315,7 +4285,7 @@ is-primitive@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/is-primitive/-/is-primitive-2.0.0.tgz#207bab91638499c07b2adf240a41a87210034575"
 
-is-promise@2.1.0, is-promise@^2.1.0:
+is-promise@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/is-promise/-/is-promise-2.1.0.tgz#79a2a9ece7f096e80f36d2b2f3bc16c1ff4bf3fa"
 
@@ -6809,7 +6779,7 @@ progress@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.0.tgz#8a1be366bf8fc23db2bd23f10c6fe920b4389d1f"
 
-promise@^7.0.3, promise@^7.1.1:
+promise@^7.1.1:
   version "7.3.1"
   resolved "https://registry.yarnpkg.com/promise/-/promise-7.3.1.tgz#064b72602b18f90f29192b8b1bc418ffd1ebd3bf"
   dependencies:
@@ -6821,7 +6791,7 @@ prop-types@15.5.8:
   dependencies:
     fbjs "^0.8.9"
 
-prop-types@^15, prop-types@^15.0.0, prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.5.7:
+prop-types@^15, prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.5.7:
   version "15.5.10"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.5.10.tgz#2797dfc3126182e3a95e3dfbb2e893ddd7456154"
   dependencies:
@@ -6959,15 +6929,6 @@ rc@^1.0.1, rc@^1.1.6, rc@^1.1.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-cookie@^2.0.8:
-  version "2.0.8"
-  resolved "https://registry.yarnpkg.com/react-cookie/-/react-cookie-2.0.8.tgz#2b551c8d80f8c1973ac9347aab61b152c6313398"
-  dependencies:
-    hoist-non-react-statics "^1.2.0"
-    prop-types "^15.0.0"
-    react "^15.0.0"
-    universal-cookie "^2.0.1"
-
 react-debounce-input@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/react-debounce-input/-/react-debounce-input-3.0.1.tgz#a17636164d58dcccc75cce20002c1e6a0694ab66"
@@ -7077,7 +7038,7 @@ react-test-renderer@^15.6.1:
     fbjs "^0.8.9"
     object-assign "^4.1.0"
 
-react@^15.0.0, react@^15.5.4:
+react@^15.5.4:
   version "15.6.1"
   resolved "https://registry.yarnpkg.com/react/-/react-15.6.1.tgz#baa8434ec6780bde997cdc380b79cd33b96393df"
   dependencies:
@@ -8371,10 +8332,6 @@ tr46@~0.0.3:
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/tr46/-/tr46-0.0.3.tgz#8184fd347dac9cdc185992f3a6622e14b9d9ab6a"
 
-transmitter@3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/transmitter/-/transmitter-3.0.1.tgz#32e99e43d1321e49dc2e194fa75df4fe84a8b918"
-
 trim-newlines@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/trim-newlines/-/trim-newlines-1.0.0.tgz#5887966bb582a4503a41eb524f7d35011815a613"
@@ -8506,13 +8463,6 @@ unique-string@^1.0.0:
   resolved "https://registry.yarnpkg.com/unique-string/-/unique-string-1.0.0.tgz#9e1057cca851abb93398f8b33ae187b99caec11a"
   dependencies:
     crypto-random-string "^1.0.0"
-
-universal-cookie@^2.0.1:
-  version "2.0.8"
-  resolved "https://registry.yarnpkg.com/universal-cookie/-/universal-cookie-2.0.8.tgz#e9ab9a2a665bcd847917caee5b1a4c17598eabb9"
-  dependencies:
-    cookie "^0.3.1"
-    object-assign "^4.1.0"
 
 universal-router@^3.2.0:
   version "3.2.0"
@@ -8788,10 +8738,6 @@ whatwg-encoding@^1.0.1:
 whatwg-fetch@>=0.10.0, whatwg-fetch@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-2.0.3.tgz#9c84ec2dcf68187ff00bc64e1274b442176e1c84"
-
-whatwg-fetch@^0.9.0:
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-0.9.0.tgz#0e3684c6cb9995b43efc9df03e4c365d95fd9cc0"
 
 whatwg-url@^4.3.0:
   version "4.8.0"
