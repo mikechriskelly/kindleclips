@@ -7,18 +7,15 @@ import Button from './Button';
 import LoadSpinner from './LoadSpinner';
 
 Upload.propTypes = {
-  title: PropTypes.string.isRequired,
   isLoading: PropTypes.bool.isRequired,
 };
 
-function Upload({ title, isLoading }) {
+function Upload({ isLoading }) {
   return (
     <OuterContainer>
       {isLoading ? <LoadSpinner /> : null}
       <InnerContainer>
-        <h3>
-          {title}
-        </h3>
+        <h3>Upload</h3>
         <BigDropzone
           accept="text/plain"
           multiple={false}

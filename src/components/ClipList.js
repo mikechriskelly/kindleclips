@@ -5,8 +5,7 @@ import Clip from './ClipItem';
 ClipList.propTypes = {
   clipList: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.string,
-      slug: PropTypes.string,
+      shortId: PropTypes.string,
       title: PropTypes.string,
       author: PropTypes.string,
       text: PropTypes.string,
@@ -25,8 +24,7 @@ function ClipList({ clipList, searchTerm }) {
     <ul>
       {clipList.map(clip =>
         <Clip
-          id={clip.id}
-          slug={clip.slug}
+          shortId={clip.shortId}
           key={clip.id}
           title={clip.title}
           author={clip.author}

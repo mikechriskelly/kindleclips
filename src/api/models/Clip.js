@@ -11,6 +11,13 @@ const Clip = Model.define('clip', {
     primaryKey: true,
   },
 
+  shortId: {
+    type: DataType.STRING(20),
+    comment: 'Short URL friendly unique ID',
+    allowNull: false,
+    field: 'short_id',
+  },
+
   userId: {
     type: DataType.UUID,
     unique: 'compositeIndex',
@@ -40,14 +47,9 @@ const Clip = Model.define('clip', {
     type: DataType.TEXT,
     allowNull: false,
   },
-
-  slug: {
-    type: DataType.STRING(20),
-    allowNull: true,
-  },
 });
 
-Clip.generateSlug = () => shortid.generate();
+Clip.generateShortId = () => shortid.generate();
 
 Clip.getVectorName = () => 'search';
 
@@ -97,7 +99,7 @@ Clip.search = async (userId, searchPhrase, resultLimit) => {
   const query = Model.getQueryInterface().escape(searchPhrase);
   const vectorName = this.getVectorName();
   return Model.query(
-    `SELECT id, title, author, text, slug FROM "${TABLENAME}"
+    `SELECT id, short_id as "shortId", title, author, text FROM "${TABLENAME}"
         WHERE user_id = '${userId}'
         AND ${vectorName} @@ plainto_tsquery('english', ${query})
         LIMIT ${resultLimit}`,
@@ -107,7 +109,7 @@ Clip.search = async (userId, searchPhrase, resultLimit) => {
 
 Clip.getSimilar = async clipId =>
   Model.query(
-    `SELECT id, title, author, text, slug FROM "${TABLENAME}"
+    `SELECT id, short_id as "shortId", title, author, text FROM "${TABLENAME}"
         WHERE id IN (
           SELECT sim_clip_id
           FROM clip_dist
@@ -118,8 +120,7 @@ Clip.getSimilar = async clipId =>
 
 Clip.getRandom = async (userId, seed = Math.random()) =>
   Model.query(
-    `SELECT id, title, author, text, slug FROM "${TABLENAME}"
-        WHERE user_id = '${userId}'
+    `SELECT id, short_id as "shortId", title, author, text FROM "${TABLENAME}"
         OFFSET ${seed} *
         (SELECT count(*) FROM "${TABLENAME}" WHERE user_id = '${userId}')
         LIMIT 1`,

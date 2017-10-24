@@ -7,16 +7,20 @@ import Page from './components/Page';
 import UploadPage from './components/UploadPage';
 import SearchPage from './components/SearchPage';
 import about from './../public/about.md';
-import { fetchRandomClip } from './modules/clips';
+import { fetchClip, fetchRandomClip } from './modules/clips';
 
 const routes = {
   path: '/',
   children: [
     {
       // CLIP
-      path: ['/', '/c/:slug'],
-      async action({ store }) {
-        await store.dispatch(fetchRandomClip());
+      path: ['/', '/c/:shortId'],
+      async action({ store }, { shortId }) {
+        if (shortId) {
+          store.dispatch(fetchClip(shortId));
+        } else {
+          store.dispatch(fetchRandomClip());
+        }
         return {
           title: 'Clip',
           component: <ClipPage />,
@@ -60,11 +64,10 @@ const routes = {
       // UPLOAD
       path: '/upload',
       action() {
-        const title = 'Upload';
         const isLoading = false; // TODO: Tack loading state
         return {
           title: 'Upload',
-          component: <UploadPage title={title} isLoading={isLoading} />,
+          component: <UploadPage isLoading={isLoading} />,
         };
       },
     },

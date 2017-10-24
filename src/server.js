@@ -227,7 +227,6 @@ app.get('*', async (req, res, next) => {
     const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
     res.status(route.status || 200);
     res.send(`<!doctype html>${html}`);
-    // alt.flush();
   } catch (err) {
     next(err);
   }
@@ -269,7 +268,10 @@ if (!module.hot) {
 // -----------------------------------------------------------------------------
 if (module.hot) {
   app.hot = module.hot;
-  module.hot.accept('./router');
+  // TODO: Remove the promise that syncs the DB
+  promise.then(() => {
+    module.hot.accept('./router');
+  });
 }
 
 export default app;

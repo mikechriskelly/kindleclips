@@ -3,13 +3,11 @@ import PropTypes from 'prop-types';
 import FaRandom from 'react-icons/lib/fa/random';
 import FaLevelUp from 'react-icons/lib/fa/level-up';
 import styled from 'styled-components';
-// import ClipActions from '../../actions/ClipActions';
 import Link from './Link';
 import history from '../history';
 
 ClipItem.propTypes = {
-  id: PropTypes.string,
-  slug: PropTypes.string,
+  shortId: PropTypes.string,
   title: PropTypes.string,
   author: PropTypes.string,
   text: PropTypes.string,
@@ -18,11 +16,12 @@ ClipItem.propTypes = {
   searchTerm: PropTypes.string,
 };
 
-function ClipItem({ title, author, text, inList, searchTerm, slug }) {
+function ClipItem({ shortId, title, author, text, inList, searchTerm }) {
   const handleRandom = async () => {
+    // TODO: Figure out where to update history since Redux actions don't return value here
     // const clip = await ClipActions.fetchPrimary(null, true);
-    const clip = {};
-    history.push(`/c/${clip.slug}`);
+    // const clip = {};
+    history.push(`/c/${shortId}`);
   };
 
   const buttonRandom = (
@@ -32,7 +31,7 @@ function ClipItem({ title, author, text, inList, searchTerm, slug }) {
   );
 
   const buttonSetPrimary = (
-    <Link to={`/c/${slug}`}>
+    <Link to={`/c/${shortId}`}>
       <FaLevelUp size={22} />
     </Link>
   );
@@ -65,7 +64,7 @@ function ClipItem({ title, author, text, inList, searchTerm, slug }) {
         {markup.title}
       </span>
       <span>
-        {markup.author}
+        {` | ${markup.author}`}
       </span>
       {inList ? buttonSetPrimary : buttonRandom}
     </div>

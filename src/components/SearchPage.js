@@ -7,8 +7,7 @@ SearchPage.propTypes = {
   searchTerm: PropTypes.string.isRequired,
   results: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.string,
-      slug: PropTypes.string,
+      shortId: PropTypes.string,
       title: PropTypes.string,
       author: PropTypes.string,
       text: PropTypes.string,

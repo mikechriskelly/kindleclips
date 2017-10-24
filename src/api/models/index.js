@@ -55,22 +55,22 @@ Clip.belongsToMany(Clip, {
 });
 
 /**
- * Generate new slugs for every clip in the database
- * Only used for adding slugs to existing database
- * WARNING: Will overwrite existing slugs and bring user bookmarks
+ * Generate new short IDs for every clip in the database
+ * Only used for adding short IDs to existing database
+ * WARNING: Will overwrite existing short IDs and break user bookmarks
  */
-async function generateNewSlugs() {
+async function generateNewShortId() {
   try {
     const clips = await Clip.findAll();
     clips.map(clip => {
       Clip.update(
-        { slug: Clip.generateSlug() },
+        { shortId: Clip.generateShortId() },
         { where: { id: clip.dataValues.id } },
       );
       return true;
     });
   } catch (err) {
-    console.error('Failed to add slugs to clips: ', err);
+    console.error('Failed to add short ID to clips: ', err);
   }
 }
 
@@ -95,5 +95,5 @@ export {
   ClipDist,
   Topic,
   TopicProb,
-  generateNewSlugs,
+  generateNewShortId,
 };

@@ -7,15 +7,13 @@ import ClipList from './ClipList';
 import ClipItem from './ClipItem';
 
 ClipPage.propTypes = {
-  id: PropTypes.string,
-  slug: PropTypes.string,
+  shortId: PropTypes.string,
   title: PropTypes.string,
   author: PropTypes.string,
   text: PropTypes.string,
   similarClips: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.string,
-      slug: PropTypes.string,
+      shortId: PropTypes.string,
       title: PropTypes.string,
       author: PropTypes.string,
       text: PropTypes.string,
@@ -24,25 +22,18 @@ ClipPage.propTypes = {
 };
 
 ClipPage.defaultProps = {
-  id: 'NONE',
-  slug: 'notfound',
+  shortId: null,
   title: '',
   author: '',
   text: '',
   similarClips: [],
 };
 
-function ClipPage({ id, slug, title, author, text, similarClips }) {
+function ClipPage({ shortId, title, author, text, similarClips }) {
   return (
     <Layout>
       <Container>
-        <ClipItem
-          id={id}
-          slug={slug}
-          title={title}
-          author={author}
-          text={text}
-        />
+        <ClipItem shortId={shortId} title={title} author={author} text={text} />
         <h2>Similar Clips</h2>
         {similarClips && <ClipList clipList={similarClips} />}
       </Container>

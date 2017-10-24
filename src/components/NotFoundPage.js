@@ -1,18 +1,11 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-NotFound.propTypes = {
-  title: PropTypes.string.isRequired,
-};
-
-function NotFound({ title }) {
+function NotFound() {
   return (
     <OuterContainer>
       <InnerContainer>
-        <h1>
-          {title}
-        </h1>
+        <h1>Page Not Found</h1>
         <p>Sorry, the page you were trying to view does not exist.</p>
       </InnerContainer>
     </OuterContainer>

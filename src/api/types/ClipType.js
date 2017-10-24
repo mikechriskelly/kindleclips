@@ -11,12 +11,12 @@ const ClipType = new ObjectType({
   name: 'Clip',
   fields: () => ({
     id: { type: new NonNull(ID) },
+    shortId: { type: StringType },
     userId: { type: new NonNull(ID) },
     hash: { type: new NonNull(ID) },
     title: { type: StringType },
     author: { type: StringType },
     text: { type: new NonNull(StringType) },
-    slug: { type: StringType },
     similarClips: {
       type: new ListType(ClipType),
       resolve: clip => Clip.getSimilar(clip.id), // .then(post => post.toJSON().comments);

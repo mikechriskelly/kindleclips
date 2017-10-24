@@ -52,7 +52,7 @@ function parseMyClippingsTxt(clipFile, userId) {
       .trim()
       .substring(0, 120);
     clip.userId = userId;
-    clip.slug = shortid.generate();
+    clip.shortId = shortid.generate();
     return clip.text.length ? clip : null;
   });
   return clips.filter(n => n !== null);
@@ -84,7 +84,7 @@ const readClips = {
   type: new GraphQLList(ClipType),
   args: {
     id: { type: GraphQLID },
-    slug: { type: GraphQLString },
+    shortId: { type: GraphQLString },
     search: { type: GraphQLString },
     random: { type: GraphQLBoolean },
     seed: { type: GraphQLFloat },
@@ -92,8 +92,9 @@ const readClips = {
   resolve: (root, args) => {
     const userId = getUserId(root);
     const limit = 50;
-    const attributes = ['id', 'title', 'author', 'text', 'slug'];
+    const attributes = ['id', 'shortId', 'title', 'author', 'text'];
 
+    // UI should not query ID. Use Short ID instead.
     if (args.id) {
       return Clip.findAll({
         attributes,
@@ -102,10 +103,10 @@ const readClips = {
       });
     }
 
-    if (args.slug) {
+    if (args.shortId) {
       return Clip.findAll({
         attributes,
-        where: { userId, slug: args.slug },
+        where: { userId, shortId: args.shortId },
         limit: 1,
       });
     }
