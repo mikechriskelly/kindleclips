@@ -7,6 +7,7 @@ import expressGraphQL from 'express-graphql';
 import nodeFetch from 'node-fetch';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
+import { ServerStyleSheet, StyleSheetManager } from 'styled-components';
 import PrettyError from 'pretty-error';
 import pg from 'pg';
 import App from './components/App';
@@ -166,8 +167,6 @@ app.use(
 // -----------------------------------------------------------------------------
 app.get('*', async (req, res, next) => {
   try {
-    const css = new Set();
-
     // Universal HTTP client
     const fetch = createFetch(nodeFetch, {
       baseUrl: config.api.serverUrl,
@@ -185,12 +184,6 @@ app.get('*', async (req, res, next) => {
     // Global (context) variables that can be easily accessed from any React component
     // https://facebook.github.io/react/docs/context.html
     const context = {
-      // Enables critical path CSS rendering
-      // https://github.com/kriasoft/isomorphic-style-loader
-      insertCss: (...styles) => {
-        // eslint-disable-next-line no-underscore-dangle
-        styles.forEach(style => css.add(style._getCss()));
-      },
       fetch,
       store,
       storeSubscription: null,
@@ -207,13 +200,17 @@ app.get('*', async (req, res, next) => {
       return;
     }
 
+    // Styled Components style sheet
+    const sheet = new ServerStyleSheet();
+
     const data = { ...route };
     data.children = ReactDOM.renderToString(
-      <App context={context} store={store}>
-        {route.component}
-      </App>,
+      <StyleSheetManager sheet={sheet.instance}>
+        <App context={context} store={store}>
+          {route.component}
+        </App>
+      </StyleSheetManager>,
     );
-    data.styles = [{ id: 'css', cssText: [...css].join('') }];
     data.scripts = [assets.vendor.js];
     if (route.chunks) {
       data.scripts.push(...route.chunks.map(chunk => assets[chunk].js));

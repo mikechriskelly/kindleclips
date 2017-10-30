@@ -9,24 +9,17 @@ class Html extends React.Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
-    styles: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        cssText: PropTypes.string.isRequired,
-      }).isRequired,
-    ),
     scripts: PropTypes.arrayOf(PropTypes.string.isRequired),
     app: PropTypes.object, // eslint-disable-line
     children: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
-    styles: [],
     scripts: [],
   };
 
   render() {
-    const { title, description, styles, scripts, app, children } = this.props;
+    const { title, description, scripts, app, children } = this.props;
     return (
       <html className="no-js" lang="en">
         <head>
@@ -41,13 +34,6 @@ class Html extends React.Component {
             <link key={script} rel="preload" href={script} as="script" />,
           )}
           <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-          {styles.map(style =>
-            <style
-              key={style.id}
-              id={style.id}
-              dangerouslySetInnerHTML={{ __html: style.cssText }}
-            />,
-          )}
         </head>
         <body>
           <div id="app" dangerouslySetInnerHTML={{ __html: children }} />
