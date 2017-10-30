@@ -71,16 +71,6 @@ const routes = {
       },
     },
     {
-      // UPLOADING
-      path: '/uploading',
-      action() {
-        return {
-          title: 'Uploading',
-          component: <UploadPage isLoading />,
-        };
-      },
-    },
-    {
       // NOT FOUND
       path: '*',
       action() {

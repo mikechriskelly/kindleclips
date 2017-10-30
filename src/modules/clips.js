@@ -4,8 +4,11 @@ import history from '../history';
 const FETCH_CLIP_PENDING = 'FETCH_CLIP_PENDING';
 const FETCH_CLIP_FULFILLED = 'FETCH_CLIP_FULFILLED';
 const FETCH_CLIP_REJECTED = 'FETCH_CLIP_REJECTED';
+const UPLOAD_CLIPS_PENDING = 'UPLOAD_CLIPS_PENDING';
+const UPLOAD_CLIPS_FULFILLED = 'UPLOAD_CLIPS_FULFILLED';
+const UPLOAD_CLIPS_REJECTED = 'UPLOAD_CLIPS_REJECTED';
 
-// Actions
+// Thunk Actions
 export function fetchClip(shortId) {
   return async (dispatch, getState, { graphqlRequest }) => {
     dispatch(fetchClipPending());
@@ -17,7 +20,6 @@ export function fetchClip(shortId) {
       const clip = data.data.readClips[0];
       dispatch(fetchClipFulfilled(clip));
     } catch (errorMsg) {
-      console.error(errorMsg);
       dispatch(fetchClipRejected(errorMsg));
     }
   };
@@ -38,6 +40,34 @@ export function fetchRandomClip() {
   };
 }
 
+export function uploadClips(files) {
+  // TODO: Get this old code working
+  return async (dispatch, getState, { fetch }) => {
+    dispatch(uploadClipsPending());
+    const formData = new FormData();
+    formData.append('myClippingsTxt', files[0]);
+
+    const resp = await fetch('/api/clips/upload', {
+      method: 'post',
+      body: formData,
+      credentials: 'include',
+    });
+
+    if (resp.status === 200) {
+      fetch('/api/clips/analyze', {
+        method: 'get',
+        credentials: 'include',
+      });
+      // Delayed redirect to ensure DB returns new results
+      setTimeout(() => history.push('/'), 2200);
+      dispatch(uploadClipsFulfilled());
+    } else {
+      dispatch(uploadClipsRejected('Error uploading clips'));
+    }
+  };
+}
+
+// Regular Actions
 export function fetchClipPending() {
   return {
     type: FETCH_CLIP_PENDING,
@@ -58,32 +88,22 @@ export function fetchClipRejected(errorMsg) {
   };
 }
 
-export function uploadClips(files) {
-  // TODO: Get this old code working
-  return (dispatch, getState, { fetch }) => {
-    dispatch(fetchClipPending());
+export function uploadClipsPending() {
+  return {
+    type: UPLOAD_CLIPS_PENDING,
+  };
+}
 
-    // Put UI in loading state while processing file
-    history.push('/uploading');
-    const formData = new FormData();
-    formData.append('myClippingsTxt', files[0]);
+export function uploadClipsFulfilled() {
+  return {
+    type: UPLOAD_CLIPS_FULFILLED,
+  };
+}
 
-    const resp = fetch('/api/clips/upload', {
-      method: 'post',
-      body: formData,
-      credentials: 'include',
-    });
-
-    if (resp.status === 200) {
-      fetch('/api/clips/analyze', {
-        method: 'get',
-        credentials: 'include',
-      });
-      // Delayed redirect to ensure DB returns new results
-      setTimeout(() => history.push('/'), 2200);
-    } else {
-      this.catchError('Error uploading clips');
-    }
+export function uploadClipsRejected(errorMsg) {
+  return {
+    type: UPLOAD_CLIPS_REJECTED,
+    errorMsg,
   };
 }
 
@@ -123,6 +143,29 @@ export default function reducer(state = initialState, action = {}) {
     case FETCH_CLIP_REJECTED: {
       return {
         ...state,
+        isLoading: false,
+        isError: true,
+        errorMsg: action.errorMsg,
+      };
+    }
+    case UPLOAD_CLIPS_PENDING: {
+      return {
+        ...state,
+        isLoading: true,
+      };
+    }
+    case UPLOAD_CLIPS_FULFILLED: {
+      return {
+        ...state,
+        isLoading: false,
+        isError: false,
+        errorMsg: null,
+      };
+    }
+    case UPLOAD_CLIPS_REJECTED: {
+      return {
+        ...state,
+        isLoading: false,
         isError: true,
         errorMsg: action.errorMsg,
       };

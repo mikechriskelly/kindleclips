@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import Dropzone from 'react-dropzone';
 import FaCloudUpload from 'react-icons/lib/fa/cloud-upload';
@@ -7,42 +8,51 @@ import Button from './Button';
 import LoadSpinner from './LoadSpinner';
 import { uploadClips } from './../modules/clips';
 
-Upload.propTypes = {
-  isLoading: PropTypes.bool,
-};
+class UploadPage extends React.Component {
+  static propTypes = {
+    isLoading: PropTypes.bool,
+    onSubmit: PropTypes.func,
+  };
 
-Upload.defaultProps = {
-  isLoading: false,
-};
+  static defaultProps = {
+    isLoading: false,
+    onSubmit: files => files,
+  };
 
-function Upload({ isLoading }) {
-  return (
-    <OuterContainer>
-      {isLoading ? <LoadSpinner /> : null}
-      <InnerContainer>
-        <h3>Upload</h3>
-        <BigDropzone accept="text/plain" multiple={false} onDrop={uploadClips}>
-          <Content>
-            <FaCloudUpload size={42} />
-            <p>Connect your Kindle to your computer.</p>
-            <p>
-              Upload the <strong>My Clippings.txt</strong> file from your Kindle
-            </p>
-          </Content>
-        </BigDropzone>
-        <Action>
-          <ButtonDropzone
+  render() {
+    return (
+      <OuterContainer>
+        {this.props.isLoading ? <LoadSpinner /> : null}
+        <InnerContainer>
+          <h3>Upload</h3>
+          <BigDropzone
             accept="text/plain"
             multiple={false}
-            onDrop={uploadClips}
+            onDrop={this.props.onSubmit}
           >
-            <Button label="Select File" type="primary" />
-          </ButtonDropzone>
-          <Button label="Cancel" href="/" />
-        </Action>
-      </InnerContainer>
-    </OuterContainer>
-  );
+            <Content>
+              <FaCloudUpload size={42} />
+              <p>Connect your Kindle to your computer.</p>
+              <p>
+                Upload the <strong>My Clippings.txt</strong> file from your
+                Kindle
+              </p>
+            </Content>
+          </BigDropzone>
+          <Action>
+            <ButtonDropzone
+              accept="text/plain"
+              multiple={false}
+              onDrop={this.props.onSubmit}
+            >
+              <Button label="Select File" type="primary" />
+            </ButtonDropzone>
+            <Button label="Cancel" href="/" />
+          </Action>
+        </InnerContainer>
+      </OuterContainer>
+    );
+  }
 }
 
 const OuterContainer = styled.div`
@@ -87,4 +97,16 @@ const Content = styled.div`
 
 const Action = styled.div`margin-top: 25px;`;
 
-export default Upload;
+function mapStateToProps(state) {
+  return {
+    clips: state.clips,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    onSubmit: files => dispatch(uploadClips(files)),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(UploadPage);
