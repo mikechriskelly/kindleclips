@@ -7,26 +7,34 @@ const FETCH_CLIP_REJECTED = 'FETCH_CLIP_REJECTED';
 
 // Actions
 export function fetchClip(shortId) {
-  return (dispatch, getState, { graphqlRequest }) => {
+  return async (dispatch, getState, { graphqlRequest }) => {
     dispatch(fetchClipPending());
-    graphqlRequest(
-      `{readClips(shortId: "${shortId}") {shortId, title, author, text, similarClips { shortId, title, author, text }}}`,
-    ).then(data => {
-      const clip = data.data.readClips ? data.data.readClips[0] : null;
+    // const foo = await getState().cachedClips[shortId];
+    try {
+      const data = await graphqlRequest(
+        `{readClips(shortId: "${shortId}") {shortId, title, author, text, similarClips { shortId, title, author, text }}}`,
+      );
+      const clip = data.data.readClips[0];
       dispatch(fetchClipFulfilled(clip));
-    });
+    } catch (errorMsg) {
+      console.error(errorMsg);
+      dispatch(fetchClipRejected(errorMsg));
+    }
   };
 }
 
 export function fetchRandomClip() {
-  return (dispatch, getState, { graphqlRequest }) => {
+  return async (dispatch, getState, { graphqlRequest }) => {
     dispatch(fetchClipPending());
-    graphqlRequest(
-      `{readClips(random: true) {shortId, title, author, text, similarClips {shortId, title, author, text}}}`,
-    ).then(data => {
-      const clip = data.data.readClips ? data.data.readClips[0] : null;
+    try {
+      const data = await graphqlRequest(
+        `{readClips(random: true) {shortId, title, author, text, similarClips {shortId, title, author, text}}}`,
+      );
+      const clip = data.data.readClips[0];
       dispatch(fetchClipFulfilled(clip));
-    });
+    } catch (errorMsg) {
+      dispatch(fetchClipRejected(errorMsg));
+    }
   };
 }
 
@@ -36,16 +44,17 @@ export function fetchClipPending() {
   };
 }
 
-export function fetchClipFulfilled(data) {
+export function fetchClipFulfilled(clip) {
   return {
     type: FETCH_CLIP_FULFILLED,
-    data,
+    clip,
   };
 }
 
-export function fetchClipRejected() {
+export function fetchClipRejected(errorMsg) {
   return {
     type: FETCH_CLIP_REJECTED,
+    errorMsg,
   };
 }
 
@@ -81,13 +90,12 @@ export function uploadClips(files) {
 // Initial State
 const initialState = {
   primaryClip: {},
-  primaryClipID: null,
-  similarClipIDs: [],
-  matchingClipIDs: [],
-  clips: {},
+  matchingClips: [],
+  cachedClips: {},
   searchTerm: null,
   isLoading: false,
   isError: false,
+  errorMsg: null,
 };
 
 // Reducer
@@ -102,15 +110,21 @@ export default function reducer(state = initialState, action = {}) {
     case FETCH_CLIP_FULFILLED: {
       return {
         ...state,
-        primaryClip: action.data,
+        primaryClip: action.clip,
+        cachedClips: {
+          ...state.cachedClips,
+          // [action.clip.shortId]: action.clip,
+        },
         isLoading: false,
         isError: false,
+        errorMsg: null,
       };
     }
     case FETCH_CLIP_REJECTED: {
       return {
         ...state,
         isError: true,
+        errorMsg: action.errorMsg,
       };
     }
     default:

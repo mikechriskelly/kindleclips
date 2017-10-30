@@ -64,10 +64,19 @@ const routes = {
       // UPLOAD
       path: '/upload',
       action() {
-        const isLoading = false; // TODO: Tack loading state
         return {
           title: 'Upload',
-          component: <UploadPage isLoading={isLoading} />,
+          component: <UploadPage />,
+        };
+      },
+    },
+    {
+      // UPLOADING
+      path: '/uploading',
+      action() {
+        return {
+          title: 'Uploading',
+          component: <UploadPage isLoading />,
         };
       },
     },

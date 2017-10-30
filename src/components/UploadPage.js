@@ -5,9 +5,14 @@ import Dropzone from 'react-dropzone';
 import FaCloudUpload from 'react-icons/lib/fa/cloud-upload';
 import Button from './Button';
 import LoadSpinner from './LoadSpinner';
+import { uploadClips } from './../modules/clips';
 
 Upload.propTypes = {
-  isLoading: PropTypes.bool.isRequired,
+  isLoading: PropTypes.bool,
+};
+
+Upload.defaultProps = {
+  isLoading: false,
 };
 
 function Upload({ isLoading }) {
@@ -16,11 +21,7 @@ function Upload({ isLoading }) {
       {isLoading ? <LoadSpinner /> : null}
       <InnerContainer>
         <h3>Upload</h3>
-        <BigDropzone
-          accept="text/plain"
-          multiple={false}
-          /* onDrop={ClipActions.upload} */
-        >
+        <BigDropzone accept="text/plain" multiple={false} onDrop={uploadClips}>
           <Content>
             <FaCloudUpload size={42} />
             <p>Connect your Kindle to your computer.</p>
@@ -33,11 +34,11 @@ function Upload({ isLoading }) {
           <ButtonDropzone
             accept="text/plain"
             multiple={false}
-            /* onDrop={ClipActions.upload} */
+            onDrop={uploadClips}
           >
-            <Button text="Select File" type="primary" />
+            <Button label="Select File" type="primary" />
           </ButtonDropzone>
-          <Button text="Cancel" href="/" />
+          <Button label="Cancel" href="/" />
         </Action>
       </InnerContainer>
     </OuterContainer>
