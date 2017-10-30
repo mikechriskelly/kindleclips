@@ -4,14 +4,22 @@ import { spawn } from './lib/cp';
 import { makeDir, moveDir, cleanDir } from './lib/fs';
 import run from './run';
 
-// GitHub Pages
+// Deploying to Dokku
 const remote = {
   name: 'github',
-  url: 'https://github.com/<user>/<repo>.git',
-  branch: 'gh-pages',
-  website: 'https://<user>.github.io/<repo>/',
-  static: true,
+  url: 'dokku@45.55.30.76:kindleclips',
+  branch: 'master',
+  website: 'https://<app>.mikechriskelly.com',
 };
+
+// GitHub Pages
+// const remote = {
+//   name: 'github',
+//   url: 'https://github.com/<user>/<repo>.git',
+//   branch: 'gh-pages',
+//   website: 'https://<user>.github.io/<repo>/',
+//   static: true,
+// };
 
 // Heroku
 // const remote = {
