@@ -4,7 +4,6 @@ import FaRandom from 'react-icons/lib/fa/random';
 import FaLevelUp from 'react-icons/lib/fa/level-up';
 import styled from 'styled-components';
 import Link from './Link';
-import history from '../history';
 
 ClipItem.propTypes = {
   shortId: PropTypes.string,
@@ -17,17 +16,10 @@ ClipItem.propTypes = {
 };
 
 function ClipItem({ shortId, title, author, text, inList, searchTerm }) {
-  const handleRandom = async () => {
-    // TODO: Figure out where to update history since Redux actions don't return value here
-    // const clip = await ClipActions.fetchPrimary(null, true);
-    // const clip = {};
-    history.push(`/c/${shortId}`);
-  };
-
   const buttonRandom = (
-    <button onClick={handleRandom}>
+    <Link to="/random">
       <FaRandom size={22} />
-    </button>
+    </Link>
   );
 
   const buttonSetPrimary = (

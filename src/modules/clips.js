@@ -12,11 +12,17 @@ const UPLOAD_CLIPS_REJECTED = 'UPLOAD_CLIPS_REJECTED';
 export function fetchClip(shortId) {
   return async (dispatch, getState, { graphqlRequest }) => {
     dispatch(fetchClipPending());
+
+    // In case no ID provided, pick an initial clip based on time of day (server and client will make same choice)
+    const now = new Date();
+    const seed = now.getUTCDate() * now.getUTCHours() / (31 * 24);
+    const query = shortId
+      ? `{readClips(shortId: "${shortId}") {shortId, title, author, text, similarClips { shortId, title, author, text }}}`
+      : `{readClips(random: true, seed: ${seed}) {shortId, title, author, text, similarClips { shortId, title, author, text }}}`;
+
     // const foo = await getState().cachedClips[shortId];
     try {
-      const data = await graphqlRequest(
-        `{readClips(shortId: "${shortId}") {shortId, title, author, text, similarClips { shortId, title, author, text }}}`,
-      );
+      const data = await graphqlRequest(query);
       const clip = data.data.readClips[0];
       dispatch(fetchClipFulfilled(clip));
     } catch (errorMsg) {
@@ -34,6 +40,12 @@ export function fetchRandomClip() {
       );
       const clip = data.data.readClips[0];
       dispatch(fetchClipFulfilled(clip));
+
+      // Update URL to match randomly fetched clip
+      const clipURL = `/c/${clip.shortId}`;
+      if (history.location.pathname !== clipURL) {
+        history.replace(clipURL);
+      }
     } catch (errorMsg) {
       dispatch(fetchClipRejected(errorMsg));
     }

@@ -16,11 +16,18 @@ const routes = {
       // CLIP
       path: ['/', '/c/:shortId'],
       async action({ store }, { shortId }) {
-        if (shortId) {
-          store.dispatch(fetchClip(shortId));
-        } else {
-          store.dispatch(fetchRandomClip());
-        }
+        store.dispatch(fetchClip(shortId));
+        return {
+          title: 'Clip',
+          component: <ClipPage />,
+        };
+      },
+    },
+    {
+      // RANDOM
+      path: ['/random'],
+      async action({ store }) {
+        store.dispatch(fetchRandomClip());
         return {
           title: 'Clip',
           component: <ClipPage />,
