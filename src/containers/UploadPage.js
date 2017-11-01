@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import Dropzone from 'react-dropzone';
 import FaCloudUpload from 'react-icons/lib/fa/cloud-upload';
-import Button from './Button';
-import LoadSpinner from './LoadSpinner';
+import Button from './../components/Button';
+import LoadSpinner from './../components/LoadSpinner';
 import { uploadClips } from './../modules/clips';
 
 class UploadPage extends React.Component {

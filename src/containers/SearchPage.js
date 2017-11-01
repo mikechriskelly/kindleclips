@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Header from './Header';
-import ClipList from './ClipList';
+import Header from './../components/Header';
+import ClipList from './../components/ClipList';
 
 SearchPage.propTypes = {
   searchTerm: PropTypes.string.isRequired,

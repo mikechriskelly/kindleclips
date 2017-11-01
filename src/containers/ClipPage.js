@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import Layout from './Layout';
-import ClipList from './ClipList';
-import ClipItem from './ClipItem';
+import Layout from './../components/Layout';
+import ClipList from './../components/ClipList';
+import ClipItem from './../components/ClipItem';
 
 ClipPage.propTypes = {
   shortId: PropTypes.string,

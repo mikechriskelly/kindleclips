@@ -1,11 +1,11 @@
 import React from 'react';
-import ClipPage from './components/ClipPage';
+import ClipPage from './containers/ClipPage';
 import ErrorPage from './components/ErrorPage';
 import NotFoundPage from './components/NotFoundPage';
 import LoginPage from './components/LoginPage';
 import Page from './components/Page';
-import UploadPage from './components/UploadPage';
-import SearchPage from './components/SearchPage';
+import UploadPage from './containers/UploadPage';
+import SearchPage from './containers/SearchPage';
 import about from './../public/about.md';
 import { fetchClip, fetchRandomClip } from './modules/clips';
 
