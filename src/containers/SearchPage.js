@@ -1,34 +1,42 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Header from './../components/Header';
+import { connect } from 'react-redux';
+import Header from './../containers/Header';
 import ClipList from './../components/ClipList';
 
-SearchPage.propTypes = {
-  searchTerm: PropTypes.string.isRequired,
-  results: PropTypes.arrayOf(
-    PropTypes.shape({
-      shortId: PropTypes.string,
-      title: PropTypes.string,
-      author: PropTypes.string,
-      text: PropTypes.string,
-    }),
-  ).isRequired,
-};
+class SearchPage extends React.Component {
+  static propTypes = {
+    searchTerm: PropTypes.string,
+    matchingClips: PropTypes.arrayOf(
+      PropTypes.shape({
+        shortId: PropTypes.string,
+        title: PropTypes.string,
+        author: PropTypes.string,
+        text: PropTypes.string,
+      }),
+    ),
+  };
 
-function SearchPage({ searchTerm, results }) {
-  return (
-    <div>
-      <Header searchKey={searchTerm} />
+  static defaultProps = {
+    searchTerm: null,
+    matchingClips: [],
+  };
+
+  render() {
+    return (
       <div>
-        {results.length > 0
-          ? <div>
-              <h2>Search Results</h2>
-              <ClipList clipList={results} searchTerm={results.searchTerm} />
-            </div>
-          : <h2>No Results Found</h2>}
+        <Header searchKey={this.props.searchTerm} />
+        <div>
+          {this.props.matchingClips.length > 0
+            ? <ClipList
+                clipList={this.props.matchingClips}
+                searchTerm={this.props.searchTerm}
+              />
+            : <h2>No Results Found</h2>}
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 }
 
-export default SearchPage;
+export default connect(state => state.clips)(SearchPage);

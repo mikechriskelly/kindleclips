@@ -16,7 +16,7 @@ class UploadPage extends React.Component {
 
   static defaultProps = {
     isLoading: false,
-    onSubmit: files => files,
+    onSubmit: null,
   };
 
   render() {

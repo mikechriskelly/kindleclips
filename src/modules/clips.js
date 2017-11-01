@@ -1,9 +1,23 @@
 import history from '../history';
 
-// Constants
+// Initial State
+const initialState = {
+  primaryClip: {},
+  matchingClips: [],
+  cachedClips: {},
+  searchTerm: null,
+  isLoading: false,
+  isError: false,
+  errorMsg: null,
+};
+
+// Action Constants
 const FETCH_CLIP_PENDING = 'FETCH_CLIP_PENDING';
 const FETCH_CLIP_FULFILLED = 'FETCH_CLIP_FULFILLED';
 const FETCH_CLIP_REJECTED = 'FETCH_CLIP_REJECTED';
+const SEARCH_CLIPS_PENDING = 'SEARCH_CLIPS_PENDING';
+const SEARCH_CLIPS_FULFILLED = 'SEARCH_CLIPS_FULFILLED';
+const SEARCH_CLIPS_REJECTED = 'SEARCH_CLIPS_REJECTED';
 const UPLOAD_CLIPS_PENDING = 'UPLOAD_CLIPS_PENDING';
 const UPLOAD_CLIPS_FULFILLED = 'UPLOAD_CLIPS_FULFILLED';
 const UPLOAD_CLIPS_REJECTED = 'UPLOAD_CLIPS_REJECTED';
@@ -48,6 +62,31 @@ export function fetchRandomClip() {
       }
     } catch (errorMsg) {
       dispatch(fetchClipRejected(errorMsg));
+    }
+  };
+}
+
+export function searchClips(searchTerm) {
+  return async (dispatch, getState, { graphqlRequest }) => {
+    if (!searchTerm) {
+      history.push('/');
+      return;
+    }
+    dispatch(searchClipsPending());
+    try {
+      const data = await graphqlRequest(
+        `{readClips(search:"${searchTerm}") {shortId, title, author, text, similarClips {shortId, title, author, text}}}`,
+      );
+      const matchingClips = data.data.readClips;
+      dispatch(searchClipsFulfilled(matchingClips));
+
+      // Update URL to match randomly fetched clip
+      const clipURL = `/s/${searchTerm}`;
+      if (history.location.pathname !== clipURL) {
+        history.replace(clipURL);
+      }
+    } catch (errorMsg) {
+      dispatch(searchClipsRejected(errorMsg));
     }
   };
 }
@@ -100,6 +139,26 @@ export function fetchClipRejected(errorMsg) {
   };
 }
 
+export function searchClipsPending() {
+  return {
+    type: SEARCH_CLIPS_PENDING,
+  };
+}
+
+export function searchClipsFulfilled(matchingClips) {
+  return {
+    type: SEARCH_CLIPS_FULFILLED,
+    matchingClips,
+  };
+}
+
+export function searchClipsRejected(errorMsg) {
+  return {
+    type: SEARCH_CLIPS_REJECTED,
+    errorMsg,
+  };
+}
+
 export function uploadClipsPending() {
   return {
     type: UPLOAD_CLIPS_PENDING,
@@ -118,17 +177,6 @@ export function uploadClipsRejected(errorMsg) {
     errorMsg,
   };
 }
-
-// Initial State
-const initialState = {
-  primaryClip: {},
-  matchingClips: [],
-  cachedClips: {},
-  searchTerm: null,
-  isLoading: false,
-  isError: false,
-  errorMsg: null,
-};
 
 // Reducer
 export default function reducer(state = initialState, action = {}) {
@@ -153,6 +201,33 @@ export default function reducer(state = initialState, action = {}) {
       };
     }
     case FETCH_CLIP_REJECTED: {
+      return {
+        ...state,
+        isLoading: false,
+        isError: true,
+        errorMsg: action.errorMsg,
+      };
+    }
+    case SEARCH_CLIPS_PENDING: {
+      return {
+        ...state,
+        isLoading: true,
+      };
+    }
+    case SEARCH_CLIPS_FULFILLED: {
+      return {
+        ...state,
+        matchingClips: action.matchingClips,
+        cachedClips: {
+          ...state.cachedClips,
+          // [action.clip.shortId]: action.clip,
+        },
+        isLoading: false,
+        isError: false,
+        errorMsg: null,
+      };
+    }
+    case SEARCH_CLIPS_REJECTED: {
       return {
         ...state,
         isLoading: false,

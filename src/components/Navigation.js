@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import Link from './Link';
 
 Navigation.propTypes = {
-  isLoggedIn: PropTypes.bool.isRequired,
+  isLoggedIn: PropTypes.bool,
 };
 
 Navigation.defaultProps = {

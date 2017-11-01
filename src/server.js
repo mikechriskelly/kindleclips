@@ -173,6 +173,11 @@ app.get('*', async (req, res, next) => {
       cookie: req.headers.cookie,
     });
 
+    // Put user information in global state
+    if (req.user) {
+      req.user.isLoggedIn = true;
+    }
+
     const initialState = {
       user: req.user || null,
     };

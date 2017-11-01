@@ -20,12 +20,15 @@ ClipList.defaultProps = {
 };
 
 function ClipList({ clipList, searchTerm }) {
-  return (
+  return [
+    <h2>
+      {searchTerm ? 'Search Results' : 'Similar Clips'}
+    </h2>,
     <ul>
       {clipList.map(clip =>
         <Clip
           shortId={clip.shortId}
-          key={clip.id}
+          key={clip.shortId}
           title={clip.title}
           author={clip.author}
           text={clip.text}
@@ -33,8 +36,8 @@ function ClipList({ clipList, searchTerm }) {
           inList
         />,
       )}
-    </ul>
-  );
+    </ul>,
+  ];
 }
 
 export default ClipList;

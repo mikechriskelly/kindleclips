@@ -3,6 +3,7 @@ import DataType from 'sequelize';
 import Model from '../sequelize';
 
 const TABLENAME = 'clip';
+const VECTORNAME = 'search';
 
 const Clip = Model.define('clip', {
   id: {
@@ -51,30 +52,27 @@ const Clip = Model.define('clip', {
 
 Clip.generateShortId = () => shortid.generate();
 
-Clip.getVectorName = () => 'search';
-
 Clip.addFullTextIndex = async () => {
   const searchFields = ['title', 'author', 'text'];
-  const vectorName = this.getVectorName();
   try {
     await Model.query(
       `ALTER TABLE ${TABLENAME}
-        ADD COLUMN ${vectorName} TSVECTOR`,
+        ADD COLUMN ${VECTORNAME} TSVECTOR`,
     );
     await Model.query(
       `UPDATE ${TABLENAME}
-        SET ${vectorName} = to_tsvector('english',
+        SET ${VECTORNAME} = to_tsvector('english',
         '${searchFields.join("' || '")}')`,
     );
     await Model.query(
       `CREATE INDEX post_search_idx ON ${TABLENAME}
-       USING gin(${vectorName});`,
+       USING gin(${VECTORNAME});`,
     );
     await Model.query(
       `CREATE TRIGGER post_vector_update
         BEFORE INSERT OR UPDATE ON ${TABLENAME}
         FOR EACH ROW EXECUTE PROCEDURE
-        tsvector_update_trigger(${vectorName},
+        tsvector_update_trigger(${VECTORNAME},
         'pg_catalog.english', ${searchFields.join(', ')})`,
     );
   } catch (err) {
@@ -97,11 +95,10 @@ Clip.addIgnoreDuplicateRule = async () => {
 
 Clip.search = async (userId, searchPhrase, resultLimit) => {
   const query = Model.getQueryInterface().escape(searchPhrase);
-  const vectorName = this.getVectorName();
   return Model.query(
     `SELECT id, short_id as "shortId", title, author, text FROM "${TABLENAME}"
         WHERE user_id = '${userId}'
-        AND ${vectorName} @@ plainto_tsquery('english', ${query})
+        AND ${VECTORNAME} @@ plainto_tsquery('english', ${query})
         LIMIT ${resultLimit}`,
     { type: Model.QueryTypes.SELECT },
   ).then(results => results);

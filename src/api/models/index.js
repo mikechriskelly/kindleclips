@@ -78,8 +78,8 @@ async function sync(...args) {
   await sequelize.sync(...args);
 
   // Only need to run these functions against fresh database
-  // Clip.addFullTextIndex();
-  // Clip.addIgnoreDuplicateRule();
+  Clip.addFullTextIndex();
+  Clip.addIgnoreDuplicateRule();
 
   return sequelize;
 }

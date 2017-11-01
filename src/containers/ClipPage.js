@@ -6,39 +6,46 @@ import Layout from './../components/Layout';
 import ClipList from './../components/ClipList';
 import ClipItem from './../components/ClipItem';
 
-ClipPage.propTypes = {
-  shortId: PropTypes.string,
-  title: PropTypes.string,
-  author: PropTypes.string,
-  text: PropTypes.string,
-  similarClips: PropTypes.arrayOf(
-    PropTypes.shape({
-      shortId: PropTypes.string,
-      title: PropTypes.string,
-      author: PropTypes.string,
-      text: PropTypes.string,
-    }),
-  ),
-};
+class ClipPage extends React.Component {
+  static propTypes = {
+    shortId: PropTypes.string,
+    title: PropTypes.string,
+    author: PropTypes.string,
+    text: PropTypes.string,
+    similarClips: PropTypes.arrayOf(
+      PropTypes.shape({
+        shortId: PropTypes.string,
+        title: PropTypes.string,
+        author: PropTypes.string,
+        text: PropTypes.string,
+      }),
+    ),
+  };
 
-ClipPage.defaultProps = {
-  shortId: null,
-  title: '',
-  author: '',
-  text: '',
-  similarClips: [],
-};
+  static defaultProps = {
+    shortId: null,
+    title: '',
+    author: '',
+    text: '',
+    similarClips: [],
+  };
 
-function ClipPage({ shortId, title, author, text, similarClips }) {
-  return (
-    <Layout>
-      <Container>
-        <ClipItem shortId={shortId} title={title} author={author} text={text} />
-        <h2>Similar Clips</h2>
-        {similarClips && <ClipList clipList={similarClips} />}
-      </Container>
-    </Layout>
-  );
+  render() {
+    return (
+      <Layout>
+        <Container>
+          <ClipItem
+            shortId={this.props.shortId}
+            title={this.props.title}
+            author={this.props.author}
+            text={this.props.text}
+          />
+          {this.props.similarClips &&
+            <ClipList clips={this.props.similarClips} />}
+        </Container>
+      </Layout>
+    );
+  }
 }
 
 const Container = styled.div`
