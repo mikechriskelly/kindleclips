@@ -1,5 +1,5 @@
 // Initial State
-const initialState = {
+export const initialState = {
   id: null,
   email: null,
   isLoggedIn: false,

@@ -1,7 +1,7 @@
 import history from '../history';
 
 // Initial State
-const initialState = {
+export const initialState = {
   primaryClip: {},
   matchingClips: [],
   cachedClips: {},

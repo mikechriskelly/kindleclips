@@ -23,6 +23,8 @@ import configureStore from './store/configureStore';
 import config from './config';
 import { loginUser } from './api/auth';
 import apiRoutes from './api/routes';
+import { initialState as clipsInitialState } from './modules/clips';
+import { initialState as userInitialState } from './modules/user';
 
 // Connect to PostgreSQL
 // Use SSL if DB is not local
@@ -179,7 +181,8 @@ app.get('*', async (req, res, next) => {
     }
 
     const initialState = {
-      user: req.user || null,
+      user: userInitialState,
+      clips: clipsInitialState,
     };
 
     const store = configureStore(initialState, {
