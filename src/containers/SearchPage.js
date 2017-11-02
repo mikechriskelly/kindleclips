@@ -25,7 +25,7 @@ class SearchPage extends React.Component {
   render() {
     return (
       <div>
-        <Header searchKey={this.props.searchTerm} />
+        <Header searchTerm={this.props.searchTerm} />
         <div>
           {this.props.matchingClips.length > 0
             ? <ClipList

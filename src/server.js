@@ -27,7 +27,7 @@ import apiRoutes from './api/routes';
 // Connect to PostgreSQL
 // Use SSL if DB is not local
 pg.defaults.ssl = !!process.env.DATABASE_URL;
-const pgPool = new pg.Pool(config.db.url);
+const pgPool = new pg.Pool({ connectionString: config.db.url });
 pgPool.connect(err => {
   if (err) throw err;
   console.info('Connected to Postgres');

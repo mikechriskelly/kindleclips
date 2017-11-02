@@ -38,12 +38,10 @@ const routes = {
       // SEARCH
       path: ['/s', '/s/:searchterm'],
       action() {
-        const searchTerm = ''; // TODO: Insert from URL
-        const clips = {}; // TODO: Data Fetch e.g. await ClipActions.fetchMatching(searchTerm);
         return {
           chunks: ['search'],
           title: 'Search Results',
-          component: <SearchPage searchTerm={searchTerm} results={clips} />,
+          component: <SearchPage />,
         };
       },
     },

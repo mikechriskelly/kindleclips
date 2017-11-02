@@ -6,10 +6,10 @@ import run from './run';
 
 // Deploying to Dokku
 const remote = {
-  name: 'github',
+  name: 'dokku',
   url: 'dokku@45.55.30.76:kindleclips',
   branch: 'master',
-  website: 'https://<app>.mikechriskelly.com',
+  website: 'http://www.mikechriskelly.com',
 };
 
 // GitHub Pages

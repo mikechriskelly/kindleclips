@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import Dropzone from 'react-dropzone';
-import FaCloudUpload from 'react-icons/lib/fa/cloud-upload';
 import Button from './../components/Button';
 import LoadSpinner from './../components/LoadSpinner';
 import { uploadClips } from './../modules/clips';
@@ -31,7 +30,6 @@ class UploadPage extends React.Component {
             onDrop={this.props.onSubmit}
           >
             <Content>
-              <FaCloudUpload size={42} />
               <p>Connect your Kindle to your computer.</p>
               <p>
                 Upload the <strong>My Clippings.txt</strong> file from your
