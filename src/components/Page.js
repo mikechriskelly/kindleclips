@@ -26,15 +26,11 @@ function Page({ title, html }) {
   );
 }
 
-const OuterContainer = styled.div`
-  padding-left: 20px;
-  padding-right: 20px;
-`;
+const OuterContainer = styled.div`margin: 0;`;
 
 const InnerContainer = styled.div`
   margin: 0 auto;
-  padding: 0 0 40px;
-  max-width: var(--max-content-width);
+  padding: 0;
 `;
 
 export default Page;

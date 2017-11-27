@@ -91,7 +91,7 @@ const readClips = {
   },
   resolve: (root, args) => {
     const userId = getUserId(root);
-    const limit = 50;
+    const limit = 250;
     const attributes = ['id', 'shortId', 'title', 'author', 'text'];
 
     // UI should not query ID. Use Short ID instead.

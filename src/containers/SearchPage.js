@@ -23,7 +23,7 @@ class SearchPage extends React.Component {
     return (
       <Layout>
         <div>
-          {this.props.isLoading ? <h2>Searching...</h2> : null}
+          {this.props.isLoading ? null : null}
           <ClipList
             clipList={this.props.matchingClips}
             searchTerm={this.props.isHighlighted ? this.props.searchTerm : null}

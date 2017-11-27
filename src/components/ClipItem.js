@@ -23,7 +23,7 @@ ClipItem.defaultProps = {
 function ClipItem({ shortId, title, author, text, inList, searchTerm }) {
   const buttonSetPrimary = (
     <Link to={`/c/${shortId}`}>
-      <FaLink size={18} />
+      <StyledFaLink size={18} />
     </Link>
   );
 
@@ -52,18 +52,18 @@ function ClipItem({ shortId, title, author, text, inList, searchTerm }) {
 
   const clipMarkup = (
     <Container>
-      <p>
+      <Body>
         {markup.text}
-      </p>
+      </Body>
       <Metadata>
-        {inList ? buttonSetPrimary : null}
         <Link to={`/title/${searchTitle}`}>
           {markup.title}
         </Link>
-        <span> | </span>
+        {title.length > 0 ? <span> &#183; </span> : null}
         <Link to={`/author/${searchAuthor}`}>
           {markup.author}
         </Link>
+        {inList ? buttonSetPrimary : null}
       </Metadata>
     </Container>
   );
@@ -78,8 +78,9 @@ function ClipItem({ shortId, title, author, text, inList, searchTerm }) {
 }
 
 const Container = styled.div`
-  margin: 0 auto;
   max-width: 650px;
+  margin: 0 auto 60px auto;
+  position: relative;
 `;
 
 const HighlightedSpan = styled.span`
@@ -89,10 +90,17 @@ const HighlightedSpan = styled.span`
   border-radius: 3px;
   display: inline-block;
 `;
+const Body = styled.p`margin: 0;`;
 
 const Metadata = styled.div`
-  color: #666;
-  font-size: 12px;
+  font-size: 11px;
+  padding-top: 5px;
+  position: absolute;
+  right: 0;
+`;
+
+const StyledFaLink = styled(FaLink)`
+  margin-left: 5px;
 `;
 
 const StyledLi = styled.li`list-style: none;`;

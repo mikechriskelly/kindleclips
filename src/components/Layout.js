@@ -22,9 +22,10 @@ const Container = styled.div`
   font-weight: 100;
   font-size: 1em; /* ~16px; */
   font-family: ${constants.font};
-  line-height: 1.375; /* ~22px */
+  line-height: 1.7;
   margin: 0 auto;
   max-width: 750px;
+  padding: 10px;
 `;
 
 export default Layout;

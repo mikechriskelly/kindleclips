@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 import ClipItem from './ClipItem';
 
 ClipList.propTypes = {
@@ -30,22 +31,24 @@ function ClipList({ clipList, searchTerm }) {
   if (clipList.length > 0) {
     return (
       <div>
-        <ul>
+        <List>
           {clipList.map(clip =>
             <ClipItem
               shortId={clip.shortId}
               key={clip.shortId}
-              title={clip.title}
-              author={clip.author}
+              title={searchTerm ? clip.title : ''}
+              author={searchTerm ? clip.author : ''}
               text={clip.text}
               searchTerm={searchTerm}
               inList
             />,
           )}
-        </ul>
+        </List>
       </div>
     );
   }
 }
+
+const List = styled.ul`padding: 0;`;
 
 export default ClipList;
