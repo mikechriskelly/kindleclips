@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Clip from './ClipItem';
+import ClipItem from './ClipItem';
 
 ClipList.propTypes = {
   clipList: PropTypes.arrayOf(
@@ -26,7 +26,7 @@ function ClipList({ clipList, searchTerm }) {
     </h2>,
     <ul>
       {clipList.map(clip =>
-        <Clip
+        <ClipItem
           shortId={clip.shortId}
           key={clip.shortId}
           title={clip.title}

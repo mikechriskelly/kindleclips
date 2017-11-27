@@ -2,10 +2,16 @@ import history from '../history';
 
 // Initial State
 export const initialState = {
-  primaryClip: {},
+  primaryClip: {
+    shortId: '',
+    title: '',
+    author: '',
+    text: '',
+    similarClips: [],
+  },
   matchingClips: [],
   cachedClips: {},
-  searchTerm: null,
+  searchTerm: '',
   isLoading: false,
   isError: false,
   errorMsg: null,

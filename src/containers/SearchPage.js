@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Header from './../containers/Header';
+import Layout from './../components/Layout';
 import ClipList from './../components/ClipList';
 
 class SearchPage extends React.Component {
   static propTypes = {
-    searchTerm: PropTypes.string,
+    searchTerm: PropTypes.string.isRequired,
     matchingClips: PropTypes.arrayOf(
       PropTypes.shape({
         shortId: PropTypes.string,
@@ -14,18 +14,12 @@ class SearchPage extends React.Component {
         author: PropTypes.string,
         text: PropTypes.string,
       }),
-    ),
-  };
-
-  static defaultProps = {
-    searchTerm: null,
-    matchingClips: [],
+    ).isRequired,
   };
 
   render() {
     return (
-      <div>
-        <Header searchTerm={this.props.searchTerm} />
+      <Layout>
         <div>
           {this.props.matchingClips.length > 0
             ? <ClipList
@@ -34,7 +28,7 @@ class SearchPage extends React.Component {
               />
             : <h2>No Results Found</h2>}
         </div>
-      </div>
+      </Layout>
     );
   }
 }
