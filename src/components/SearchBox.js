@@ -32,7 +32,7 @@ const Container = styled.div`
   margin: 10px 0;
   max-height: 37px;
   vertical-align: middle;
-  width: 50%;
+  width: 100%;
 `;
 
 const baseIcon = css`

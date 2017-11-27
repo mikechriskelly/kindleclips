@@ -36,12 +36,18 @@ const routes = {
     },
     {
       // SEARCH
-      path: ['/s', '/s/:searchTerm'],
-      async action({ store }, { searchTerm }) {
+      path: [
+        '/s',
+        '/s/:searchPhrase',
+        '/author/:searchAuthor',
+        '/title/:searchTitle',
+      ],
+      async action({ store }, { searchPhrase, searchAuthor, searchTitle }) {
+        const searchTerm = searchPhrase || searchAuthor || searchTitle;
         store.dispatch(searchClips(searchTerm));
         return {
           title: 'Search Results',
-          component: <SearchPage />,
+          component: <SearchPage isHighlighted={!!searchPhrase} />,
         };
       },
     },

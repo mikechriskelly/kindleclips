@@ -2,14 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import Navigation from '../components/Navigation';
 import SearchBox from '../components/SearchBox';
 import Button from '../components/Button';
 import { searchClips } from './../modules/clips';
 
 class Header extends React.Component {
   static propTypes = {
-    isLoggedIn: PropTypes.bool.isRequired,
+    // isLoggedIn: PropTypes.bool.isRequired,
     searchTerm: PropTypes.string.isRequired,
   };
 
@@ -27,7 +26,7 @@ class Header extends React.Component {
     return (
       <Container>
         <StyledHeader>
-          <Navigation isLoggedIn={this.props.isLoggedIn} />
+          {/* <Navigation isLoggedIn={this.props.isLoggedIn} /> */}
           <SearchBox
             searchTerm={this.props.searchTerm}
             onSubmit={this.handleSubmit}

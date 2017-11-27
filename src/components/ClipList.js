@@ -30,9 +30,6 @@ function ClipList({ clipList, searchTerm }) {
   if (clipList.length > 0) {
     return (
       <div>
-        <h2>
-          {searchTerm ? 'Search Results' : 'Similar Clips'}
-        </h2>
         <ul>
           {clipList.map(clip =>
             <ClipItem

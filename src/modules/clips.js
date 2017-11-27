@@ -88,7 +88,14 @@ export function searchClips(searchTerm) {
 
       // Update URL to match randomly fetched clip
       const clipURL = `/s/${searchTerm}`;
-      if (history.location.pathname !== clipURL) {
+      const clipURL2 = `/title/${searchTerm}`;
+      const clipURL3 = `/author/${searchTerm}`;
+
+      if (
+        history.location.pathname !== clipURL &&
+        history.location.pathname !== clipURL2 &&
+        history.location.pathname !== clipURL3
+      ) {
         history.replace(clipURL);
       }
     } catch (errorMsg) {

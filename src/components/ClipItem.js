@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import FaLevelUp from 'react-icons/lib/fa/level-up';
+import FaLink from 'react-icons/lib/io/link';
 import styled from 'styled-components';
 import Link from './Link';
 
@@ -23,7 +23,7 @@ ClipItem.defaultProps = {
 function ClipItem({ shortId, title, author, text, inList, searchTerm }) {
   const buttonSetPrimary = (
     <Link to={`/c/${shortId}`}>
-      <FaLevelUp size={22} />
+      <FaLink size={18} />
     </Link>
   );
 
@@ -46,19 +46,24 @@ function ClipItem({ shortId, title, author, text, inList, searchTerm }) {
     });
   }
 
+  // TODO: Remove these and do title/author search with real endpoints
+  const searchTitle = title.replace(/[^a-zA-Z0-9-_]/g, ' ');
+  const searchAuthor = author.replace(/[^a-zA-Z0-9-_]/g, ' ');
+
   const clipMarkup = (
     <Container>
       <p>
         {markup.text}
       </p>
       <Metadata>
-        <span>
-          {markup.title}
-        </span>
-        <span>
-          {` | ${markup.author}`}
-        </span>
         {inList ? buttonSetPrimary : null}
+        <Link to={`/title/${searchTitle}`}>
+          {markup.title}
+        </Link>
+        <span> | </span>
+        <Link to={`/author/${searchAuthor}`}>
+          {markup.author}
+        </Link>
       </Metadata>
     </Container>
   );
@@ -74,7 +79,7 @@ function ClipItem({ shortId, title, author, text, inList, searchTerm }) {
 
 const Container = styled.div`
   margin: 0 auto;
-  max-width: 700px;
+  max-width: 650px;
 `;
 
 const HighlightedSpan = styled.span`

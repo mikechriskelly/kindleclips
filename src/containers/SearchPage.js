@@ -16,6 +16,7 @@ class SearchPage extends React.Component {
       }),
     ).isRequired,
     isLoading: PropTypes.bool.isRequired,
+    isHighlighted: PropTypes.bool.isRequired,
   };
 
   render() {
@@ -25,7 +26,7 @@ class SearchPage extends React.Component {
           {this.props.isLoading ? <h2>Searching...</h2> : null}
           <ClipList
             clipList={this.props.matchingClips}
-            searchTerm={this.props.searchTerm}
+            searchTerm={this.props.isHighlighted ? this.props.searchTerm : null}
           />
         </div>
       </Layout>

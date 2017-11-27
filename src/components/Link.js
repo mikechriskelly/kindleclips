@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 import history from '../history';
+import constants from './constants';
 
 Link.propTypes = {
   to: PropTypes.string.isRequired,
@@ -28,9 +30,9 @@ function Link({ to, children, onClick }) {
   };
 
   return (
-    <a href={to} onClick={handleClick}>
+    <StyledA href={to} onClick={handleClick}>
       {children}
-    </a>
+    </StyledA>
   );
 }
 
@@ -43,5 +45,13 @@ function isLeftClickEvent(event) {
 function isModifiedEvent(event) {
   return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
 }
+
+const StyledA = styled.a`
+  color: ${constants.color.link};
+  :visited {
+    color: ${constants.color.link};
+  }
+  text-decoration: none;
+`;
 
 export default Link;
