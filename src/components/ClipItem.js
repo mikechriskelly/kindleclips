@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import FaRandom from 'react-icons/lib/fa/random';
 import FaLevelUp from 'react-icons/lib/fa/level-up';
 import styled from 'styled-components';
 import Link from './Link';
@@ -22,12 +21,6 @@ ClipItem.defaultProps = {
 };
 
 function ClipItem({ shortId, title, author, text, inList, searchTerm }) {
-  const buttonRandom = (
-    <Link to="/random">
-      <FaRandom size={22} />
-    </Link>
-  );
-
   const buttonSetPrimary = (
     <Link to={`/c/${shortId}`}>
       <FaLevelUp size={22} />
@@ -54,28 +47,35 @@ function ClipItem({ shortId, title, author, text, inList, searchTerm }) {
   }
 
   const clipMarkup = (
-    <div>
+    <Container>
       <p>
         {markup.text}
       </p>
-      <span>
-        {markup.title}
-      </span>
-      <span>
-        {` | ${markup.author}`}
-      </span>
-      {inList ? buttonSetPrimary : buttonRandom}
-    </div>
+      <Metadata>
+        <span>
+          {markup.title}
+        </span>
+        <span>
+          {` | ${markup.author}`}
+        </span>
+        {inList ? buttonSetPrimary : null}
+      </Metadata>
+    </Container>
   );
 
   const listWrapper =
     inList &&
-    <li>
+    <StyledLi>
       {clipMarkup}
-    </li>;
+    </StyledLi>;
 
   return inList ? listWrapper : clipMarkup;
 }
+
+const Container = styled.div`
+  margin: 0 auto;
+  max-width: 700px;
+`;
 
 const HighlightedSpan = styled.span`
   background: rgba(255, 230, 0, 0.4);
@@ -84,5 +84,12 @@ const HighlightedSpan = styled.span`
   border-radius: 3px;
   display: inline-block;
 `;
+
+const Metadata = styled.div`
+  color: #666;
+  font-size: 12px;
+`;
+
+const StyledLi = styled.li`list-style: none;`;
 
 export default ClipItem;

@@ -32,7 +32,7 @@ class ClipPage extends React.Component {
             author={this.props.author}
             text={this.props.text}
           />
-          <ClipList clips={this.props.similarClips} />
+          <ClipList clipList={this.props.similarClips} />
         </Container>
       </Layout>
     );
@@ -40,8 +40,8 @@ class ClipPage extends React.Component {
 }
 
 const Container = styled.div`
-  position: absolute;
-  top: 2em;
+  margin: 1em;
+  max-width: 750px;
   width: 100%;
 `;
 

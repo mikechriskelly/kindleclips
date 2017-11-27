@@ -92,76 +92,9 @@ const config = {
             // Adds __self attribute to JSX which React will use for some warnings
             // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-jsx-self
             ...(isDebug ? ['transform-react-jsx-self'] : []),
+            ['babel-plugin-styled-components', { ssr: true }],
           ],
         },
-      },
-
-      // Rules for Style Sheets
-      {
-        test: reStyle,
-        rules: [
-          // Convert CSS into JS module
-          {
-            issuer: { not: [reStyle] },
-            use: 'isomorphic-style-loader',
-          },
-
-          // Process external/third-party styles
-          {
-            exclude: path.resolve(__dirname, '../src'),
-            loader: 'css-loader',
-            options: {
-              sourceMap: isDebug,
-              minimize: !isDebug,
-              discardComments: { removeAll: true },
-            },
-          },
-
-          // Process internal/project styles (from src folder)
-          {
-            include: path.resolve(__dirname, '../src'),
-            loader: 'css-loader',
-            options: {
-              // CSS Loader https://github.com/webpack/css-loader
-              importLoaders: 1,
-              sourceMap: isDebug,
-              // CSS Modules https://github.com/css-modules/css-modules
-              modules: true,
-              localIdentName: isDebug
-                ? '[name]-[local]-[hash:base64:5]'
-                : '[hash:base64:5]',
-              // CSS Nano http://cssnano.co/options/
-              minimize: !isDebug,
-              discardComments: { removeAll: true },
-            },
-          },
-
-          // Apply PostCSS plugins including autoprefixer
-          {
-            loader: 'postcss-loader',
-            options: {
-              config: {
-                path: './tools/postcss.config.js',
-              },
-            },
-          },
-
-          // Compile Less to CSS
-          // https://github.com/webpack-contrib/less-loader
-          // Install dependencies before uncommenting: yarn add --dev less-loader less
-          // {
-          //   test: /\.less$/,
-          //   loader: 'less-loader',
-          // },
-
-          // Compile Sass to CSS
-          // https://github.com/webpack-contrib/sass-loader
-          // Install dependencies before uncommenting: yarn add --dev sass-loader node-sass
-          // {
-          //   test: /\.scss$/,
-          //   loader: 'sass-loader',
-          // },
-        ],
       },
 
       // Rules for images

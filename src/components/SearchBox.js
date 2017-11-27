@@ -17,7 +17,6 @@ function SearchBox({ searchTerm, handleSubmit }) {
         <SearchField
           aria-label="Search clips"
           component="input"
-          defaultValue={searchTerm}
           name="searchTerm"
           placeholder="Search..."
           type="search"
@@ -33,7 +32,7 @@ const Container = styled.div`
   margin: 10px 0;
   max-height: 37px;
   vertical-align: middle;
-  width: 100%;
+  width: 50%;
 `;
 
 const baseIcon = css`

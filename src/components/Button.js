@@ -8,7 +8,7 @@ Button.propTypes = {
   href: PropTypes.string,
   onClick: PropTypes.func,
   primary: PropTypes.bool,
-  isServerSideOnly: PropTypes.bool.isRequired,
+  isServerSideOnly: PropTypes.bool,
 };
 
 Button.defaultProps = {
@@ -42,7 +42,6 @@ function Button({ label, href, onClick, isServerSideOnly }) {
 //  Styling
 const styles = css`
   background: { props => props.primary ? '#999' : '#333' }
-  border: transparent;
   border-radius: 2px;
   box-sizing: border-box;
   display: inline-block;

@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import Navigation from '../components/Navigation';
 import SearchBox from '../components/SearchBox';
+import Button from '../components/Button';
 import { searchClips } from './../modules/clips';
 
 class Header extends React.Component {
@@ -31,6 +32,7 @@ class Header extends React.Component {
             searchTerm={this.props.searchTerm}
             onSubmit={this.handleSubmit}
           />
+          <Button href="/random" label="Random" />
         </StyledHeader>
       </Container>
     );
