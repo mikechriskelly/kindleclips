@@ -78,7 +78,7 @@ export function searchClips(searchTerm) {
       history.push('/');
       return;
     }
-    dispatch(searchClipsPending());
+    dispatch(searchClipsPending(searchTerm));
     try {
       const data = await graphqlRequest(
         `{readClips(search:"${searchTerm}") {shortId, title, author, text, similarClips {shortId, title, author, text}}}`,
@@ -145,9 +145,10 @@ export function fetchClipRejected(errorMsg) {
   };
 }
 
-export function searchClipsPending() {
+export function searchClipsPending(searchTerm) {
   return {
     type: SEARCH_CLIPS_PENDING,
+    searchTerm,
   };
 }
 
@@ -218,6 +219,7 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         isLoading: true,
+        searchTerm: action.searchTerm,
       };
     }
     case SEARCH_CLIPS_FULFILLED: {

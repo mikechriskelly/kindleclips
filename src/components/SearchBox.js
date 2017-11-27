@@ -17,6 +17,7 @@ function SearchBox({ searchTerm, handleSubmit }) {
         <SearchField
           aria-label="Search clips"
           component="input"
+          defaultValue={searchTerm}
           name="searchTerm"
           placeholder="Search..."
           type="search"
@@ -28,21 +29,19 @@ function SearchBox({ searchTerm, handleSubmit }) {
 }
 
 const Container = styled.div`
-  background-color: '#666';
-  border-radius: 3px;
-  float: left;
-  margin: 0 10px;
+  background-color: #efefef;
+  margin: 10px 0;
   max-height: 37px;
-  padding-left: 0px;
-  position: relative;
   vertical-align: middle;
-  width: 50%;
+  width: 100%;
 `;
 
 const baseIcon = css`
-  color: #fff;
-  margin: -5px 4px 0 8px;
-  size: 20;
+  color: #222;
+  left: 4px;
+  position: relative;
+  top: -2px;
+  width: 25px;
 `;
 
 const SearchIcon = styled(FaSearch)`${baseIcon}`;
@@ -51,15 +50,14 @@ const SearchField = styled(Field)`
   background-color: inherit;
   border: none;
   border-radius: 0;
-  color: #fff;
-  font-size: 18px;
-  margin-top: 5px;
+  color: #222;
+  font-size: 16px;
   outline: none;
-  padding: 2px;
-  width: calc(100% - 40px);
+  padding: 6px;
   :placeholder {
-    color: #fff;
+    color: #ccc;
   }
+  width: calc(100% - 30px);
 `;
 
 export default reduxForm({ form: 'search' })(SearchBox);

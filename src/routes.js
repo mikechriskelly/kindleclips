@@ -7,7 +7,7 @@ import Page from './components/Page';
 import UploadPage from './containers/UploadPage';
 import SearchPage from './containers/SearchPage';
 import about from './../public/about.md';
-import { fetchClip, fetchRandomClip } from './modules/clips';
+import { fetchClip, fetchRandomClip, searchClips } from './modules/clips';
 
 const routes = {
   path: '/',
@@ -36,10 +36,10 @@ const routes = {
     },
     {
       // SEARCH
-      path: ['/s', '/s/:searchterm'],
-      action() {
+      path: ['/s', '/s/:searchTerm'],
+      async action({ store }, { searchTerm }) {
+        store.dispatch(searchClips(searchTerm));
         return {
-          chunks: ['search'],
           title: 'Search Results',
           component: <SearchPage />,
         };

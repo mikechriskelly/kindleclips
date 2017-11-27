@@ -32,8 +32,7 @@ class ClipPage extends React.Component {
             author={this.props.author}
             text={this.props.text}
           />
-          {this.props.similarClips.length > 0 &&
-            <ClipList clips={this.props.similarClips} />}
+          <ClipList clips={this.props.similarClips} />
         </Container>
       </Layout>
     );

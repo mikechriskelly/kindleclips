@@ -19,24 +19,36 @@ ClipList.defaultProps = {
 };
 
 function ClipList({ clipList, searchTerm }) {
-  return [
-    <h2>
-      {searchTerm ? 'Search Results' : 'Similar Clips'}
-    </h2>,
-    <ul>
-      {clipList.map(clip =>
-        <ClipItem
-          shortId={clip.shortId}
-          key={clip.shortId}
-          title={clip.title}
-          author={clip.author}
-          text={clip.text}
-          searchTerm={searchTerm}
-          inList
-        />,
-      )}
-    </ul>,
-  ];
+  if (clipList.length === 0) {
+    return (
+      <h2>
+        {searchTerm ? 'No Results' : null}
+      </h2>
+    );
+  }
+
+  if (clipList.length > 0) {
+    return (
+      <div>
+        <h2>
+          {searchTerm ? 'Search Results' : 'Similar Clips'}
+        </h2>
+        <ul>
+          {clipList.map(clip =>
+            <ClipItem
+              shortId={clip.shortId}
+              key={clip.shortId}
+              title={clip.title}
+              author={clip.author}
+              text={clip.text}
+              searchTerm={searchTerm}
+              inList
+            />,
+          )}
+        </ul>
+      </div>
+    );
+  }
 }
 
 export default ClipList;

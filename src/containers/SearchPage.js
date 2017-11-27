@@ -15,18 +15,18 @@ class SearchPage extends React.Component {
         text: PropTypes.string,
       }),
     ).isRequired,
+    isLoading: PropTypes.bool.isRequired,
   };
 
   render() {
     return (
       <Layout>
         <div>
-          {this.props.matchingClips.length > 0
-            ? <ClipList
-                clipList={this.props.matchingClips}
-                searchTerm={this.props.searchTerm}
-              />
-            : <h2>No Results Found</h2>}
+          {this.props.isLoading ? <h2>Searching...</h2> : null}
+          <ClipList
+            clipList={this.props.matchingClips}
+            searchTerm={this.props.searchTerm}
+          />
         </div>
       </Layout>
     );
