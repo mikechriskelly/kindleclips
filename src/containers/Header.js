@@ -8,16 +8,19 @@ import { searchClips } from './../modules/clips';
 
 class Header extends React.Component {
   static propTypes = {
-    isLoggedIn: PropTypes.bool,
-    searchTerm: PropTypes.string,
-    onChange: PropTypes.func,
+    isLoggedIn: PropTypes.bool.isRequired,
+    searchTerm: PropTypes.string.isRequired,
   };
 
-  static defaultProps = {
-    isLoggedIn: false,
-    searchTerm: '',
-    onChange: null,
-  };
+  constructor({ dispatch }) {
+    super();
+    this.dispatch = dispatch;
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleSubmit(values) {
+    this.dispatch(searchClips(values.searchTerm));
+  }
 
   render() {
     return (
@@ -25,8 +28,8 @@ class Header extends React.Component {
         <StyledHeader>
           <Navigation isLoggedIn={this.props.isLoggedIn} />
           <SearchBox
-            searchKey={this.props.searchTerm}
-            onChange={this.props.onChange}
+            searchTerm={this.props.searchTerm}
+            onSubmit={this.handleSubmit}
           />
         </StyledHeader>
       </Container>
@@ -49,18 +52,9 @@ const StyledHeader = styled.header`
 
 function mapStateToProps(state) {
   return {
-    searchTerm: state.clips.searchTerm,
     isLoggedIn: state.user.isLoggedIn,
+    searchTerm: state.clips.searchTerm,
   };
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    onChange: event => {
-      const newSearchTerm = event.target.value;
-      dispatch(searchClips(newSearchTerm));
-    },
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default connect(mapStateToProps)(Header);

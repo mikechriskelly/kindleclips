@@ -1,30 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
-import DebounceInput from 'react-debounce-input';
+import { Field, reduxForm } from 'redux-form';
 import FaSearch from 'react-icons/lib/fa/search';
 
 SearchBox.propTypes = {
-  searchTerm: PropTypes.string,
-  onChange: PropTypes.func.isRequired,
+  searchTerm: PropTypes.string.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
 };
 
-SearchBox.defaultProps = {
-  searchTerm: '',
-};
-
-function SearchBox({ searchTerm, onChange }) {
+function SearchBox({ searchTerm, handleSubmit }) {
   return (
     <Container>
-      <SearchIcon />
-      <StyledDebounced
-        minLength={2}
-        debounceTimeout={400}
-        key={searchTerm}
-        value={searchTerm}
-        onChange={onChange}
-        placeholder="Search..."
-      />
+      <form onSubmit={handleSubmit}>
+        <SearchIcon />
+        <SearchField
+          aria-label="Search clips"
+          component="input"
+          name="searchTerm"
+          placeholder="Search..."
+          type="search"
+          value={searchTerm}
+        />
+      </form>
     </Container>
   );
 }
@@ -49,7 +47,7 @@ const baseIcon = css`
 
 const SearchIcon = styled(FaSearch)`${baseIcon}`;
 
-const StyledDebounced = styled(DebounceInput)`
+const SearchField = styled(Field)`
   background-color: inherit;
   border: none;
   border-radius: 0;
@@ -64,4 +62,4 @@ const StyledDebounced = styled(DebounceInput)`
   }
 `;
 
-export default SearchBox;
+export default reduxForm({ form: 'search' })(SearchBox);

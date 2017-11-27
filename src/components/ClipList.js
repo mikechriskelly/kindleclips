@@ -5,18 +5,17 @@ import ClipItem from './ClipItem';
 ClipList.propTypes = {
   clipList: PropTypes.arrayOf(
     PropTypes.shape({
-      shortId: PropTypes.string,
+      shortId: PropTypes.string.isRequired,
       title: PropTypes.string,
       author: PropTypes.string,
-      text: PropTypes.string,
+      text: PropTypes.string.isRequired,
     }),
-  ),
+  ).isRequired,
   searchTerm: PropTypes.string,
 };
 
 ClipList.defaultProps = {
-  clipList: [],
-  searchTerm: '',
+  searchTerm: null,
 };
 
 function ClipList({ clipList, searchTerm }) {

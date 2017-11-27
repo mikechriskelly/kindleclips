@@ -6,13 +6,19 @@ import styled from 'styled-components';
 import Link from './Link';
 
 ClipItem.propTypes = {
-  shortId: PropTypes.string,
+  shortId: PropTypes.string.isRequired,
   title: PropTypes.string,
   author: PropTypes.string,
-  text: PropTypes.string,
+  text: PropTypes.string.isRequired,
   inList: PropTypes.bool,
-  index: PropTypes.number,
   searchTerm: PropTypes.string,
+};
+
+ClipItem.defaultProps = {
+  title: '',
+  author: '',
+  inList: false,
+  searchTerm: null,
 };
 
 function ClipItem({ shortId, title, author, text, inList, searchTerm }) {
