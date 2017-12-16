@@ -1,4 +1,3 @@
-import { initialize } from 'redux-form';
 import history from '../history';
 
 // Initial State
@@ -43,7 +42,14 @@ export function fetchClip(shortId) {
       ? `{readClips(shortId: "${shortId}") {shortId, title, author, text, similarClips { shortId, title, author, text }}}`
       : `{readClips(random: true, seed: ${seed}) {shortId, title, author, text, similarClips { shortId, title, author, text }}}`;
 
-    // const foo = await getState().cachedClips[shortId];
+    // Use cached clip if available
+    const cachedClip = getState().clips.cachedClips[shortId];
+    if (cachedClip) {
+      dispatch(fetchClipFulfilled(cachedClip));
+      return;
+    }
+
+    // Otherwise query for clip
     try {
       const data = await graphqlRequest(query);
       const clip = data.data.readClips[0];
@@ -210,7 +216,7 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         primaryClip: initialState.primaryClip,
-        matchingClips: initialize.matchingClips,
+        matchingClips: initialState.matchingClips,
         isLoading: true,
       };
     }
@@ -220,7 +226,7 @@ export default function reducer(state = initialState, action = {}) {
         primaryClip: action.clip,
         cachedClips: {
           ...state.cachedClips,
-          // [action.clip.shortId]: action.clip,
+          [action.clip.shortId]: action.clip,
         },
         isLoading: false,
         isError: false,
@@ -246,10 +252,6 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         matchingClips: action.matchingClips,
-        cachedClips: {
-          ...state.cachedClips,
-          // [action.clip.shortId]: action.clip,
-        },
         isLoading: false,
         isError: false,
         errorMsg: null,

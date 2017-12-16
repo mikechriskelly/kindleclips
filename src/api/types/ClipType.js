@@ -19,7 +19,7 @@ const ClipType = new ObjectType({
     text: { type: new NonNull(StringType) },
     similarClips: {
       type: new ListType(ClipType),
-      resolve: clip => Clip.getSimilar(clip.id), // .then(post => post.toJSON().comments);
+      resolve: clip => Clip.getSimilar(clip.id),
     },
   }),
 });
