@@ -181,7 +181,10 @@ app.get('*', async (req, res, next) => {
     }
 
     const initialState = {
-      user: userInitialState,
+      user: {
+        ...userInitialState,
+        ...req.user,
+      },
       clips: clipsInitialState,
     };
 

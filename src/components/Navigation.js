@@ -15,7 +15,7 @@ function Navigation({ isLoggedIn }) {
   const userLinks = (
     <div>
       <Link to="/upload">Upload</Link>
-      <Link to="/logout">Log Out</Link>
+      <a href="/logout">Log Out</a>
     </div>
   );
 

@@ -8,10 +8,10 @@ import ClipItem from './../components/ClipItem';
 
 class ClipPage extends React.Component {
   static propTypes = {
-    shortId: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    author: PropTypes.string.isRequired,
-    text: PropTypes.string.isRequired,
+    shortId: PropTypes.string,
+    title: PropTypes.string,
+    author: PropTypes.string,
+    text: PropTypes.string,
     similarClips: PropTypes.arrayOf(
       PropTypes.shape({
         shortId: PropTypes.string,
@@ -19,7 +19,15 @@ class ClipPage extends React.Component {
         author: PropTypes.string,
         text: PropTypes.string,
       }),
-    ).isRequired,
+    ),
+  };
+
+  static defaultProps = {
+    shortId: '',
+    title: '',
+    author: '',
+    text: '',
+    similarClips: [],
   };
 
   render() {
