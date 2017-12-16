@@ -1,3 +1,4 @@
+import { initialize } from 'redux-form';
 import history from '../history';
 
 // Initial State
@@ -31,6 +32,8 @@ const UPLOAD_CLIPS_REJECTED = 'UPLOAD_CLIPS_REJECTED';
 // Thunk Actions
 export function fetchClip(shortId) {
   return async (dispatch, getState, { graphqlRequest }) => {
+    if (getState().clips.primaryClip.shortId === shortId) return;
+
     dispatch(fetchClipPending());
 
     // In case no ID provided, pick an initial clip based on time of day (server and client will make same choice)
@@ -44,7 +47,12 @@ export function fetchClip(shortId) {
     try {
       const data = await graphqlRequest(query);
       const clip = data.data.readClips[0];
-      dispatch(fetchClipFulfilled(clip));
+
+      if (clip) {
+        dispatch(fetchClipFulfilled(clip));
+      } else {
+        dispatch(fetchClipRejected('Clip Not Found'));
+      }
     } catch (errorMsg) {
       dispatch(fetchClipRejected(errorMsg));
     }
@@ -59,12 +67,15 @@ export function fetchRandomClip() {
         `{readClips(random: true) {shortId, title, author, text, similarClips {shortId, title, author, text}}}`,
       );
       const clip = data.data.readClips[0];
-      dispatch(fetchClipFulfilled(clip));
-
-      // Update URL to match randomly fetched clip
-      const clipURL = `/c/${clip.shortId}`;
-      if (history.location.pathname !== clipURL) {
-        history.replace(clipURL);
+      if (clip) {
+        dispatch(fetchClipFulfilled(clip));
+        // Update URL to match randomly fetched clip
+        const clipURL = `/c/${clip.shortId}`;
+        if (history.location.pathname !== clipURL) {
+          history.replace(clipURL);
+        }
+      } else {
+        dispatch(fetchClipRejected('Clip Not Found'));
       }
     } catch (errorMsg) {
       dispatch(fetchClipRejected(errorMsg));
@@ -198,6 +209,8 @@ export default function reducer(state = initialState, action = {}) {
     case FETCH_CLIP_PENDING: {
       return {
         ...state,
+        primaryClip: initialState.primaryClip,
+        matchingClips: initialize.matchingClips,
         isLoading: true,
       };
     }
