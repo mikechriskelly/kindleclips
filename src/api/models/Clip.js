@@ -118,8 +118,9 @@ Clip.getSimilar = async clipId =>
 Clip.getRandom = async (userId, seed = Math.random()) =>
   Model.query(
     `SELECT id, short_id as "shortId", title, author, text FROM "${TABLENAME}"
+        WHERE user_id = '${userId}'
         OFFSET ${seed} *
-        (SELECT count(*) FROM "${TABLENAME}" WHERE user_id = '${userId}')
+          (SELECT count(*) FROM "${TABLENAME}" WHERE user_id = '${userId}')
         LIMIT 1`,
     { type: Model.QueryTypes.SELECT },
   ).then(results => results);
