@@ -92,7 +92,7 @@ const config = {
             // Adds __self attribute to JSX which React will use for some warnings
             // https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-react-jsx-self
             ...(isDebug ? ['transform-react-jsx-self'] : []),
-            ['babel-plugin-styled-components', { ssr: true }],
+            ['babel-plugin-styled-components', { ssr: true, minify: true }],
           ],
         },
       },

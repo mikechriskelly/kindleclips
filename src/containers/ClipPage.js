@@ -48,7 +48,6 @@ class ClipPage extends React.Component {
 }
 
 const Container = styled.div`
-  margin: 1em;
   max-width: 750px;
   width: 100%;
 `;

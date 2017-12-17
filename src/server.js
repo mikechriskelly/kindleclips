@@ -222,6 +222,7 @@ app.get('*', async (req, res, next) => {
         </App>
       </StyleSheetManager>,
     );
+    data.style = sheet.getStyleTags();
     data.scripts = [assets.vendor.js];
     if (route.chunks) {
       data.scripts.push(...route.chunks.map(chunk => assets[chunk].js));

@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import FaUpload from 'react-icons/lib/fa/upload';
+import FaSignOut from 'react-icons/lib/fa/sign-out';
 import Link from './Link';
 
 Navigation.propTypes = {
@@ -14,8 +16,12 @@ Navigation.defaultProps = {
 function Navigation({ isLoggedIn }) {
   const userLinks = (
     <div>
-      <Link to="/upload">Upload</Link>
-      <a href="/logout">Log Out</a>
+      <Link to="/upload">
+        <FaUpload />
+      </Link>
+      <a href="/logout">
+        <FaSignOut />
+      </a>
     </div>
   );
 

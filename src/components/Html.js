@@ -9,6 +9,7 @@ class Html extends React.Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
+    style: PropTypes.string,
     scripts: PropTypes.arrayOf(PropTypes.string.isRequired),
     app: PropTypes.object, // eslint-disable-line
     children: PropTypes.string.isRequired,
@@ -16,17 +17,18 @@ class Html extends React.Component {
 
   static defaultProps = {
     scripts: [],
+    style: '',
   };
 
   render() {
-    const { title, description, scripts, app, children } = this.props;
+    const { title, description, style, scripts, app, children } = this.props;
     return (
       <html className="no-js" lang="en">
         <head>
           <meta charSet="utf-8" />
           <meta httpEquiv="x-ua-compatible" content="ie=edge" />
           <title>
-            {title}
+            <div id="app" dangerouslySetInnerHTML={{ __html: children }} />
           </title>
           <meta name="description" content={description} />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -34,6 +36,7 @@ class Html extends React.Component {
             <link key={script} rel="preload" href={script} as="script" />,
           )}
           <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+          <style dangerouslySetInnerHTML={{ __html: style }} />
         </head>
         <body>
           <div id="app" dangerouslySetInnerHTML={{ __html: children }} />
